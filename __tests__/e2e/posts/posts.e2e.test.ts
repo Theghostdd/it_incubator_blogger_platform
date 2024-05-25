@@ -26,7 +26,7 @@ describe(SETTINGS.PATH.POST, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic admin:qwerty"
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
             },
             checkValues: {
                 id: expect.any(String),
@@ -189,7 +189,7 @@ describe(SETTINGS.PATH.POST, () => {
         inspectData = {
             status: 401,
             headers: {
-                basic_auth: "Basic admin:fhfhf"
+                basic_auth: "Basic YWRtaW46cXdlcn"
             },
             checkValues: {
                 ...inspectData.checkValues
@@ -208,7 +208,7 @@ describe(SETTINGS.PATH.POST, () => {
         const result = await TestModules.CreateElement(endpoint, null, inspectData)
     })
 
-    it('shouldn`t create element, blog id not found, status: 404',async () => {
+    it('shouldn`t create element, blog id not found, status: 400',async () => {
 
         const DataToSend = {
             title: "some title",
@@ -219,9 +219,9 @@ describe(SETTINGS.PATH.POST, () => {
 
         inspectData = {
             ...inspectData,
-            status: 404,
+            status: 400,
             headers: {
-                basic_auth: "Basic admin:qwerty"
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
             }
         }
 
@@ -239,12 +239,23 @@ describe(SETTINGS.PATH.POST, () => {
 
         inspectData = {
             ...inspectData,
-            status: 404,
+            status: 400,
             headers: {
-                basic_auth: "Basic admin:qwerty"
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
             }
         }
         const result = await TestModules.CreateElement(endpoint, DataToUpdate, inspectData)
+    })
+
+    it('shouldn`t update element, Unauthorized, Bearer, status: 401',async () => {
+        inspectData = {
+            ...inspectData,
+            status: 401,
+            headers: {
+                basic_auth: "Bearer YWRtaW46cXdlcnR5"
+            }
+        }
+        const result = await TestModules.UpdateElementById(endpoint, idElement, null, inspectData)
     })
 
     it('should delete all data', async () => {

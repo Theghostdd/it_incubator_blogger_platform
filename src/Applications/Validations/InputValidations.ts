@@ -1,6 +1,8 @@
 import { NextFunction, Response, Request, query } from "express";
 import { body, validationResult, Result } from 'express-validator';
-import { AdminAuth } from '../../settings'
+import { BlogRepos } from "../../Repositories/BlogRepo";
+import { rejects } from "assert";
+import { BlogResponseType } from "../Types/Types";
 
 
 
@@ -21,26 +23,19 @@ export const inputValidation = (req: Request, res: Response, next: NextFunction)
 
 export const authValidation = async (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers['authorization'];
-    let SAuth = false;
     if (!auth) {
         return res.sendStatus(401)
     }
-    
+
+    const SplitStringTypeAuth = auth.split(' ')[0]
+    if (SplitStringTypeAuth !== "Basic") {
+        return res.sendStatus(401)
+    }
+
     const SplitString = auth.split(' ')[1]
-    const UserLogin = SplitString.split(':')[0];
-    const UserPass = SplitString.split(':')[1];
-    const encodeLogin = await Buffer.from(UserLogin, 'binary').toString('base64');
-    const encodePass = await Buffer.from(UserPass, 'binary').toString('base64');
+    const decode = Buffer.from(SplitString, 'base64').toString('utf8');
 
-    await AdminAuth.forEach( (i: any) => {
-        if (i.login === encodeLogin) {
-            if (i.pass === encodePass) {
-                SAuth = true
-            }
-        }
-    })
-
-    if (SAuth) {
+    if (decode === 'admin:qwerty') {
         return next()
     }
 
@@ -91,7 +86,14 @@ export const RuleValidations = {
                     .withMessage('The blog id must be a string')
                     .trim()
                     .notEmpty()
-                    .withMessage('The blog id can`t be empty'),
+                    .withMessage('The blog id can`t be empty')
+                    .custom( async (id: string) => {
+                        const result: BlogResponseType = await BlogRepos.GetBlogById(id)
+                        if (result.status === 200) {
+                            return true
+                        }
+                        throw new Error('Blog id not found');
+                    })
 }
 
 

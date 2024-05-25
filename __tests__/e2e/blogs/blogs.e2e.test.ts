@@ -31,7 +31,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic admin:qwerty"
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
             },
             checkValues: {
                 id: expect.any(String),
@@ -57,7 +57,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic admin:qwerty"
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
             },
             checkValues: {
                 id: expect.any(String),
@@ -212,7 +212,7 @@ describe(SETTINGS.PATH.BLOG, () => {
             ...inspectData,
             status: 401,
             headers: {
-                basic_auth: "Basic ff:fkr"
+                basic_auth: "Basic YWRtaW46cXdl"
             }
         }
 
@@ -227,6 +227,18 @@ describe(SETTINGS.PATH.BLOG, () => {
         const result = await TestModules.CreateElement(endpoint, null, inspectData)
     })
 
+
+    it('shouldn`t update element, Unauthorized, Bearer, status: 401',async () => {
+        inspectData = {
+            ...inspectData,
+            status: 401,
+            headers: {
+                basic_auth: "Bearer YWRtaW46cXdlcnR5"
+            }
+        }
+        const result = await TestModules.UpdateElementById(endpoint, idElement, null, inspectData)
+    })
+
     it('should create blog`s element for post, status: 201, and return element', async () => {
 
         const DataToSend = {
@@ -238,7 +250,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic admin:qwerty"
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
             },
             checkValues: {
                 id: expect.any(String),
