@@ -61,7 +61,7 @@ export const TestModules = {
 
     async DeleteAllElements () {
         const result = await GetRequest()
-            .delete(SETTINGS.PATH_TEST.TEST_ALL_DATA)
+            .delete(`${SETTINGS.PATH_TEST.TEST}/${SETTINGS.PATH_TEST.TEST_ALL_DATA}`)
             .expect(204)
         return;
     }

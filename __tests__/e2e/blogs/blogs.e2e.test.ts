@@ -16,9 +16,10 @@ describe(SETTINGS.PATH.BLOG, () => {
     let idElement: string;
     let idElementToDell: string;
     
-    before( async () => {
+    it('should delete all data', async () => {
         await TestModules.DeleteAllElements()
     })
+
     it('should create blog`s element, status: 201, and return element', async () => {
 
         const DataToSend = {

@@ -262,7 +262,7 @@ describe(SETTINGS.PATH.POST, () => {
         const result = await TestModules.CreateElement(endpoint, DataToUpdate, inspectData)
     })
 
-    after(async () => {
+    it('should delete all data', async () => {
         await TestModules.DeleteAllElements()
     })
 })

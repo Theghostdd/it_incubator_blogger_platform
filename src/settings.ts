@@ -9,7 +9,7 @@ export const SETTINGS = {
     },
     PATH_TEST: {
         TEST: "/api/testing",
-        TEST_ALL_DATA: "/api/testing/all-data"
+        TEST_ALL_DATA: "/all-data"
     }
 }
 
