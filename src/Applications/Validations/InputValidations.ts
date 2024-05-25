@@ -1,4 +1,4 @@
-import { NextFunction, Response, Request } from "express";
+import { NextFunction, Response, Request, query } from "express";
 import { body, validationResult, Result } from 'express-validator';
 import { AdminAuth } from '../../settings'
 
@@ -10,7 +10,7 @@ export const inputValidation = (req: Request, res: Response, next: NextFunction)
 
     if (error.array().length > 0) {
         return res.status(400).json({
-            errorsMessages: error.array().map( (e) => ({
+            errorsMessages: error.array({onlyFirstError: true}).map( (e) => ({
                 message: e.msg,
                 field: e.path
             })
@@ -25,10 +25,10 @@ export const authValidation = async (req: Request, res: Response, next: NextFunc
     if (!auth) {
         return res.sendStatus(401)
     }
-
-    const decode = await Buffer.from(auth.split(' ')[1], 'base64').toString('binary');
-    const UserLogin = decode.split(':')[0];
-    const UserPass = decode.split(':')[1];
+    
+    const SplitString = auth.split(' ')[1]
+    const UserLogin = SplitString.split(':')[0];
+    const UserPass = SplitString.split(':')[1];
     const encodeLogin = await Buffer.from(UserLogin, 'binary').toString('base64');
     const encodePass = await Buffer.from(UserPass, 'binary').toString('base64');
 

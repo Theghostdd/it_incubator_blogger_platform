@@ -31,7 +31,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
+                basic_auth: "Basic admin:qwerty"
             },
             checkValues: {
                 id: expect.any(String),
@@ -57,7 +57,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
+                basic_auth: "Basic admin:qwerty"
             },
             checkValues: {
                 id: expect.any(String),
@@ -193,12 +193,12 @@ describe(SETTINGS.PATH.BLOG, () => {
             checkValues: {
                 errorsMessages: [
                     {
-                        "message": expect.any(String),
-                        "field": expect.any(String)
+                        message: expect.any(String),
+                        field: "name"
                     },
                     {
-                        "message": expect.any(String),
-                        "field": expect.any(String)
+                        message: expect.any(String),
+                        field: "websiteUrl"
                     }
                 ]
             }
@@ -212,7 +212,7 @@ describe(SETTINGS.PATH.BLOG, () => {
             ...inspectData,
             status: 401,
             headers: {
-                basic_auth: "Basic YWRtaW46"
+                basic_auth: "Basic ff:fkr"
             }
         }
 
@@ -238,7 +238,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
+                basic_auth: "Basic admin:qwerty"
             },
             checkValues: {
                 id: expect.any(String),

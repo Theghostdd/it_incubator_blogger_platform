@@ -26,7 +26,7 @@ describe(SETTINGS.PATH.POST, () => {
         inspectData = {
             status: 201,
             headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
+                basic_auth: "Basic admin:qwerty"
             },
             checkValues: {
                 id: expect.any(String),
@@ -189,7 +189,7 @@ describe(SETTINGS.PATH.POST, () => {
         inspectData = {
             status: 401,
             headers: {
-                basic_auth: "Basic YWRtaW46"
+                basic_auth: "Basic admin:fhfhf"
             },
             checkValues: {
                 ...inspectData.checkValues
@@ -201,25 +201,10 @@ describe(SETTINGS.PATH.POST, () => {
 
     it('shouldn`t delete element, Unauthorized, incorrect data, status: 401',async () => {
 
-        inspectData = {
-            ...inspectData,
-            headers: {
-                basic_auth: "Basic YWRtaW46"
-            },
-        }
-
         const result = await TestModules.DeleteElementById(endpoint, idElement, inspectData)
     })
 
     it('shouldn`t create element, Unauthorized, incorrect data, status: 401',async () => {
-
-        inspectData = {
-            ...inspectData,
-            headers: {
-                basic_auth: "Basic YWRtaW46"
-            },
-        }
-
         const result = await TestModules.CreateElement(endpoint, null, inspectData)
     })
 
@@ -236,7 +221,7 @@ describe(SETTINGS.PATH.POST, () => {
             ...inspectData,
             status: 404,
             headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
+                basic_auth: "Basic admin:qwerty"
             }
         }
 
@@ -256,7 +241,7 @@ describe(SETTINGS.PATH.POST, () => {
             ...inspectData,
             status: 404,
             headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
+                basic_auth: "Basic admin:qwerty"
             }
         }
         const result = await TestModules.CreateElement(endpoint, DataToUpdate, inspectData)
