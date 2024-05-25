@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1716653849271" clover="3.2.0">
+  <project timestamp="1716653849271" name="All files">
+    <metrics statements="210" coveredstatements="187" conditionals="22" coveredconditionals="18" methods="52" coveredmethods="48" elements="284" coveredelements="253" complexity="0" loc="210" ncloc="210" packages="9" files="12" classes="12"/>
+    <package name="__tests__.e2e.modules">
+      <metrics statements="24" coveredstatements="21" conditionals="3" coveredconditionals="2" methods="7" coveredmethods="6"/>
+      <file name="modules.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/__tests__/e2e/modules/modules.ts">
+        <metrics statements="24" coveredstatements="21" conditionals="3" coveredconditionals="2" methods="7" coveredmethods="6"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="51" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="11" count="13" type="stmt"/>
+        <line num="17" count="13" type="cond" truecount="0" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="20" count="13" type="stmt"/>
+        <line num="24" count="9" type="stmt"/>
+        <line num="28" count="9" type="cond" truecount="1" falsecount="0"/>
+        <line num="29" count="6" type="stmt"/>
+        <line num="31" count="9" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="39" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="40" count="3" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="46" count="17" type="stmt"/>
+        <line num="51" count="17" type="stmt"/>
+        <line num="55" count="9" type="stmt"/>
+        <line num="59" count="9" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src">
+      <metrics statements="16" coveredstatements="16" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+      <file name="app.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/app.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+      </file>
+      <file name="settings.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/settings.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Applications.Response">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="Response.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Applications/Response/Response.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Applications.Utils">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="CreateId.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Applications/Utils/CreateId.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="8" type="stmt"/>
+        <line num="5" count="8" type="stmt"/>
+        <line num="6" count="8" type="stmt"/>
+        <line num="7" count="8" type="stmt"/>
+        <line num="8" count="8" type="stmt"/>
+        <line num="10" count="8" type="stmt"/>
+        <line num="12" count="8" type="stmt"/>
+        <line num="13" count="8" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Applications.Validations">
+      <metrics statements="26" coveredstatements="25" conditionals="5" coveredconditionals="4" methods="5" coveredmethods="5"/>
+      <file name="InputValidations.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Applications/Validations/InputValidations.ts">
+        <metrics statements="26" coveredstatements="25" conditionals="5" coveredconditionals="4" methods="5" coveredmethods="5"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="24" type="stmt"/>
+        <line num="11" count="24" type="cond" truecount="1" falsecount="0"/>
+        <line num="12" count="8" type="stmt"/>
+        <line num="13" count="11" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+        <line num="22" count="39" type="stmt"/>
+        <line num="23" count="39" type="stmt"/>
+        <line num="24" count="39" type="stmt"/>
+        <line num="25" count="39" type="cond" truecount="0" falsecount="1"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="29" count="39" type="stmt"/>
+        <line num="30" count="39" type="stmt"/>
+        <line num="31" count="39" type="stmt"/>
+        <line num="32" count="39" type="stmt"/>
+        <line num="33" count="39" type="stmt"/>
+        <line num="35" count="39" type="stmt"/>
+        <line num="36" count="39" type="cond" truecount="1" falsecount="0"/>
+        <line num="37" count="39" type="cond" truecount="1" falsecount="0"/>
+        <line num="38" count="30" type="stmt"/>
+        <line num="43" count="39" type="cond" truecount="1" falsecount="0"/>
+        <line num="44" count="30" type="stmt"/>
+        <line num="47" count="9" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Repositories">
+      <metrics statements="81" coveredstatements="64" conditionals="12" coveredconditionals="10" methods="17" coveredmethods="16"/>
+      <file name="BlogRepo.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Repositories/BlogRepo.ts">
+        <metrics statements="34" coveredstatements="28" conditionals="4" coveredconditionals="3" methods="8" coveredmethods="8"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="15" count="10" type="stmt"/>
+        <line num="16" count="14" type="stmt"/>
+        <line num="18" count="10" type="cond" truecount="1" falsecount="0"/>
+        <line num="19" count="6" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="35" count="2" type="cond" truecount="0" falsecount="1"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+        <line num="51" count="6" type="stmt"/>
+        <line num="52" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="4" type="stmt"/>
+        <line num="65" count="4" type="stmt"/>
+        <line num="66" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="82" count="6" type="stmt"/>
+        <line num="83" count="6" type="stmt"/>
+        <line num="87" count="6" type="stmt"/>
+        <line num="88" count="6" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+      </file>
+      <file name="PostRepo.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Repositories/PostRepo.ts">
+        <metrics statements="38" coveredstatements="32" conditionals="8" coveredconditionals="7" methods="8" coveredmethods="8"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="14" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="79" count="4" type="stmt"/>
+        <line num="80" count="4" type="stmt"/>
+        <line num="82" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="83" count="2" type="stmt"/>
+        <line num="89" count="2" type="stmt"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="97" count="2" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+      </file>
+      <file name="TestRepo.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Repositories/TestRepo.ts">
+        <metrics statements="9" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Routers.BlogRouter">
+      <metrics statements="24" coveredstatements="24" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="10"/>
+      <file name="BlogRouters.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Routers/BlogRouter/BlogRouters.ts">
+        <metrics statements="24" coveredstatements="24" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="10"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="19" count="6" type="stmt"/>
+        <line num="20" count="6" type="stmt"/>
+        <line num="21" count="6" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="30" count="6" type="stmt"/>
+        <line num="31" count="6" type="stmt"/>
+        <line num="32" count="6" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="41" count="4" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="48" count="4" type="stmt"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Routers.PostRouter">
+      <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="10"/>
+      <file name="PostRouter.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Routers/PostRouter/PostRouter.ts">
+        <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="10"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="47" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.Routers.TestRouter">
+      <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="TestRouter.ts" path="/Users/mar/Desktop/ITIncubator/blog_project/src/Routers/TestRouter/TestRouter.ts">
+        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
