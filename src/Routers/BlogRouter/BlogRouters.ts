@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
 import { BlogRepos } from "../../Repositories/BlogRepo";
 import { body} from 'express-validator';
-import { RuleValidations, authValidation, inputValidation } from "../../Applications/Validations/InputValidations";
+import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
 import { BlogInputType, RequestParamsType, GetResponse, GetAllResponse, StatusResponse} from "../../Applications/Types/Types";
+import { authValidation } from "../../Applications/Validations/auth/auth";
 
 export const BlogRouter = Router()
 

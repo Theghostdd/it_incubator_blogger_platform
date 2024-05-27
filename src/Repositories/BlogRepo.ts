@@ -1,4 +1,4 @@
-import { Response } from "../Applications/Response/Response"
+import { Response } from "../Applications/Utils/Response"
 import { BlogsViewType, BlogResponseType, BlogsResponseType, BlogInputType} from "../Applications/Types/Types"
 import { CreateId } from "../Applications/Utils/CreateId"
 
@@ -81,7 +81,7 @@ export const BlogRepos = {
     async CreateBlog (data: BlogInputType) {
         try { // Catch error
             const CreateElement = { // Create New Element
-                id: CreateId(),
+                id: await CreateId(),
                 ...data
             }
             dbBlogs.push(CreateElement)

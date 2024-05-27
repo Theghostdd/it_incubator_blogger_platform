@@ -1,5 +1,5 @@
 import { PostResponseType, PostsResponseType, PostsViewType, PostInputType} from "../Applications/Types/Types";
-import { Response } from '../Applications/Response/Response'
+import { Response } from '../Applications/Utils/Response'
 import { CreateId } from "../Applications/Utils/CreateId";
 import { BlogRepos } from "./BlogRepo";
 
@@ -81,7 +81,7 @@ export const PostRepo = {
 
             if (getBlogById && getBlogById.elements && getBlogById.elements.name) { // If element found then create post
                 const CreateElement = {
-                    id: CreateId(),
+                    id: await CreateId(),
                     blogName: getBlogById.elements.name,
                     ...data
                 }

@@ -69,7 +69,13 @@ export type PostResponseType = {
 *
 */
 export type InspectType = {
-    
+    status: number,
+    headers: InspectHeadersType,
+    checkValues: Object
+}
+
+type InspectHeadersType = {
+    basic_auth: string
 }
 /*
 *

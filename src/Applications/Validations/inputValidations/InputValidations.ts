@@ -1,8 +1,7 @@
 import { NextFunction, Response, Request, query } from "express";
 import { body, validationResult, Result } from 'express-validator';
-import { BlogRepos } from "../../Repositories/BlogRepo";
-import { rejects } from "assert";
-import { BlogResponseType } from "../Types/Types";
+import { BlogRepos } from "../../../Repositories/BlogRepo";
+import { BlogResponseType } from "../../Types/Types";
 
 
 
@@ -19,27 +18,6 @@ export const inputValidation = (req: Request, res: Response, next: NextFunction)
         )})
     }
     return next()
-}
-
-export const authValidation = async (req: Request, res: Response, next: NextFunction) => {
-    const auth = req.headers['authorization'];
-    if (!auth) {
-        return res.sendStatus(401)
-    }
-
-    const SplitStringTypeAuth = auth.split(' ')[0]
-    if (SplitStringTypeAuth !== "Basic") {
-        return res.sendStatus(401)
-    }
-
-    const SplitString = auth.split(' ')[1]
-    const decode = Buffer.from(SplitString, 'base64').toString('utf8');
-
-    if (decode === 'admin:qwerty') {
-        return next()
-    }
-
-    return res.sendStatus(401)
 }
 
 export const RuleValidations = {

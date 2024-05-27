@@ -1,4 +1,4 @@
-import { Response } from "../Applications/Response/Response"
+import { Response } from "../Applications/Utils/Response"
 import { BlogResponseType } from "../Applications/Types/Types"
 import { dbBlogs } from "./BlogRepo"
 import { dbPosts } from "./PostRepo"

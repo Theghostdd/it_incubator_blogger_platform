@@ -1,6 +1,3 @@
-import { BlogsViewType } from "../Types/Types";
-
-
 export const Response = {
     E404: {
         status: 404,

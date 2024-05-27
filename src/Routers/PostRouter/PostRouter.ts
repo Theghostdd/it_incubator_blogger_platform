@@ -1,7 +1,8 @@
 import { Router, Request, Response } from "express";
 import { PostRepo } from "../../Repositories/PostRepo";
 import { GetAllResponse, GetResponse, RequestParamsType, StatusResponse, PostInputType, PostViewType } from "../../Applications/Types/Types";
-import { RuleValidations, authValidation, inputValidation } from "../../Applications/Validations/InputValidations";
+import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
+import { authValidation } from "../../Applications/Validations/auth/auth";
 
 
 export const PostRouter = Router()

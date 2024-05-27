@@ -13,9 +13,9 @@ export const SETTINGS = {
     }
 }
 
-// export const AdminAuth = [
-//     {
-//         login: "YWRtaW4=",
-//         pass: "cXdlcnR5"
-//     }
-// ]
+export const AuthData = [
+    {
+        login: "admin",
+        encode: "YWRtaW46cXdlcnR5"
+    }
+]

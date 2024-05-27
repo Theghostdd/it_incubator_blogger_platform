@@ -1,13 +1,14 @@
 import request from "supertest"
 import { app } from "../../../src/app"
 import { SETTINGS } from "../../../src/settings"
+import { InspectType } from '../../../src/Applications/Types/Types';
 
 const GetRequest = () => {
     return request(app)
 }
 
 export const TestModules = {
-    async CreateElement (endpoint: string, data: any, inspectData: any) {
+    async CreateElement (endpoint: string, data: any, inspectData: InspectType) {
         const result = await GetRequest()
             .post(endpoint)
             .set({'Authorization': inspectData.headers.basic_auth})
@@ -20,7 +21,7 @@ export const TestModules = {
         return result.body
     },
 
-    async GetElementById (endpoint: string, id: string | number, inspectData: any) {
+    async GetElementById (endpoint: string, id: string | number, inspectData: InspectType) {
         const result = await GetRequest()
             .get(`${endpoint}/${id}`)
             .expect(inspectData.status)
@@ -31,7 +32,7 @@ export const TestModules = {
         return;
     },
 
-    async GetAllElements (endpoint: string, inspectData: any) {
+    async GetAllElements (endpoint: string, inspectData: InspectType) {
         const result = await GetRequest()
             .get(endpoint)
             .expect(inspectData.status)
@@ -42,7 +43,7 @@ export const TestModules = {
         return;
     },
 
-    async UpdateElementById (endpoint: string, id: string | number, data: any, inspectData: any) {
+    async UpdateElementById (endpoint: string, id: string | number, data: any, inspectData: InspectType) {
         const result = await GetRequest()
             .put(`${endpoint}/${id}`)
             .set({'Authorization': inspectData.headers.basic_auth})
@@ -51,7 +52,7 @@ export const TestModules = {
         return;
     },
 
-    async DeleteElementById (endpoint: string, id: string | number, inspectData: any) {
+    async DeleteElementById (endpoint: string, id: string | number, inspectData: InspectType) {
         const result = await GetRequest()
             .delete(`${endpoint}/${id}`)
             .set({'Authorization': inspectData.headers.basic_auth})

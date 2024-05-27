@@ -1,6 +1,7 @@
-import { before } from 'node:test';
 import { SETTINGS } from '../../../src/settings'
 import { TestModules } from '../modules/modules'
+import { InspectType, BlogViewType } from '../../../src/Applications/Types/Types';
+
 
 
 
@@ -11,8 +12,8 @@ describe(SETTINGS.PATH.BLOG, () => {
 
     const endpoint: string = SETTINGS.PATH.BLOG
 
-    let returnValues: any;
-    let inspectData: any;
+    let returnValues: BlogViewType;
+    let inspectData: InspectType;
     let idElement: string;
     let idElementToDell: string;
     

@@ -1,7 +1,7 @@
 import { TestModules } from '../modules/modules'
 import { SETTINGS } from '../../../src/settings'
 import { idBlogForPost, nameBlog } from '../blogs/blogs.e2e.test';
-import { after } from 'node:test';
+import { InspectType, PostViewType } from '../../../src/Applications/Types/Types';
 
 
 
@@ -9,8 +9,8 @@ describe(SETTINGS.PATH.POST, () => {
 
     const endpoint: string = SETTINGS.PATH.POST
 
-    let returnValues: any;
-    let inspectData: any;
+    let returnValues: PostViewType;
+    let inspectData: InspectType;
     let idElement: string;
     let idElementToDell: string;
 
