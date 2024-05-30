@@ -14,8 +14,14 @@ export const SETTINGS = {
     MONGO: {
         URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
         URL_CLOUD: process.env.MONGO_CLOUD_ULR || 'mongodb://0.0.0.0:27017',
-        SECRET_KEY: process.env.SECRET_KEY || 'YOURSECRETKEYGOESHERE'
-    }
+        SECRET_KEY: process.env.SECRET_KEY || 'YOURSECRETKEYGOESHERE',
+        DB_NAME: 'blog_platform',
+        COLLECTIONS: {
+            posts: 'posts',
+            blogs: 'blogs'
+        }
+    },
+
 }
 
 export const AuthData = [

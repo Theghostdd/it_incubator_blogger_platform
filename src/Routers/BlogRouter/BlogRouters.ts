@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { BlogRepos } from "../../Repositories/BlogRepo";
+import { BlogRepos } from "../../Repositories/BlogRepo/BlogRepo";
 import { body} from 'express-validator';
 import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
 import { BlogInputType, RequestParamsType, GetResponse, GetAllResponse, StatusResponse} from "../../Applications/Types/Types";

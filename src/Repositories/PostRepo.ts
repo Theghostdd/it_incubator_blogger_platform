@@ -1,7 +1,7 @@
 import { PostResponseType, PostsResponseType, PostsViewType, PostInputType} from "../Applications/Types/Types";
 import { Response } from '../Applications/Utils/Response'
 import { CreateId } from "../Applications/Utils/CreateId";
-import { BlogRepos } from "./BlogRepo";
+import { BlogRepos } from "./BlogRepo/BlogRepo";
 
 export const dbPosts: PostsViewType = [
 

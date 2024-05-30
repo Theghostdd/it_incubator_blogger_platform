@@ -6,7 +6,7 @@
 export type BlogsViewType = BlogViewType[]
 
 export type BlogViewType = {
-    id:	string,
+    id: string,
     name: string,
     description: string,
     websiteUrl:	string

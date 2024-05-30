@@ -1,8 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { SETTINGS } from "../../settings"; 
 
-const uri = '';
-
 export const client = new MongoClient(SETTINGS.MONGO.URL, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -10,7 +8,7 @@ export const client = new MongoClient(SETTINGS.MONGO.URL, {
     deprecationErrors: true,
   },
 });
-
+export const db = client.db(SETTINGS.MONGO.DB_NAME)
 export async function startDB() {
     try {
         await client.connect()

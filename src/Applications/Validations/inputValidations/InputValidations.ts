@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request, query } from "express";
 import { body, validationResult, Result } from 'express-validator';
-import { BlogRepos } from "../../../Repositories/BlogRepo";
+import { BlogRepos } from "../../../Repositories/BlogRepo/BlogRepo";
 import { BlogResponseType } from "../../Types/Types";
 
 

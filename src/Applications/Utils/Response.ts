@@ -13,5 +13,10 @@ export const Response = {
         status: 204,
         message: "OK",
         elements: null
+    },
+    S202: {
+        status: 202,
+        message: "OK",
+        elements: null
     }
 }
