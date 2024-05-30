@@ -1,7 +1,7 @@
 import { Response } from "../Applications/Utils/Response"
 import { BlogResponseType } from "../Applications/Types/Types"
 import { dbBlogs } from "./BlogRepo/BlogRepo"
-import { dbPosts } from "./PostRepo"
+import { dbPosts } from "./PostRepo/PostRepo"
 
 
 export const TestRepo = {

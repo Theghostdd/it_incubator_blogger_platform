@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb"
-
 export type BlogsViewType = BlogViewType[]
 
 export type BlogViewType = {
