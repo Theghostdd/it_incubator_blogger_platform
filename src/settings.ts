@@ -10,6 +10,11 @@ export const SETTINGS = {
     PATH_TEST: {
         TEST: "/api/testing",
         TEST_ALL_DATA: "/all-data"
+    },
+    MONGO: {
+        URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
+        URL_CLOUD: process.env.MONGO_CLOUD_ULR || 'mongodb://0.0.0.0:27017',
+        SECRET_KEY: process.env.SECRET_KEY || 'YOURSECRETKEYGOESHERE'
     }
 }
 

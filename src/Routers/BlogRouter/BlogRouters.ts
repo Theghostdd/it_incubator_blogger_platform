@@ -23,30 +23,30 @@ BlogRouter.get('/:id', async (req: Request<RequestParamsType>, res: Response<Get
 })
 
 BlogRouter.post('/', 
-authValidation,
-RuleValidations.validDescription,
-RuleValidations.validName,
-RuleValidations.validWebsiteUrl,
-inputValidation,
-async (req: Request<any, any, BlogInputType>, res: Response<GetResponse | null>) => {
-    const result = await BlogRepos.CreateBlog(req.body)
-    return res.status(result.status).json(result.elements)
+    authValidation,
+    RuleValidations.validDescription,
+    RuleValidations.validName,
+    RuleValidations.validWebsiteUrl,
+    inputValidation,
+    async (req: Request<any, any, BlogInputType>, res: Response<GetResponse | null>) => {
+        const result = await BlogRepos.CreateBlog(req.body)
+        return res.status(result.status).json(result.elements)
 })
 
 BlogRouter.put('/:id',
-authValidation,
-RuleValidations.validDescription,
-RuleValidations.validName,
-RuleValidations.validWebsiteUrl,
-inputValidation,
-async (req: Request<RequestParamsType, any, BlogInputType>, res: Response<StatusResponse>) => {
-    const result = await BlogRepos.UpdateBlogById(req.params.id, req.body)
-    return res.sendStatus(result.status)
+    authValidation,
+    RuleValidations.validDescription,
+    RuleValidations.validName,
+    RuleValidations.validWebsiteUrl,
+    inputValidation,
+    async (req: Request<RequestParamsType, any, BlogInputType>, res: Response<StatusResponse>) => {
+        const result = await BlogRepos.UpdateBlogById(req.params.id, req.body)
+        return res.sendStatus(result.status)
 })
 
 BlogRouter.delete('/:id', 
-authValidation,
-async (req: Request<RequestParamsType>, res: Response<StatusResponse>) => {
-    const result = await BlogRepos.DellBlogById(req.params.id)
-    return res.sendStatus(result.status)
+    authValidation,
+    async (req: Request<RequestParamsType>, res: Response<StatusResponse>) => {
+        const result = await BlogRepos.DellBlogById(req.params.id)
+        return res.sendStatus(result.status)
 })

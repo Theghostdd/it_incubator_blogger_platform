@@ -18,32 +18,32 @@ PostRouter.get('/:id', async (req: Request<RequestParamsType>, res: Response<Get
 })
 
 PostRouter.post('/', 
-authValidation,
-RuleValidations.validTitle,
-RuleValidations.validShortDescription,
-RuleValidations.validContent,
-RuleValidations.validBlogId,
-inputValidation,
-async (req: Request<any, any, PostInputType>, res: Response<PostViewType | null>) => {
-    const result = await PostRepo.CreatePost(req.body)
-    return res.status(result.status).json(result.elements)
+    authValidation,
+    RuleValidations.validTitle,
+    RuleValidations.validShortDescription,
+    RuleValidations.validContent,
+    RuleValidations.validBlogId,
+    inputValidation,
+    async (req: Request<any, any, PostInputType>, res: Response<PostViewType | null>) => {
+        const result = await PostRepo.CreatePost(req.body)
+        return res.status(result.status).json(result.elements)
 })
 
 PostRouter.put('/:id', 
-authValidation,
-RuleValidations.validTitle,
-RuleValidations.validShortDescription,
-RuleValidations.validContent,
-RuleValidations.validBlogId,
-inputValidation,
-async (req: Request<RequestParamsType, any, PostInputType>, res: Response<StatusResponse | null>) => {
-    const result = await PostRepo.UpdatePostById(req.params.id, req.body)
-    return res.sendStatus(result.status)
+    authValidation,
+    RuleValidations.validTitle,
+    RuleValidations.validShortDescription,
+    RuleValidations.validContent,
+    RuleValidations.validBlogId,
+    inputValidation,
+    async (req: Request<RequestParamsType, any, PostInputType>, res: Response<StatusResponse | null>) => {
+        const result = await PostRepo.UpdatePostById(req.params.id, req.body)
+        return res.sendStatus(result.status)
 })
 
 PostRouter.delete('/:id', 
-authValidation,
-async (req: Request<RequestParamsType>, res: Response<StatusResponse | null>) => {
-    const result = await PostRepo.DellPostById(req.params.id)
-    return res.sendStatus(result.status)
+    authValidation,
+    async (req: Request<RequestParamsType>, res: Response<StatusResponse | null>) => {
+        const result = await PostRepo.DellPostById(req.params.id)
+        return res.sendStatus(result.status)
 })
