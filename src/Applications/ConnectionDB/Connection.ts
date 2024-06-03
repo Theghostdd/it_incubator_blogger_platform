@@ -1,7 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { SETTINGS } from "../../settings"; 
 
-export const client = new MongoClient(SETTINGS.MONGO.URL, {
+export const client = new MongoClient(SETTINGS.MONGO.URL_CLOUD, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
