@@ -10,7 +10,6 @@ describe(SETTINGS.PATH.POST, () => {
 
     let returnValues: any;
     let ElementId: string;
-
     let blogId: string;
     let blogName: string;
     let InspectData: any;
