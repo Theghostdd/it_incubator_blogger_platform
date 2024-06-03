@@ -1,3 +1,4 @@
+
 export type BlogsViewType = BlogViewType[]
 
 export type BlogViewType = {
@@ -26,5 +27,4 @@ export type BlogResponseType = {
     message: string,
     elements: BlogViewType | null
 }
-
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { SETTINGS } from "../../settings";
-import { TestRepo } from "../../Repositories/TestRepo";
+import { TestRepo } from "../../Repositories/TestRepo/TestRepo";
 import { StatusResponse } from "../../Applications/Types/Types";
 
 

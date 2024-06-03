@@ -8,55 +8,44 @@ const GetRequest = () => {
 }
 
 export const TestModules = {
-    async CreateElement (endpoint: string, data: any, inspectData: InspectType) {
+    async CreateElement (endpoint: string, status: number, CreateData: any, InspectData: any) {
         const result = await GetRequest()
             .post(endpoint)
-            .set({'Authorization': inspectData.headers.basic_auth})
-            .send(data)
-            .expect(inspectData.status)
-        
-        if (inspectData.status === 200) {
-            expect(result.body).toEqual(inspectData.checkValues)
-        }
+            .set({'Authorization': InspectData.headers.basic_auth})
+            .send(CreateData)
+            .expect(status)
         return result.body
     },
 
-    async GetElementById (endpoint: string, id: string | number, inspectData: InspectType) {
+    async GetElementById (endpoint: string, status: number, id: string | number) {
         const result = await GetRequest()
             .get(`${endpoint}/${id}`)
-            .expect(inspectData.status)
+            .expect(status)
 
-        if (inspectData.status === 200) {
-            expect(result.body).toEqual(inspectData.checkValues)
-        }
-        return;
+        return result.body;
     },
 
-    async GetAllElements (endpoint: string, inspectData: InspectType) {
+    async GetAllElements (endpoint: string, status: number) {
         const result = await GetRequest()
             .get(endpoint)
-            .expect(inspectData.status)
-
-        if (inspectData.status === 200) {
-            expect(result.body.length).toBe(2)
-        }
-        return;
+            .expect(status)
+        return result.body;
     },
 
-    async UpdateElementById (endpoint: string, id: string | number, data: any, inspectData: InspectType) {
+    async UpdateElementById (endpoint: string, status: number, id: string | number, UpdateData: any, InspectData: any) {
         const result = await GetRequest()
             .put(`${endpoint}/${id}`)
-            .set({'Authorization': inspectData.headers.basic_auth})
-            .send(data)
-            .expect(inspectData.status)
-        return;
+            .set({'Authorization': InspectData.headers.basic_auth})
+            .send(UpdateData)
+            .expect(status)
+        return result.body;
     },
 
-    async DeleteElementById (endpoint: string, id: string | number, inspectData: InspectType) {
+    async DeleteElementById (endpoint: string, status: number, id: string | number, InspectData: any) {
         const result = await GetRequest()
             .delete(`${endpoint}/${id}`)
-            .set({'Authorization': inspectData.headers.basic_auth})
-            .expect(inspectData.status)
+            .set({'Authorization': InspectData.headers.basic_auth})
+            .expect(status)
         return;
     },
 

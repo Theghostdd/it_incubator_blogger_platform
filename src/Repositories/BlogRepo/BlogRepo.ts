@@ -1,36 +1,35 @@
 import { Response } from "../../Applications/Utils/Response"
 import { db } from "../../Applications/ConnectionDB/Connection"
 import { SETTINGS } from "../../settings"
-import { BlogResponseType, BlogViewType, BlogInputType, BlogsResponseType } from './BlogTypes'
+import { BlogResponseType, BlogInputType, BlogsResponseType } from './BlogTypes'
 import { ObjectId } from "mongodb"
-
-
-
-
-
-
+import fs from 'fs'
 
 export const BlogRepos = {
     async GetBlogById (id: string): Promise<BlogResponseType> {
         try { // Catch error 
-            const result: any  = await db.collection(SETTINGS.MONGO.COLLECTIONS.blogs).findOne({
+            const result  = await db.collection(SETTINGS.MONGO.COLLECTIONS.blogs).findOne({
                 _id: new ObjectId(id)
             }) // Looking for element by id
             if (result) { // If element found then sending element 
                 const {_id, ...rest} = result
-                const blogData: BlogViewType = {
-                    id: _id.toString(),
-                    ...rest
-                }
                 return {
                     status: 200,
                     message: "OK",
-                    elements: blogData
+                    elements: {
+                        id: _id.toString(),
+                        name: rest.name,
+                        description: rest.description,
+                        websiteUrl:	rest.websiteUrl,
+                        createdAt: rest.createdAt,
+                        isMembership: rest.isMembership
+                    }
                 }
             } // Else sending error 404
             return Response.E404
 
-        } catch (e) { // If process has error sending error
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Get blog by id error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -55,7 +54,8 @@ export const BlogRepos = {
                 }
             }
             return Response.E404
-        } catch (e) { // If process has error sending error
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Get all blogs error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -71,8 +71,8 @@ export const BlogRepos = {
             }
             
             return Response.E404
-        } catch (e) { // If process has error sending error
-            console.log(e)
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Delete blog error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -93,8 +93,8 @@ export const BlogRepos = {
             }
             
             return Response.E404
-        } catch (e) { // If process has error sending error
-            console.log(e)
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Update blog error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -117,7 +117,8 @@ export const BlogRepos = {
                     ...DataBlog
                 }
             }
-        } catch (e) { // Else sending error 400
+        } catch (e: any) { // Else sending error 400
+            fs.appendFileSync('log.txt', `Create blog error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     }

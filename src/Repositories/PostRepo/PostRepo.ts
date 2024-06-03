@@ -1,16 +1,16 @@
-import { PostResponseType, PostsResponseType, PostInputType, PostMongoType, PostsMongoType} from "./PostTypes";
+import { PostResponseType, PostsResponseType, PostInputType} from "./PostTypes";
 import { Response } from '../../Applications/Utils/Response'
-import { CreateId } from "../../Applications/Utils/CreateId";
 import { BlogRepos } from "../BlogRepo/BlogRepo";
 import { db } from "../../Applications/ConnectionDB/Connection";
 import { SETTINGS } from "../../settings";
 import { ObjectId } from "mongodb";
+import fs from 'fs'
 
 
 export const PostRepo = {
     async GetPostById (id: string): Promise<PostResponseType> {
         try { // Catch error
-            const result: any = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).findOne({
+            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).findOne({
                 _id: new ObjectId(id)
             })
             if (result) { // If found element sending this element
@@ -20,13 +20,18 @@ export const PostRepo = {
                     message: "OK",
                     elements: {
                         id: _id.toString(),
-                        ...rest
+                        title: rest.title,
+                        shortDescription: rest.shortDescription,
+                        content: rest.content,
+                        blogId: rest.blogId,
+                        blogName: rest.blogName,
+                        createdAt: rest.createdAt
                     }
                 }
             } // Else sending error 404
             return Response.E404
-        } catch (e) { // If process has error sending error
-            console.error(e)
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Get post by id error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -52,7 +57,8 @@ export const PostRepo = {
                 }
             }
             return Response.E404
-        } catch (e) { // If process has error sending error
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Get all posts error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -67,28 +73,33 @@ export const PostRepo = {
                 return Response.S204
             }
             return Response.E404
-        } catch (e) { // If process has error sending error
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Delete post by id error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         } 
     },
 
     async UpdatePostById (id: string, data: PostInputType ) {
         try { // Catch error
-            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).updateOne({
-                _id: new ObjectId(id)
-            }, {
-                $set: {...data}
-            })
-
-            if (result.matchedCount > 0) {
-                if (result.modifiedCount > 0) {
-                    return Response.S204
+            const getBlogById = await BlogRepos.GetBlogById(data.blogId) // Looking for Blog by ID
+            if (getBlogById) {
+                const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).updateOne({
+                    _id: new ObjectId(id)
+                }, {
+                    $set: {...data}
+                })
+    
+                if (result.matchedCount > 0) {
+                    if (result.modifiedCount > 0) {
+                        return Response.S204
+                    }
+                    return Response.S202
                 }
-                return Response.S202
+                return Response.E404
             }
-
             return Response.E404
-        } catch (e) { // If process has error sending error
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Update post by id error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     },
@@ -118,7 +129,8 @@ export const PostRepo = {
                 }
             } // Else sending error 404
             return Response.E404
-        } catch (e) { // If process has error sending error
+        } catch (e: any) { // If process has error sending error
+            fs.appendFileSync('log.txt', `Create post error: ${new Date().toISOString()} - ${e.toString()}\n`);
             return Response.E400
         }
     }

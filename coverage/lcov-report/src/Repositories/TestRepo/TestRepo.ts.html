@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/Routers/TestRouter/TestRouter.ts</title>
+    <title>Code coverage report for src/Repositories/TestRepo/TestRepo.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/Routers/TestRouter</a> TestRouter.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/Repositories/TestRepo</a> TestRepo.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>8/9</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>8/9</span>
             </div>
         
             
@@ -74,10 +74,13 @@
 <a name='L9'></a><a href='#L9'>9</a>
 <a name='L10'></a><a href='#L10'>10</a>
 <a name='L11'></a><a href='#L11'>11</a>
-<a name='L12'></a><a href='#L12'>12</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -85,18 +88,27 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Router, Request, Response } from "express";
-import { SETTINGS } from "../../settings";
-import { TestRepo } from "../../Repositories/TestRepo/TestRepo";
-import { StatusResponse } from "../../Applications/Types/Types";
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { db } from "../../Applications/ConnectionDB/Connection"
+import { Response } from "../../Applications/Utils/Response"
+import { SETTINGS } from "../../settings"
 &nbsp;
 &nbsp;
-export const TestRouter = Router()
-&nbsp;
-TestRouter.delete(SETTINGS.PATH_TEST.TEST_ALL_DATA, async (req: Request, res: Response&lt;StatusResponse&gt;) =&gt; {
-    const result = await TestRepo.DellAllElements()
-    return res.sendStatus(result.status)
-})</pre></td></tr></table></pre>
+export const TestRepo = {
+    async DellAllElements (): Promise&lt;any&gt; {
+        try {
+            const deleteBlogs = await db.collection(SETTINGS.MONGO.COLLECTIONS.blogs).deleteMany({})
+            const deletePosts = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).deleteMany({})
+            return Response.S204
+        } catch (e) {
+<span class="cstat-no" title="statement not covered" >            return Response.E400</span>
+        }
+    }
+}</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

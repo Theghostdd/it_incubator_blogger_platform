@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { PostRepo } from "../../Repositories/PostRepo/PostRepo";
-import { GetAllResponse, GetResponse, RequestParamsType, StatusResponse, PostInputType, PostViewType } from "../../Applications/Types/Types";
+import { GetAllResponse, GetResponse, RequestParamsType, StatusResponse } from "../../Applications/Types/Types";
+import { PostInputType, PostViewType } from '../../Repositories/PostRepo/PostTypes'
 import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
 import { authValidation } from "../../Applications/Validations/auth/auth";
 

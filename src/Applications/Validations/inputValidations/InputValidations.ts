@@ -1,10 +1,7 @@
 import { NextFunction, Response, Request, query } from "express";
 import { body, validationResult, Result } from 'express-validator';
 import { BlogRepos } from "../../../Repositories/BlogRepo/BlogRepo";
-import { BlogResponseType } from "../../Types/Types";
-
-
-
+import { BlogResponseType } from "../../../Repositories/BlogRepo/BlogTypes";
 
 export const inputValidation = (req: Request, res: Response, next: NextFunction) => {
     const error: Result = validationResult(req)
@@ -16,6 +13,7 @@ export const inputValidation = (req: Request, res: Response, next: NextFunction)
                 field: e.path
             })
         )})
+        
     }
     return next()
 }

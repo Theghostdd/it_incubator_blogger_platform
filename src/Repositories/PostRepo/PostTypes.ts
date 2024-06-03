@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb"
-
 export type PostsViewType = PostViewType[]
 
 export type PostViewType = {
@@ -29,19 +27,4 @@ export type PostResponseType = {
     status: number,
     message: string,
     elements: PostViewType | null
-}
-
-/*
-*
-* Mongo Types
-*
-*/
-export type PostsMongoType = PostMongoType[]
-export type PostMongoType = {
-    _id: ObjectId,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string
 }
