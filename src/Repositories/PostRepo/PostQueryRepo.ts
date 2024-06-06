@@ -38,15 +38,21 @@ export const PostQueryRepo = {
     async GetAllPosts (filter: any): Promise<PostsResponseType> {
         try {
             PostQueryRepo.GetAllCountElements()
-            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).find({}).skip(filter.skip).limit(filter.pageSize).toArray()
+
+            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts)
+                .find({})
+                .sort(filter.sort.sortBy, filter.sort.sortDirection)
+                .skip(filter.pagination.skip)
+                .limit(filter.pagination.pageSize)
+                .toArray()
             if (result.length > 0) {
                 return {
                     status: 200,
                     elements: {
-                        pagesCount: filter.pagesCount,
-                        page: filter.page,
-                        pageSize: filter.pageSize,
-                        totalCount: filter.totalCount,
+                        pagesCount: filter.pagination.pagesCount,
+                        page: filter.pagination.page,
+                        pageSize: filter.pagination.pageSize,
+                        totalCount: filter.pagination.totalCount,
                         item: result.map((el) => {
                                 return {
                                     id: el._id.toString(),

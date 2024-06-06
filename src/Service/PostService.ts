@@ -68,20 +68,31 @@ export const PostService = {
         }
     },
 
-    async Pagination (query: any) {
+    async CreateFilter (query: any) {
         const page = query.pageNumber ? query.pageNumber : 1
         const pageSize = query.pageSize ? query.pageSize : 10
+        const sortBy = query.sortBy ? query.sortBy : "createdAt"
+        const sortDirection = query.sortDirection === 'asc' ? 1 : -1
         try {
             const getTotalCount = await PostQueryRepo.GetAllCountElements()
             const totalCount = getTotalCount 
             const pagesCount = Math.ceil(totalCount / pageSize)
             const skip = (page - 1) * pageSize
             return {
-                totalCount: totalCount,
-                pagesCount: pagesCount,
-                skip: skip,
-                pageSize: pageSize,
-                page: page
+                pagination: {
+                    totalCount: +totalCount,
+                    pagesCount: +pagesCount,
+                    skip: +skip,
+                    pageSize: +pageSize,
+                    page: +page
+                },
+                sort: {
+                    sortBy: sortBy,
+                    sortDirection: sortDirection
+                },
+                filter: {
+
+                }
             }
         } catch (e) {
             SaveError(SETTINGS.PATH.POST, 'GET', 'Creating pagination for all the post elements', e)
