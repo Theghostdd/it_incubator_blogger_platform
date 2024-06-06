@@ -252,7 +252,7 @@ describe(SETTINGS.PATH.POST, () => {
         const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 401, ElementId, InspectData)
     })
 
-    it('shouldn`t update post`s element, status: 400, bad mongo object ID', async () => {
+    it('shouldn`t update post`s element, status: 500, bad mongo object ID', async () => {
 
         const DataUpdate = {
             title: "Some post title",
@@ -267,15 +267,15 @@ describe(SETTINGS.PATH.POST, () => {
             }
         }
 
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 400, '574736bbffh4656664', DataUpdate, InspectData)
+        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, '574736bbffh4656664', DataUpdate, InspectData)
     })
 
-    it('shouldn`t delete post`s element, status: 400, bad mongo object ID', async () => {
-        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 400, '574736bbffh4656664', InspectData)
+    it('shouldn`t delete post`s element, status: 500, bad mongo object ID', async () => {
+        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 500, '574736bbffh4656664', InspectData)
     })
 
-    it('shouldn`t get post`s element, status: 400, bad mongo object ID and delete all elements, status: 204', async () => {
-        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 400, '574736bbffh4656664')
+    it('shouldn`t get post`s element, status: 500, bad mongo object ID and delete all elements, status: 204', async () => {
+        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 500, '574736bbffh4656664')
         await TestModules.DeleteAllElements()
     })
 })

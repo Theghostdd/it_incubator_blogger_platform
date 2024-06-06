@@ -1,4 +1,4 @@
-import { NextFunction, Response, Request, query } from "express";
+import { NextFunction, Response, Request } from "express";
 import { AuthData } from "../../../settings";
 
 export const authValidation = async (req: Request, res: Response, next: NextFunction) => {

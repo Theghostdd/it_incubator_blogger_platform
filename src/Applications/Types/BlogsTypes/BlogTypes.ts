@@ -1,4 +1,3 @@
-
 export type BlogsViewType = BlogViewType[]
 
 export type BlogViewType = {
@@ -16,15 +15,21 @@ export type BlogInputType = {
     websiteUrl:	string
 }
 
+export type BlogCreatingType = BlogInputType & {
+    createdAt: string,
+    isMembership: boolean
+}
+
 export type BlogsResponseType = {
     status: number,
-    message: string,
     elements: BlogsViewType | null
 }
 
 export type BlogResponseType = {
     status: number,
-    message: string,
     elements: BlogViewType | null
 }
+
+
+
 

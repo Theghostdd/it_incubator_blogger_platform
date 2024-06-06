@@ -17,14 +17,17 @@ export type PostInputType = {
     blogId: string
 }
 
+export type PostCreateType = PostInputType & {
+    blogName: string,
+    createdAt: string
+}
+
 export type PostsResponseType = {
     status: number,
-    message: string,
     elements: PostsViewType | null
 }
 
 export type PostResponseType = {
     status: number,
-    message: string,
     elements: PostViewType | null
 }

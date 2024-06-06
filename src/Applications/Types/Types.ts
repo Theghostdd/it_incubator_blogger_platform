@@ -1,5 +1,6 @@
-import { BlogViewType, BlogsViewType } from "../../Repositories/BlogRepo/BlogTypes"
-import { PostViewType, PostsViewType } from "../../Repositories/PostRepo/PostTypes"
+import { BlogViewType, BlogsViewType } from "./BlogsTypes/BlogTypes"
+import { PostViewType, PostsViewType } from "./PostsTypes/PostTypes"
+import { ObjectId } from "mongodb"
 /*
 *
 *   Tests 
@@ -27,11 +28,30 @@ export type RequestParamsType = {
 *   Response 
 *
 */
-export type GetResponse = BlogViewType | PostViewType
+export type ResponseType = BlogViewType | PostViewType
 
 export type GetAllResponse = BlogsViewType | PostsViewType
 
 export type StatusResponse = {
     status: number
 }
-
+/*
+*
+*   Mongo Types 
+*
+*/
+export type UpdateMongoSuccessType = {
+    acknowledged: boolean,
+    modifiedCount: number,
+    upsertedId: ObjectId | null,
+    upsertedCount: number,
+    matchedCount: number
+}
+export type CreatedMongoSuccessType = {
+    acknowledged: boolean,
+    insertedId: ObjectId
+}
+export type DeletedMongoSuccessType = {
+    acknowledged: boolean,
+    deletedCount: number
+}

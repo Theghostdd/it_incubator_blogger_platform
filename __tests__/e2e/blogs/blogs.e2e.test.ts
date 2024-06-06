@@ -1,10 +1,6 @@
 import { SETTINGS } from '../../../src/settings'
 import { TestModules } from '../modules/modules'
 
-
-// export let idBlogForPost: string;
-// export let nameBlog: string;
-
 describe(SETTINGS.PATH.BLOG, () => {
 
     const endpoint: string = SETTINGS.PATH.BLOG
@@ -201,7 +197,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 401, ElementId, InspectData)
     })
 
-    it('shouldn`t update blog`s element, status: 400, bad mongo object ID', async () => {
+    it('shouldn`t update blog`s element, status: 500, bad mongo object ID', async () => {
 
         const DataUpdate = {
             name: "My first blog",
@@ -215,15 +211,15 @@ describe(SETTINGS.PATH.BLOG, () => {
             }
         }
 
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 400, '574736bbffh4656664', DataUpdate, InspectData)
+        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, '574736bbffh4656664', DataUpdate, InspectData)
     })
 
-    it('shouldn`t delete blog`s element, status: 400, bad mongo object ID', async () => {
-        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 400, '574736bbffh4656664', InspectData)
+    it('shouldn`t delete blog`s element, status: 500, bad mongo object ID', async () => {
+        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 500, '574736bbffh4656664', InspectData)
     })
 
-    it('shouldn`t get blog`s element, status: 400, bad mongo object ID', async () => {
-        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 400, '574736bbffh4656664')
+    it('shouldn`t get blog`s element, status: 500, bad mongo object ID', async () => {
+        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 500, '574736bbffh4656664')
     })
 })
 

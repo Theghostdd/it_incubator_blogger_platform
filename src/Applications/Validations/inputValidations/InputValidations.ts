@@ -1,7 +1,7 @@
-import { NextFunction, Response, Request, query } from "express";
+import { NextFunction, Response, Request } from "express";
 import { body, validationResult, Result } from 'express-validator';
-import { BlogRepos } from "../../../Repositories/BlogRepo/BlogRepo";
-import { BlogResponseType } from "../../../Repositories/BlogRepo/BlogTypes";
+import { BlogResponseType } from "../../Types/BlogsTypes/BlogTypes";
+import { BlogQueryRepos } from "../../../Repositories/BlogRepo/BlogQueryRepo";
 
 export const inputValidation = (req: Request, res: Response, next: NextFunction) => {
     const error: Result = validationResult(req)
@@ -64,7 +64,7 @@ export const RuleValidations = {
                     .notEmpty()
                     .withMessage('The blog id can`t be empty')
                     .custom( async (id: string) => {
-                        const result: BlogResponseType = await BlogRepos.GetBlogById(id)
+                        const result: BlogResponseType = await BlogQueryRepos.GetBlogById(id)
                         if (result.status === 200) {
                             return true
                         }

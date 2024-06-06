@@ -1,25 +1,21 @@
 import { Router, Request, Response } from "express";
-import { BlogRepos } from "../../Repositories/BlogRepo/BlogRepo";
-import { body} from 'express-validator';
 import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
-import { RequestParamsType, GetResponse, GetAllResponse, StatusResponse} from "../../Applications/Types/Types";
-import { BlogInputType } from '../../Repositories/BlogRepo/BlogTypes'
+import { RequestParamsType, ResponseType, GetAllResponse, StatusResponse} from "../../Applications/Types/Types";
+import { BlogInputType } from '../../Applications/Types/BlogsTypes/BlogTypes'
 import { authValidation } from "../../Applications/Validations/auth/auth";
+import { BlogService } from "../../Service/BlogService";
+import { BlogQueryRepos } from "../../Repositories/BlogRepo/BlogQueryRepo";
 
 export const BlogRouter = Router()
 
-export const validationName = body('id').isNumeric().withMessage('ID must be a string');
-
-
-
 
 BlogRouter.get('/', async (req: Request, res: Response<GetAllResponse | null>) => {
-    const result = await BlogRepos.GetAllBlogs()
+    const result = await BlogQueryRepos.GetAllBlogs()
     return res.status(result.status).json(result.elements)
 })
 
-BlogRouter.get('/:id', async (req: Request<RequestParamsType>, res: Response<GetResponse | null>) => {
-    const result = await BlogRepos.GetBlogById(req.params.id)
+BlogRouter.get('/:id', async (req: Request<RequestParamsType>, res: Response<ResponseType | null>) => {
+    const result = await BlogQueryRepos.GetBlogById(req.params.id)
     return res.status(result.status).json(result.elements)
 })
 
@@ -29,8 +25,8 @@ BlogRouter.post('/',
     RuleValidations.validName,
     RuleValidations.validWebsiteUrl,
     inputValidation,
-    async (req: Request<any, any, BlogInputType>, res: Response<GetResponse | null>) => {
-        const result = await BlogRepos.CreateBlog(req.body)
+    async (req: Request<{}, {}, BlogInputType>, res: Response<ResponseType | null>) => {
+        const result = await BlogService.CreateBlogService(req.body)
         return res.status(result.status).json(result.elements)
 })
 
@@ -40,14 +36,14 @@ BlogRouter.put('/:id',
     RuleValidations.validName,
     RuleValidations.validWebsiteUrl,
     inputValidation,
-    async (req: Request<RequestParamsType, any, BlogInputType>, res: Response<StatusResponse>) => {
-        const result = await BlogRepos.UpdateBlogById(req.params.id, req.body)
+    async (req: Request<RequestParamsType, {}, BlogInputType>, res: Response<StatusResponse>) => {
+        const result = await BlogService.UpdateBlogService(req.params.id, req.body)
         return res.sendStatus(result.status)
 })
 
 BlogRouter.delete('/:id', 
     authValidation,
     async (req: Request<RequestParamsType>, res: Response<StatusResponse>) => {
-        const result = await BlogRepos.DellBlogById(req.params.id)
+        const result = await BlogService.DeleteBlogService(req.params.id)
         return res.sendStatus(result.status)
 })

@@ -1,22 +1,22 @@
 export const Response = {
     E404: {
         status: 404,
-        message: "Not found",
         elements: null
     },
     E400: {
         status: 400,
-        message: "Error, try again later",
+        elements: null
+    },
+    E500: {
+        status: 500,
         elements: null
     },
     S204: {
         status: 204,
-        message: "OK",
         elements: null
     },
     S202: {
         status: 202,
-        message: "OK",
         elements: null
     }
 }
