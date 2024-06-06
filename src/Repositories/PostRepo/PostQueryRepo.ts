@@ -35,23 +35,30 @@ export const PostQueryRepo = {
         }
     },
 
-    async GetAllPosts (): Promise<PostsResponseType> {
+    async GetAllPosts (filter: any): Promise<PostsResponseType> {
         try {
-            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).find({}).toArray()
+            PostQueryRepo.GetAllCountElements()
+            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).find({}).skip(filter.skip).limit(filter.pageSize).toArray()
             if (result.length > 0) {
                 return {
                     status: 200,
-                    elements: result.map((el) => {
-                        return {
-                            id: el._id.toString(),
-                            title: el.title,
-                            shortDescription: el.shortDescription,
-                            content: el.content,
-                            blogId: el.blogId,
-                            blogName: el.blogName,
-                            createdAt: el.createdAt
+                    elements: {
+                        pagesCount: filter.pagesCount,
+                        page: filter.page,
+                        pageSize: filter.pageSize,
+                        totalCount: filter.totalCount,
+                        item: result.map((el) => {
+                                return {
+                                    id: el._id.toString(),
+                                    title: el.title,
+                                    shortDescription: el.shortDescription,
+                                    content: el.content,
+                                    blogId: el.blogId,
+                                    blogName: el.blogName,
+                                    createdAt: el.createdAt
+                                }
                         }
-                    })
+                    )}
                 }
             }
             return Response.E404
@@ -60,4 +67,14 @@ export const PostQueryRepo = {
             return Response.E500
         }
     },
+
+    async GetAllCountElements (): Promise<any> {
+        try {
+            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).countDocuments()
+            return result
+        } catch (e: any) {
+            SaveError(SETTINGS.PATH.BLOG, 'GET', 'Getting the total number of blog items', e)
+            return Response.E500
+        }
+    }
 }

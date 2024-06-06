@@ -1,4 +1,10 @@
-export type PostsViewType = PostViewType[]
+export type PostsViewType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    item: PostViewType[]
+}
 
 export type PostViewType = {
     id: string,

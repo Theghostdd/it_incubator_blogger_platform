@@ -10,7 +10,8 @@ import { PostQueryRepo } from "../../Repositories/PostRepo/PostQueryRepo";
 export const PostRouter = Router()
 
 PostRouter.get('/', async (req: Request, res: Response<GetAllResponse | null>) => {
-    const result = await PostQueryRepo.GetAllPosts()
+    const creatingPagination = await PostService.Pagination(req.query)
+    const result = await PostQueryRepo.GetAllPosts(creatingPagination)
     return res.status(result.status).json(result.elements)
 })
 
