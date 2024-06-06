@@ -4,7 +4,7 @@ import { SETTINGS } from "../settings"
 import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../Applications/Types/Types"
 import { PostRepo } from "../Repositories/PostRepo/PostRepo"
 import { BlogQueryRepos } from "../Repositories/BlogRepo/BlogQueryRepo"
-import { PostCreateType, PostInputType, PostResponseType } from "../Applications/Types/PostsTypes/PostTypes"
+import { PostCreateType, PostFilterType, PostInputType, PostQueryRequestType, PostResponseType, PostsResponseType } from "../Applications/Types/PostsTypes/PostTypes"
 import { BlogResponseType } from "../Applications/Types/BlogsTypes/BlogTypes"
 import { PostQueryRepo } from "../Repositories/PostRepo/PostQueryRepo"
 
@@ -68,14 +68,25 @@ export const PostService = {
         }
     },
 
-    async CreateFilter (query: any) {
+    async GetAllElementsService (query: PostQueryRequestType): Promise<PostsResponseType> {
+        try {
+            const createFilter = await PostService.CreatePostFilter(query)
+            const getAllElements = PostQueryRepo.GetAllPosts(createFilter)
+            return getAllElements
+        } catch (e) {
+            SaveError(SETTINGS.PATH.POST, 'GET', 'Getting all the post elements', e)
+            return Response.E500
+        }
+    },
+
+    async CreatePostFilter (query: PostQueryRequestType): Promise<PostFilterType> {
         const page = query.pageNumber ? query.pageNumber : 1
         const pageSize = query.pageSize ? query.pageSize : 10
         const sortBy = query.sortBy ? query.sortBy : "createdAt"
         const sortDirection = query.sortDirection === 'asc' ? 1 : -1
         try {
             const getTotalCount = await PostQueryRepo.GetAllCountElements()
-            const totalCount = getTotalCount 
+            const totalCount = +getTotalCount 
             const pagesCount = Math.ceil(totalCount / pageSize)
             const skip = (page - 1) * pageSize
             return {
@@ -89,16 +100,11 @@ export const PostService = {
                 sort: {
                     sortBy: sortBy,
                     sortDirection: sortDirection
-                },
-                filter: {
-
                 }
             }
-        } catch (e) {
-            SaveError(SETTINGS.PATH.POST, 'GET', 'Creating pagination for all the post elements', e)
-            return Response.E500
+        } catch (e: any) {
+            SaveError(SETTINGS.PATH.POST, 'GET', 'Creating filter for the post elements', e)
+            throw new Error();
         }
-       
-
     }
 }

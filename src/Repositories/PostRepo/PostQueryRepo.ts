@@ -30,15 +30,13 @@ export const PostQueryRepo = {
             } 
             return Response.E404
         } catch (e: any) { 
-            SaveError(SETTINGS.PATH.BLOG, 'GET', 'Get a post by ID', e)
+            SaveError(SETTINGS.PATH.POST, 'GET', 'Get a post by ID', e)
             return Response.E500
         }
     },
 
     async GetAllPosts (filter: any): Promise<PostsResponseType> {
         try {
-            PostQueryRepo.GetAllCountElements()
-
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts)
                 .find({})
                 .sort(filter.sort.sortBy, filter.sort.sortDirection)
@@ -69,18 +67,17 @@ export const PostQueryRepo = {
             }
             return Response.E404
         } catch (e: any) {
-            SaveError(SETTINGS.PATH.BLOG, 'GET', 'Getting all the blog items', e)
+            SaveError(SETTINGS.PATH.POST, 'GET', 'Getting all the blog items', e)
             return Response.E500
         }
     },
 
-    async GetAllCountElements (): Promise<any> {
+    async GetAllCountElements (): Promise<number> {
         try {
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).countDocuments()
             return result
         } catch (e: any) {
-            SaveError(SETTINGS.PATH.BLOG, 'GET', 'Getting the total number of blog items', e)
-            return Response.E500
+            throw new Error(e)
         }
     }
 }

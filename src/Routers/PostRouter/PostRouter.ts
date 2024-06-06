@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { GetAllResponse, ResponseType, RequestParamsType, StatusResponse } from "../../Applications/Types/Types";
-import { PostInputType, PostViewType } from '../../Applications/Types/PostsTypes/PostTypes'
+import { PostFilterType, PostInputType, PostQueryRequestType, PostViewType } from '../../Applications/Types/PostsTypes/PostTypes'
 import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
 import { authValidation } from "../../Applications/Validations/auth/auth";
 import { PostService } from "../../Service/PostService";
@@ -9,9 +9,8 @@ import { PostQueryRepo } from "../../Repositories/PostRepo/PostQueryRepo";
 
 export const PostRouter = Router()
 
-PostRouter.get('/', async (req: Request, res: Response<GetAllResponse | null>) => {
-    const creatingPagination = await PostService.CreateFilter(req.query)
-    const result = await PostQueryRepo.GetAllPosts(creatingPagination)
+PostRouter.get('/', async (req: Request<{}, {}, {}, PostQueryRequestType>, res: Response<GetAllResponse | null>) => {
+    const result = await PostService.GetAllElementsService(req.query)
     return res.status(result.status).json(result.elements)
 })
 

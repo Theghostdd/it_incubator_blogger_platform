@@ -37,3 +37,28 @@ export type PostResponseType = {
     status: number,
     elements: PostViewType | null
 }
+
+export type PostFilterType = {
+    pagination: PostPaginationType,
+    sort: PostSortType
+}
+
+type PostPaginationType = {
+    totalCount: number,
+    pagesCount: number,
+    skip: number,
+    pageSize: number,
+    page: number
+}
+
+type PostSortType = {
+    sortBy: string,
+    sortDirection: number
+}
+
+export type PostQueryRequestType = {
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: string
+}
