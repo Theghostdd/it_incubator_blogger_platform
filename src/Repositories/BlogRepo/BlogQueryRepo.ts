@@ -44,7 +44,7 @@ export const BlogQueryRepos = {
             
             const searchNameTerm = query.searchNameTerm ? query.searchNameTerm : ''
             const filter = {
-                name: {$regex: searchNameTerm}
+                name: {$regex: searchNameTerm, $options: 'i'}
             }
 
             const createPagination: PaginationType = await BlogService.CreatePagination(+query.pageNumber!, +query.pageSize!, filter)
