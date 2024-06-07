@@ -13,6 +13,7 @@ describe(SETTINGS.PATH.POST, () => {
     let blogId: string;
     let blogName: string;
     let InspectData: any;
+    let query = {}
 
 
     it('should delete all data', async () => {
@@ -149,8 +150,8 @@ describe(SETTINGS.PATH.POST, () => {
             createdAt: expect.any(String)
         })
 
-        const GetAllElementsResult = await TestModules.GetAllElements(endpoint, 200)
-        expect(GetAllElementsResult.length).toBe(2)
+        const GetAllElementsResult = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElementsResult.item.length).toBe(2)
     })
 
     it('shouldn`t update post`s element, status: 404', async () => {

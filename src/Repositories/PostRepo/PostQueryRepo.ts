@@ -1,9 +1,10 @@
 import { Response } from '../../Applications/Utils/Response'
 import { db } from "../../Applications/ConnectionDB/Connection";
 import { SETTINGS } from "../../settings";
-import { ObjectId } from "mongodb";
-import { PostResponseType, PostsResponseType } from '../../Applications/Types/PostsTypes/PostTypes';
+import { ObjectId, Sort } from "mongodb";
+import { PostFilterType, PostResponseType, PostsResponseType } from '../../Applications/Types/PostsTypes/PostTypes';
 import { SaveError } from '../../Service/ErrorService/ErrorService';
+import { PostService } from '../../Service/PostService';
 
 
 
@@ -35,22 +36,27 @@ export const PostQueryRepo = {
         }
     },
 
-    async GetAllPosts (filter: any): Promise<PostsResponseType> {
+    async GetAllPosts (query: any): Promise<PostsResponseType> {
         try {
+            const sortBy = query.sortBy
+            const sortDirection = query.sortDirection === 'asc' ? 1 : -1
+            const sort: Sort = sortBy ? { [sortBy]: sortDirection } : {};
+
+            const createPagination = await PostService.CreatePagination(+query.pageNumber, +query.pageSize)
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts)
-                .find({})
-                .sort(filter.sort.sortBy, filter.sort.sortDirection)
-                .skip(filter.pagination.skip)
-                .limit(filter.pagination.pageSize)
+                .find()
+                .sort(sort)
+                .skip(createPagination.skip)
+                .limit(createPagination.pageSize)
                 .toArray()
             if (result.length > 0) {
                 return {
                     status: 200,
                     elements: {
-                        pagesCount: filter.pagination.pagesCount,
-                        page: filter.pagination.page,
-                        pageSize: filter.pagination.pageSize,
-                        totalCount: filter.pagination.totalCount,
+                        pagesCount: createPagination.pagesCount,
+                        page: createPagination.page,
+                        pageSize: createPagination.pageSize,
+                        totalCount: createPagination.totalCount,
                         item: result.map((el) => {
                                 return {
                                     id: el._id.toString(),

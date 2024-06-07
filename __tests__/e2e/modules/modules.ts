@@ -2,6 +2,7 @@ import request from "supertest"
 import { app } from "../../../src/app"
 import { SETTINGS } from "../../../src/settings"
 import { InspectType } from '../../../src/Applications/Types/Types';
+import { db } from "../../../src/Applications/ConnectionDB/Connection";
 
 const GetRequest = () => {
     return request(app)
@@ -25,9 +26,10 @@ export const TestModules = {
         return result.body;
     },
 
-    async GetAllElements (endpoint: string, status: number) {
+    async GetAllElements (endpoint: string, status: number, query: any) {
         const result = await GetRequest()
             .get(endpoint)
+            .query(query)
             .expect(status)
         return result.body;
     },
@@ -54,5 +56,10 @@ export const TestModules = {
             .delete(`${SETTINGS.PATH_TEST.TEST}/${SETTINGS.PATH_TEST.TEST_ALL_DATA}`)
             .expect(204)
         return;
+    },
+
+    async InsertManyDataMongoDB (collection: string, data: any) {
+        const result = await db.collection(collection).insertMany(data)
+        return result
     }
 } 

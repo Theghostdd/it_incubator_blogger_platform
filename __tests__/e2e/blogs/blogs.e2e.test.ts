@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { SETTINGS } from '../../../src/settings'
 import { TestModules } from '../modules/modules'
 
@@ -8,6 +9,7 @@ describe(SETTINGS.PATH.BLOG, () => {
     let returnValues: any;
     let InspectData: any;
     let ElementId: string;
+    let query = {}
     
     it('should delete all data', async () => {
         await TestModules.DeleteAllElements()
@@ -113,8 +115,8 @@ describe(SETTINGS.PATH.BLOG, () => {
             isMembership: expect.any(Boolean)
         })
 
-        const GetAllElementsResult = await TestModules.GetAllElements(endpoint, 200)
-        expect(GetAllElementsResult.length).toBe(2)
+        const GetAllElementsResult = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElementsResult.item.length).toBe(2)
 
         const DeleteAllElementsResult = await TestModules.DeleteAllElements()
     })
@@ -136,7 +138,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         const GetElementByIdResult = await TestModules.GetElementById(endpoint, 404, ElementId)
     })
 
-    it('shouldn`t get all blog`s elements, status: 404', async () => {
+    it('shouldn`t get blog`s element by ID, status: 404', async () => {
         const GetElementByIdResult = await TestModules.GetElementById(endpoint, 404, ElementId)
     })
 
@@ -221,5 +223,209 @@ describe(SETTINGS.PATH.BLOG, () => {
     it('shouldn`t get blog`s element, status: 500, bad mongo object ID', async () => {
         const GetElementByIdResult = await TestModules.GetElementById(endpoint, 500, '574736bbffh4656664')
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    it('should get all blog elements with pagination, status: 200', async () => {
+
+        const CreateData = [
+            {
+                name: "IT-Incubator",
+                description: "Blog about IT Incubator ;)",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T12:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "NodeJs Blog",
+                description: "This blog is about NodeJs",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T13:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "JS blog",
+                description: "This blog is about JS",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T14:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "PHP Blog",
+                description: "This blog is about PHP",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T15:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "Python Blog",
+                description: "This blog is about Python",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T16:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "IT Kamasutra",
+                description: "IT Blog",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T17:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "Isn`t blog about IT",
+                description: "This isn`t blog about IT",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T18:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "XXX Blog",
+                description: "A lot of info about IT",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T19:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "God`s blog",
+                description: "Just god`s blog",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T20:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "xXx IT Blog",
+                description: "Just blog about ID",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T21:44:43.684Z",
+                isMembership: false
+            },
+
+            {
+                name: "IkT IT Blog",
+                description: "It`s my first blog :)",
+                websiteUrl:	"https://samurai.it-incubator.io/",
+                createdAt: "2024-06-07T22:44:43.684Z",
+                isMembership: false
+            },
+        ]
+        const CreateManyResult = await TestModules.InsertManyDataMongoDB(SETTINGS.MONGO.COLLECTIONS.blogs, CreateData)
+        
+        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElements).toEqual({
+            pagesCount: 2,
+            page: 1,
+            pageSize: 10,
+            totalCount: 11,
+            item: expect.any(Array)
+        }) 
+        expect(GetAllElements.item).toHaveLength(10)
+    })
+
+    it('should get all blog elements with pagination and filter name, status: 200', async () => {
+        query = {
+            searchNameTerm: 'IT-Incubator',
+            pageNumber: null,
+            pageSize: null,
+            sortBy: null,
+            sortDirection: null
+        }
+        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElements).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            item: expect.any(Array)
+        }) 
+        expect(GetAllElements.item).toHaveLength(1)
+    })
+
+    it('should get all blog elements with pagination page 2, status: 200', async () => {
+        query = {
+            searchNameTerm: null,
+            pageNumber: 2,
+            pageSize: null,
+            sortBy: null,
+            sortDirection: null
+        }
+        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElements).toEqual({
+            pagesCount: 2,
+            page: 2,
+            pageSize: 10,
+            totalCount: 11,
+            item: expect.any(Array)
+        }) 
+        expect(GetAllElements.item).toHaveLength(1)
+    })
+
+    it('should get all blog elements with pagination page size 11, status: 200', async () => {
+        query = {
+            searchNameTerm: null,
+            pageNumber: null,
+            pageSize: 11,
+            sortBy: null,
+            sortDirection: null
+        }
+        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElements).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 11,
+            totalCount: 11,
+            item: expect.any(Array)
+        }) 
+        expect(GetAllElements.item).toHaveLength(11)
+    })
+
+    it('should get all blog elements with pagination and sort: desc, status: 200', async () => {
+        query = {
+            searchNameTerm: null,
+            pageNumber: null,
+            pageSize: 11,
+            sortBy: null,
+            sortDirection: 'asc'
+        }
+        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        expect(GetAllElements).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 11,
+            totalCount: 11,
+            item: expect.any(Array)
+        })
+        const sortedItems = GetAllElements.item.toSorted((a: any, b: any) => a.createdAt.localeCompare(b.createdAt));
+        expect(GetAllElements.item).toEqual(sortedItems)
+
+        
+    })
+
+
+
+
+
+
 })
 

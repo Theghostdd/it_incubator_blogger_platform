@@ -55,3 +55,20 @@ export type DeletedMongoSuccessType = {
     acknowledged: boolean,
     deletedCount: number
 }
+/*
+*
+*   Pagination and Sort Types 
+*
+*/
+export type PaginationType = {
+    totalCount: number,
+    pagesCount: number,
+    skip: number,
+    pageSize: number,
+    page: number
+}
+
+export type SortType = {
+    sortBy: string,
+    sortDirection: number
+}

@@ -2,8 +2,9 @@ import { BlogRepos } from "../Repositories/BlogRepo/BlogRepo"
 import { Response } from "../Applications/Utils/Response"
 import { SaveError } from '../Service/ErrorService/ErrorService'
 import { SETTINGS } from "../settings"
-import { BlogCreatingType, BlogInputType, BlogResponseType } from "../Applications/Types/BlogsTypes/BlogTypes"
+import { BlogCreatingType, BlogFilterType, BlogInputType, BlogQueryRequestType, BlogResponseType, BlogsResponseType } from "../Applications/Types/BlogsTypes/BlogTypes"
 import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../Applications/Types/Types"
+import { BlogQueryRepos } from "../Repositories/BlogRepo/BlogQueryRepo"
 
 
 
@@ -53,5 +54,27 @@ export const BlogService = {
             SaveError(SETTINGS.PATH.BLOG, 'DELETE', 'Deleting a blog by ID', e)
             return Response.E500
         }
+    },
+
+    async CreatePagination (page: number, pageSize: number, filter: any) {
+        try {
+
+            const getTotalCount = await BlogQueryRepos.GetAllCountElements(filter)
+            const totalCount = +getTotalCount 
+            const pagesCount = Math.ceil(totalCount / pageSize)
+            const skip = (page - 1) * pageSize
+            
+            return {
+                totalCount: +totalCount,
+                pagesCount: +pagesCount,
+                skip: +skip,
+                pageSize: +pageSize,
+                page: +page
+            }
+        } catch (e) {
+            SaveError(SETTINGS.PATH.POST, 'GET', 'Creating blog elements pagination', e)
+            throw new Error();
+        }
     }
+
 }

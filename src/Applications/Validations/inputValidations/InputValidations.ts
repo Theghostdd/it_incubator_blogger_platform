@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from "express";
-import { body, validationResult, Result } from 'express-validator';
+import { body, query, validationResult, Result } from 'express-validator';
 import { BlogResponseType } from "../../Types/BlogsTypes/BlogTypes";
 import { BlogQueryRepos } from "../../../Repositories/BlogRepo/BlogQueryRepo";
 
@@ -69,7 +69,20 @@ export const RuleValidations = {
                             return true
                         }
                         throw new Error('Blog id not found');
-                    })
+                    }),
+    validQueryPageSize: query('pageSize')
+                            .default(10)                            
+                            .isInt({min: 1}),
+    validQueryPageNumber: query('pageNumber')
+                            .default(1)
+                            .isInt({min: 1}),
+    validQuerySortDirection: query('sortDirection')
+                            .default('desc')
+                            .isString()       
+                            .isIn(['asc', 'desc']),
+    validSortBy: query('sortBy')
+                    .default('createdAt')
+                    .isString()                          
 }
 
 

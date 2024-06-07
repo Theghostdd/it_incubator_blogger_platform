@@ -68,39 +68,18 @@ export const PostService = {
         }
     },
 
-    async GetAllElementsService (query: PostQueryRequestType): Promise<PostsResponseType> {
-        try {
-            const createFilter = await PostService.CreatePostFilter(query)
-            const getAllElements = PostQueryRepo.GetAllPosts(createFilter)
-            return getAllElements
-        } catch (e) {
-            SaveError(SETTINGS.PATH.POST, 'GET', 'Getting all the post elements', e)
-            return Response.E500
-        }
-    },
-
-    async CreatePostFilter (query: PostQueryRequestType): Promise<PostFilterType> {
-        const page = query.pageNumber ? query.pageNumber : 1
-        const pageSize = query.pageSize ? query.pageSize : 10
-        const sortBy = query.sortBy ? query.sortBy : "createdAt"
-        const sortDirection = query.sortDirection === 'asc' ? 1 : -1
+    async CreatePagination (page: number, pageSize: number): Promise<any> {
         try {
             const getTotalCount = await PostQueryRepo.GetAllCountElements()
             const totalCount = +getTotalCount 
             const pagesCount = Math.ceil(totalCount / pageSize)
             const skip = (page - 1) * pageSize
             return {
-                pagination: {
-                    totalCount: +totalCount,
-                    pagesCount: +pagesCount,
-                    skip: +skip,
-                    pageSize: +pageSize,
-                    page: +page
-                },
-                sort: {
-                    sortBy: sortBy,
-                    sortDirection: sortDirection
-                }
+                totalCount: +totalCount,
+                pagesCount: +pagesCount,
+                skip: +skip,
+                pageSize: +pageSize,
+                page: +page
             }
         } catch (e: any) {
             SaveError(SETTINGS.PATH.POST, 'GET', 'Creating filter for the post elements', e)

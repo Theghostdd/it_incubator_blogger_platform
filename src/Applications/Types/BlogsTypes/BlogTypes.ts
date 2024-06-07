@@ -1,4 +1,12 @@
-export type BlogsViewType = BlogViewType[]
+import { PaginationType, SortType } from "../Types"
+
+export type BlogsViewType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    item: BlogViewType[]
+} 
 
 export type BlogViewType = {
     id: string,
@@ -13,6 +21,12 @@ export type BlogInputType = {
     name: string,
     description: string,
     websiteUrl:	string
+}
+
+export type BlogPostInputType = {
+    title: string,
+    shortDescription: string,
+    content: string
 }
 
 export type BlogCreatingType = BlogInputType & {
@@ -30,6 +44,18 @@ export type BlogResponseType = {
     elements: BlogViewType | null
 }
 
+export type BlogFilterType = {
+    pagination: PaginationType,
+    sort: SortType,
+    searchBy: string
+}
 
+export type BlogQueryRequestType = {
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: string,
+    searchNameTerm: string
+}
 
 
