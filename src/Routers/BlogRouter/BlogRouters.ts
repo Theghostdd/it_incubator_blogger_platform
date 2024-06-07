@@ -5,6 +5,9 @@ import { BlogInputType, BlogPostInputType, BlogQueryRequestType } from '../../Ap
 import { authValidation } from "../../Applications/Validations/auth/auth";
 import { BlogService } from "../../Service/BlogService";
 import { BlogQueryRepos } from "../../Repositories/BlogRepo/BlogQueryRepo";
+import { SETTINGS } from "../../settings";
+import { PostQueryRepo } from "../../Repositories/PostRepo/PostQueryRepo";
+import { PostQueryRequestType } from "../../Applications/Types/PostsTypes/PostTypes";
 
 export const BlogRouter = Router()
 
@@ -26,10 +29,16 @@ BlogRouter.get('/:id', async (req: Request<RequestParamsType>, res: Response<Res
     return res.status(result.status).json(result.elements)
 })
 
-// BlogRouter.get('/:id/posts', async (req: Request<{}, {}, {}, BlogQueryRequestType>, res: Response<AllResponseType | null>) => {
-    
-//     return res.status(200).json(null)
-// })
+BlogRouter.get(`/:id/${SETTINGS.PATH.additionalBlog.posts}`, 
+RuleValidations.validQueryPageSize,
+RuleValidations.validQueryPageNumber,
+RuleValidations.validQuerySortDirection,
+RuleValidations.validSortBy,
+inputValidation,
+async (req: Request<{id: string}, {}, {}, PostQueryRequestType>, res: Response<AllResponseType | null>) => {
+    const result = await PostQueryRepo.GetAllPosts(req.query, req.params.id)
+    return res.status(result.status).json(result.elements)
+})
 
 
 BlogRouter.post('/', 
@@ -43,16 +52,16 @@ BlogRouter.post('/',
         return res.status(result.status).json(result.elements)
 })
 
-// BlogRouter.post('/:id/posts', 
-//     authValidation,
-//     RuleValidations.validTitle,
-//     RuleValidations.validShortDescription,
-//     RuleValidations.validContent,
-//     inputValidation,
-//     async (req: Request<{}, {}, BlogPostInputType>, res: Response<ResponseType | null>) => {
+BlogRouter.post(`/:id/${SETTINGS.PATH.additionalBlog.posts}`, 
+    authValidation,
+    RuleValidations.validTitle,
+    RuleValidations.validShortDescription,
+    RuleValidations.validContent,
+    inputValidation,
+    async (req: Request<{}, {}, BlogPostInputType>, res: Response<ResponseType | null>) => {
         
-//         return res.status(200).json(null)
-// })
+        return res.status(200).json(null)
+})
 
 BlogRouter.put('/:id',
     authValidation,

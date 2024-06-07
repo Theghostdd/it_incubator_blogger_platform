@@ -5,7 +5,10 @@ export const SETTINGS = {
     PORT: process.env.PORT || "3000",
     PATH: {
         BLOG: "/api/blogs",
-        POST: "/api/posts"
+        POST: "/api/posts",
+        additionalBlog: {
+            posts: 'posts'
+        }
     },
     PATH_TEST: {
         TEST: "/api/testing",

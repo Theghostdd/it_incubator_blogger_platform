@@ -37,15 +37,19 @@ export const PostQueryRepo = {
         }
     },
 
-    async GetAllPosts (query: PostQueryRequestType): Promise<PostsResponseType> {
+    async GetAllPosts (query: PostQueryRequestType, idBlog: any): Promise<PostsResponseType> {
         try {
             const sortBy = query.sortBy
             const sortDirection = query.sortDirection === 'asc' ? 1 : -1
             const sort: Sort = sortBy ? { [sortBy]: sortDirection } : {};
+            
+            const filter = {
+                blogId: idBlog ? idBlog : {$ne: ''}
+            }
 
-            const createPagination: PaginationType = await PostService.CreatePagination(+query.pageNumber!, +query.pageSize!)
+            const createPagination: PaginationType = await PostService.CreatePagination(+query.pageNumber!, +query.pageSize!, filter)
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts)
-                .find()
+                .find(filter)
                 .sort(sort)
                 .skip(createPagination.skip)
                 .limit(createPagination.pageSize)
@@ -79,9 +83,9 @@ export const PostQueryRepo = {
         }
     },
 
-    async GetAllCountElements (): Promise<number> {
+    async GetAllCountElements (filter: Object): Promise<number> {
         try {
-            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).countDocuments()
+            const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts).countDocuments(filter)
             return result
         } catch (e: any) {
             throw new Error(e)

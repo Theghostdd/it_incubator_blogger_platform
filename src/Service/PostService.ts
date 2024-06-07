@@ -68,9 +68,9 @@ export const PostService = {
         }
     },
 
-    async CreatePagination (page: number, pageSize: number): Promise<PaginationType> {
+    async CreatePagination (page: number, pageSize: number, filter: Object): Promise<PaginationType> {
         try {
-            const getTotalCount = await PostQueryRepo.GetAllCountElements()
+            const getTotalCount = await PostQueryRepo.GetAllCountElements(filter)
             const totalCount = +getTotalCount 
             const pagesCount = Math.ceil(totalCount / pageSize)
             const skip = (page - 1) * pageSize

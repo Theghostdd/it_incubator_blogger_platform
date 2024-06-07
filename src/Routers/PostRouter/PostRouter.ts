@@ -16,7 +16,7 @@ PostRouter.get('/',
     RuleValidations.validSortBy,
     inputValidation,
     async (req: Request<any,any,any,PostQueryRequestType>, res: Response<AllResponseType | null>) => {
-        const result = await PostQueryRepo.GetAllPosts(req.query)
+        const result = await PostQueryRepo.GetAllPosts(req.query, null)
         return res.status(result.status).json(result.elements)
 })
 
