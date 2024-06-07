@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from "express";
-import { body, query, validationResult, Result } from 'express-validator';
+import { body, param,query, validationResult, Result } from 'express-validator';
 import { BlogResponseType } from "../../Types/BlogsTypes/BlogTypes";
 import { BlogQueryRepos } from "../../../Repositories/BlogRepo/BlogQueryRepo";
 
@@ -82,7 +82,17 @@ export const RuleValidations = {
                             .isIn(['asc', 'desc']),
     validSortBy: query('sortBy')
                     .default('createdAt')
-                    .isString()                          
+                    .isString(),
+    validParamBlogId: param('id')
+                        .notEmpty()
+                        .withMessage('The blog id can`t be empty')
+                        .custom( async (id: string) => {
+                            const result: BlogResponseType = await BlogQueryRepos.GetBlogById(id)
+                            if (result.status === 200) {
+                                return true
+                            }
+                            throw new Error('Blog id not found');
+                        })                   
 }
 
 

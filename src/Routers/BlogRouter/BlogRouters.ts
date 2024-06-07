@@ -7,20 +7,21 @@ import { BlogService } from "../../Service/BlogService";
 import { BlogQueryRepos } from "../../Repositories/BlogRepo/BlogQueryRepo";
 import { SETTINGS } from "../../settings";
 import { PostQueryRepo } from "../../Repositories/PostRepo/PostQueryRepo";
-import { PostQueryRequestType } from "../../Applications/Types/PostsTypes/PostTypes";
+import { PostInputType, PostQueryRequestType } from "../../Applications/Types/PostsTypes/PostTypes";
+import { PostService } from "../../Service/PostService";
 
 export const BlogRouter = Router()
 
 
 BlogRouter.get('/', 
-RuleValidations.validQueryPageSize,
-RuleValidations.validQueryPageNumber,
-RuleValidations.validQuerySortDirection,
-RuleValidations.validSortBy,
-inputValidation,
-async (req: Request<{}, {}, {}, BlogQueryRequestType>, res: Response<AllResponseType | null>) => {
-    const result = await BlogQueryRepos.GetAllBlogs(req.query)
-    return res.status(result.status).json(result.elements)
+    RuleValidations.validQueryPageSize,
+    RuleValidations.validQueryPageNumber,
+    RuleValidations.validQuerySortDirection,
+    RuleValidations.validSortBy,
+    inputValidation,
+    async (req: Request<{}, {}, {}, BlogQueryRequestType>, res: Response<AllResponseType | null>) => {
+        const result = await BlogQueryRepos.GetAllBlogs(req.query)
+        return res.status(result.status).json(result.elements)
 })
 
 
@@ -30,14 +31,14 @@ BlogRouter.get('/:id', async (req: Request<RequestParamsType>, res: Response<Res
 })
 
 BlogRouter.get(`/:id/${SETTINGS.PATH.additionalBlog.posts}`, 
-RuleValidations.validQueryPageSize,
-RuleValidations.validQueryPageNumber,
-RuleValidations.validQuerySortDirection,
-RuleValidations.validSortBy,
-inputValidation,
-async (req: Request<{id: string}, {}, {}, PostQueryRequestType>, res: Response<AllResponseType | null>) => {
-    const result = await PostQueryRepo.GetAllPosts(req.query, req.params.id)
-    return res.status(result.status).json(result.elements)
+    RuleValidations.validQueryPageSize,
+    RuleValidations.validQueryPageNumber,
+    RuleValidations.validQuerySortDirection,
+    RuleValidations.validSortBy,
+    inputValidation,
+    async (req: Request<{id: string}, {}, {}, PostQueryRequestType>, res: Response<AllResponseType | null>) => {
+        const result = await PostQueryRepo.GetAllPosts(req.query, req.params.id)
+        return res.status(result.status).json(result.elements)
 })
 
 
@@ -57,10 +58,13 @@ BlogRouter.post(`/:id/${SETTINGS.PATH.additionalBlog.posts}`,
     RuleValidations.validTitle,
     RuleValidations.validShortDescription,
     RuleValidations.validContent,
+    RuleValidations.validParamBlogId,
     inputValidation,
-    async (req: Request<{}, {}, BlogPostInputType>, res: Response<ResponseType | null>) => {
-        
-        return res.status(200).json(null)
+    async (req: Request<{id: string}, {}, PostInputType>, res: Response<ResponseType | null>) => {
+        req.body.blogId = req.params.id
+        console.log(req.body)
+        const result = await PostService.CreatePostService(req.body)
+        return res.status(result.status).json(result.elements)
 })
 
 BlogRouter.put('/:id',
