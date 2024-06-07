@@ -1,10 +1,10 @@
 import { Response } from "../Applications/Utils/Response"
 import { SaveError } from '../Service/ErrorService/ErrorService'
 import { SETTINGS } from "../settings"
-import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../Applications/Types/Types"
+import { CreatedMongoSuccessType, DeletedMongoSuccessType, PaginationType, UpdateMongoSuccessType } from "../Applications/Types/Types"
 import { PostRepo } from "../Repositories/PostRepo/PostRepo"
 import { BlogQueryRepos } from "../Repositories/BlogRepo/BlogQueryRepo"
-import { PostCreateType, PostFilterType, PostInputType, PostQueryRequestType, PostResponseType, PostsResponseType } from "../Applications/Types/PostsTypes/PostTypes"
+import { PostCreateType, PostInputType, PostResponseType } from "../Applications/Types/PostsTypes/PostTypes"
 import { BlogResponseType } from "../Applications/Types/BlogsTypes/BlogTypes"
 import { PostQueryRepo } from "../Repositories/PostRepo/PostQueryRepo"
 
@@ -68,7 +68,7 @@ export const PostService = {
         }
     },
 
-    async CreatePagination (page: number, pageSize: number): Promise<any> {
+    async CreatePagination (page: number, pageSize: number): Promise<PaginationType> {
         try {
             const getTotalCount = await PostQueryRepo.GetAllCountElements()
             const totalCount = +getTotalCount 

@@ -2,8 +2,8 @@ import { BlogRepos } from "../Repositories/BlogRepo/BlogRepo"
 import { Response } from "../Applications/Utils/Response"
 import { SaveError } from '../Service/ErrorService/ErrorService'
 import { SETTINGS } from "../settings"
-import { BlogCreatingType, BlogFilterType, BlogInputType, BlogQueryRequestType, BlogResponseType, BlogsResponseType } from "../Applications/Types/BlogsTypes/BlogTypes"
-import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../Applications/Types/Types"
+import { BlogCreatingType, BlogInputType, BlogResponseType } from "../Applications/Types/BlogsTypes/BlogTypes"
+import { CreatedMongoSuccessType, DeletedMongoSuccessType, PaginationType, UpdateMongoSuccessType } from "../Applications/Types/Types"
 import { BlogQueryRepos } from "../Repositories/BlogRepo/BlogQueryRepo"
 
 
@@ -56,14 +56,14 @@ export const BlogService = {
         }
     },
 
-    async CreatePagination (page: number, pageSize: number, filter: any) {
+    async CreatePagination (page: number, pageSize: number, filter: Object): Promise<PaginationType> {
         try {
 
             const getTotalCount = await BlogQueryRepos.GetAllCountElements(filter)
             const totalCount = +getTotalCount 
             const pagesCount = Math.ceil(totalCount / pageSize)
             const skip = (page - 1) * pageSize
-            
+
             return {
                 totalCount: +totalCount,
                 pagesCount: +pagesCount,

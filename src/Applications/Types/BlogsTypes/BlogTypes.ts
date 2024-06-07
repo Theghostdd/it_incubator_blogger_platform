@@ -1,4 +1,3 @@
-import { PaginationType, SortType } from "../Types"
 
 export type BlogsViewType = {
     pagesCount: number,
@@ -44,18 +43,13 @@ export type BlogResponseType = {
     elements: BlogViewType | null
 }
 
-export type BlogFilterType = {
-    pagination: PaginationType,
-    sort: SortType,
-    searchBy: string
+export type BlogQueryRequestType = {
+    pageNumber?: number,
+    pageSize?: number,
+    sortBy?: string,
+    sortDirection?: string,
+    searchNameTerm?: string
 }
 
-export type BlogQueryRequestType = {
-    pageNumber: number,
-    pageSize: number,
-    sortBy: string,
-    sortDirection: string,
-    searchNameTerm: string
-}
 
 

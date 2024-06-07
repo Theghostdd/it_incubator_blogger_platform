@@ -1,5 +1,3 @@
-import { PaginationType, SortType } from "../Types"
-
 export type PostsViewType = {
     pagesCount: number,
     page: number,
@@ -40,14 +38,10 @@ export type PostResponseType = {
     elements: PostViewType | null
 }
 
-export type PostFilterType = {
-    pagination: PaginationType,
-    sort: SortType,
-}
 
 export type PostQueryRequestType = {
-    pageNumber: number,
-    pageSize: number,
-    sortBy: string,
-    sortDirection: string
+    pageNumber?: number,
+    pageSize?: number,
+    sortBy?: string,
+    sortDirection?: string
 }

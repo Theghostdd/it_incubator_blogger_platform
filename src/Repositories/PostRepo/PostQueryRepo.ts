@@ -2,9 +2,10 @@ import { Response } from '../../Applications/Utils/Response'
 import { db } from "../../Applications/ConnectionDB/Connection";
 import { SETTINGS } from "../../settings";
 import { ObjectId, Sort } from "mongodb";
-import { PostFilterType, PostResponseType, PostsResponseType } from '../../Applications/Types/PostsTypes/PostTypes';
+import { PostQueryRequestType, PostResponseType, PostsResponseType } from '../../Applications/Types/PostsTypes/PostTypes';
 import { SaveError } from '../../Service/ErrorService/ErrorService';
 import { PostService } from '../../Service/PostService';
+import { PaginationType } from '../../Applications/Types/Types';
 
 
 
@@ -36,13 +37,13 @@ export const PostQueryRepo = {
         }
     },
 
-    async GetAllPosts (query: any): Promise<PostsResponseType> {
+    async GetAllPosts (query: PostQueryRequestType): Promise<PostsResponseType> {
         try {
             const sortBy = query.sortBy
             const sortDirection = query.sortDirection === 'asc' ? 1 : -1
             const sort: Sort = sortBy ? { [sortBy]: sortDirection } : {};
 
-            const createPagination = await PostService.CreatePagination(+query.pageNumber, +query.pageSize)
+            const createPagination: PaginationType = await PostService.CreatePagination(+query.pageNumber!, +query.pageSize!)
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.posts)
                 .find()
                 .sort(sort)

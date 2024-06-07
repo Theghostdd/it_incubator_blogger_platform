@@ -1,10 +1,11 @@
 import { ObjectId, Sort } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
-import { BlogFilterType, BlogResponseType, BlogsResponseType } from "../../Applications/Types/BlogsTypes/BlogTypes"
+import { BlogQueryRequestType, BlogResponseType, BlogsResponseType } from "../../Applications/Types/BlogsTypes/BlogTypes"
 import { Response } from "../../Applications/Utils/Response"
 import { SETTINGS } from "../../settings"
 import { SaveError } from "../../Service/ErrorService/ErrorService"
 import { BlogService } from "../../Service/BlogService"
+import { PaginationType } from "../../Applications/Types/Types"
 
 
 export const BlogQueryRepos = {
@@ -34,19 +35,19 @@ export const BlogQueryRepos = {
         }
     },
 
-    async GetAllBlogs (query: any): Promise<BlogsResponseType> {
+    async GetAllBlogs (query: BlogQueryRequestType): Promise<BlogsResponseType> {
         try {
 
             const sortBy = query.sortBy
             const sortDirection = query.sortDirection === 'asc' ? 1 : -1
             const sort: Sort = sortBy ? { [sortBy]: sortDirection } : {};
-
+            
             const searchNameTerm = query.searchNameTerm ? query.searchNameTerm : ''
             const filter = {
                 name: {$regex: searchNameTerm}
             }
 
-            const createPagination = await BlogService.CreatePagination(+query.pageNumber, +query.pageSize, filter)
+            const createPagination: PaginationType = await BlogService.CreatePagination(+query.pageNumber!, +query.pageSize!, filter)
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.blogs)
                 .find(filter)
                 .sort(sort)
@@ -82,7 +83,7 @@ export const BlogQueryRepos = {
         }
     },
 
-    async GetAllCountElements (filter: any): Promise<number> {
+    async GetAllCountElements (filter: Object): Promise<number> {
         try {
             const result = await db.collection(SETTINGS.MONGO.COLLECTIONS.blogs).countDocuments(filter)
             return result

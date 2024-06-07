@@ -30,7 +30,7 @@ export type RequestParamsType = {
 */
 export type ResponseType = BlogViewType | PostViewType
 
-export type GetAllResponse = BlogsViewType | PostsViewType
+export type AllResponseType = BlogsViewType | PostsViewType
 
 export type StatusResponse = {
     status: number
@@ -68,7 +68,3 @@ export type PaginationType = {
     page: number
 }
 
-export type SortType = {
-    sortBy: string,
-    sortDirection: number
-}
