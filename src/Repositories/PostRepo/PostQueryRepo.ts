@@ -42,7 +42,7 @@ export const PostQueryRepo = {
             const sortBy = query.sortBy
             const sortDirection = query.sortDirection === 'asc' ? 1 : -1
             const sort: Sort = sortBy ? { [sortBy]: sortDirection } : {};
-            
+
             const filter = {
                 blogId: idBlog ? idBlog : {$ne: ''}
             }
@@ -62,7 +62,7 @@ export const PostQueryRepo = {
                         page: createPagination.page,
                         pageSize: createPagination.pageSize,
                         totalCount: createPagination.totalCount,
-                        item: result.map((el) => {
+                        items: result.map((el) => {
                                 return {
                                     id: el._id.toString(),
                                     title: el.title,

@@ -3,7 +3,7 @@ export type PostsViewType = {
     page: number,
     pageSize: number,
     totalCount: number,
-    item: PostViewType[]
+    items: PostViewType[]
 }
 
 export type PostViewType = {

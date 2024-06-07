@@ -58,11 +58,9 @@ BlogRouter.post(`/:id/${SETTINGS.PATH.additionalBlog.posts}`,
     RuleValidations.validTitle,
     RuleValidations.validShortDescription,
     RuleValidations.validContent,
-    RuleValidations.validParamBlogId,
     inputValidation,
     async (req: Request<{id: string}, {}, PostInputType>, res: Response<ResponseType | null>) => {
         req.body.blogId = req.params.id
-        console.log(req.body)
         const result = await PostService.CreatePostService(req.body)
         return res.status(result.status).json(result.elements)
 })

@@ -4,7 +4,7 @@ export type BlogsViewType = {
     page: number,
     pageSize: number,
     totalCount: number,
-    item: BlogViewType[]
+    items: BlogViewType[]
 } 
 
 export type BlogViewType = {

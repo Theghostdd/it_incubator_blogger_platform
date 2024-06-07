@@ -14,7 +14,7 @@ export const PostService = {
     async CreatePostService (data: PostInputType): Promise<PostResponseType> {
         try {
             const getBlog: BlogResponseType = await BlogQueryRepos.GetBlogById(data.blogId)
-            if (!getBlog) { 
+            if (getBlog.status !== 200) { 
                 return Response.E404
             }  
     

@@ -63,7 +63,7 @@ export const BlogQueryRepos = {
                         page: createPagination.page,
                         pageSize: createPagination.pageSize,
                         totalCount: createPagination.totalCount,
-                        item: result.map((el) => {
+                        items: result.map((el) => {
                                 return {
                                     id: el._id.toString(),
                                     name: el.name,

@@ -82,17 +82,7 @@ export const RuleValidations = {
                             .isIn(['asc', 'desc']),
     validSortBy: query('sortBy')
                     .default('createdAt')
-                    .isString(),
-    validParamBlogId: param('id')
-                        .notEmpty()
-                        .withMessage('The blog id can`t be empty')
-                        .custom( async (id: string) => {
-                            const result: BlogResponseType = await BlogQueryRepos.GetBlogById(id)
-                            if (result.status === 200) {
-                                return true
-                            }
-                            throw new Error('Blog id not found');
-                        })                   
+                    .isString()              
 }
 
 
