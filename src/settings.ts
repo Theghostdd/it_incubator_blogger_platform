@@ -21,8 +21,7 @@ export const SETTINGS = {
         DB_NAME: 'blog_platform',
         COLLECTIONS: {
             posts: 'posts',
-            blogs: 'blogs',
-            blogs_post: 'blogs_post'
+            blogs: 'blogs'
         }
     },
 

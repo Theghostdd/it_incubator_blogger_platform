@@ -6,20 +6,27 @@ describe(SETTINGS.PATH.BLOG, () => {
 
     const endpoint: string = SETTINGS.PATH.BLOG
 
-    let returnValues: any;
+    // let returnValues: any;
     let InspectData: any;
-    let ElementId: string;
+    // let ElementId: string;
     let query = {}
+    let CreateData: any = {}
+    let CreateManyData: any = []
     
-    it('should delete all data', async () => {
-        await TestModules.DeleteAllElements()
+    beforeEach(async () => {
+        const result = await TestModules.DeleteAllElements()
     })
 
-    it('should create blog`s element, status: 201, and return element + GET by ID, status: 200', async () => {
+    afterAll(async () => {
+        const result = await TestModules.DeleteAllElements()
+    })
 
-        const CreateData = {
-            name: "My first blog",
-            description: "This is my first blog :)",
+
+    it('POST => GET | should create a blog item, status: 201, return the item and get the item by ID, status: 200', async () => {
+
+        CreateData = {
+            name: "IT-Incubator",
+            description: "The blog is about IT-Incubator",
             websiteUrl:	"https://samurai.it-incubator.io/"
         }
 
@@ -39,19 +46,23 @@ describe(SETTINGS.PATH.BLOG, () => {
             isMembership: expect.any(Boolean)
         })
 
-        returnValues = {...CreateElementResult}
-        ElementId = CreateElementResult.id
+        const returnValues = {...CreateElementResult}
+        const ElementId = CreateElementResult.id
 
         const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId)
         expect(GetCreatedElementResult).toEqual(CreateElementResult) 
     })
 
-    it('should update blog`s element, status: 204 + GET by ID, status: 200', async () => {
+    it('POST => PUT => GET | should update a blog item, status: 204 and get the item by ID, status: 200', async () => {
         const DataUpdate = {
-            name: "My first blog",
-            description: "This is my first blog :)",
+            name: "IT-Incubator 2",
+            description: "I had some error, this blog is about IT-Incubator 2",
             websiteUrl:	"https://samurai.by.io/"
         }
+
+        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
+        const ElementId = CreateElementResult.id
+        const returnValues = {...CreateElementResult}
 
         const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 204, ElementId, DataUpdate, InspectData)
 
@@ -59,115 +70,77 @@ describe(SETTINGS.PATH.BLOG, () => {
         expect(GetUpdatedElementResult).toEqual({...returnValues, ...DataUpdate})
     })
 
-    it('shouldn`t update blog`s element, status: 400, empty description', async () => {
-        const DataUpdate = {
-            name: "My first blog",
+    it('POST => DELETE => GET | should delete a blog item, status: 204 and should`t get the item by ID, status: 404', async () => {
+
+        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
+        const ElementId = CreateElementResult.id
+
+        let DeleteElementResult = await TestModules.DeleteElementById(endpoint, 204, ElementId, InspectData)
+
+        const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 404, ElementId)
+
+        DeleteElementResult = await TestModules.DeleteElementById(endpoint, 404, ElementId, InspectData)
+
+    })
+
+    it('POST => PUT | should`t update a blog item, status: 400, bad request, and status: 404, not found', async () => {
+        let DataUpdate = {
+            name: "IT-Incubator 2",
+            description: "Some description",
+            websiteUrl:	"https://samurai.by.io/"
+        }
+
+        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
+        const ElementId = CreateElementResult.id
+
+        let UpdateElementResult = await TestModules.UpdateElementById(endpoint, 404, "66632889ba80092799c0ed81", DataUpdate, InspectData)
+
+        DataUpdate = {
+            name: "IT-Incubator 2",
             description: "",
             websiteUrl:	"https://samurai.by.io/"
         }
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
-        expect(UpdateCreatedElementResult).toEqual({
+        UpdateElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
+        expect(UpdateElementResult).toEqual({
+                    errorsMessages: [
+                        {
+                            message: expect.any(String),
+                            field: 'description'
+                        }
+                    ]
+                })
+
+        DataUpdate = {
+            name: "",
+            description: "",
+            websiteUrl:	"https://samurai.by.io/"
+        }
+        UpdateElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
+        expect(UpdateElementResult).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
                     field: 'description'
-                }
-            ]
-        })
-    })
-
-    it('should delete blog`s element, status: 204 + GET by ID, status: 404', async () => {
-        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 204, ElementId, InspectData)
-        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 404, ElementId)
-    })
-
-    it('should create two blog`s elements, status: 201, and return element + GET all, status: 200 + DELETE all, status: 204', async () => {
-
-        const CreateFirstData = {
-            name: "My first blog",
-            description: "This is my first blog :)",
-            websiteUrl:	"https://samurai.it-incubator.io/"
-        }
-
-        const CreateSecondData = {
-            name: "My second blog",
-            description: "This is my second blog :)",
-            websiteUrl:	"https://second-blogs.by/"
-        }
-
-        const CreateFirstElementResult = await TestModules.CreateElement(endpoint, 201, CreateFirstData, InspectData)
-        expect(CreateFirstElementResult).toEqual({
-            id: expect.any(String),
-            name: CreateFirstData.name,
-            description: CreateFirstData.description,
-            websiteUrl: CreateFirstData.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: expect.any(Boolean)
-        })
-
-        const CreateSecondElementResult = await TestModules.CreateElement(endpoint, 201, CreateSecondData, InspectData)
-        expect(CreateSecondElementResult).toEqual({
-            id: expect.any(String),
-            name: CreateSecondData.name,
-            description: CreateSecondData.description,
-            websiteUrl: CreateSecondData.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: expect.any(Boolean)
-        })
-
-        const GetAllElementsResult = await TestModules.GetAllElements(endpoint, 200, query)
-        expect(GetAllElementsResult.item.length).toBe(2)
-
-        const DeleteAllElementsResult = await TestModules.DeleteAllElements()
-    })
-
-    it('shouldn`t update blog`s element, status: 404', async () => {
-        const DataUpdate = {
-            name: "My first blog",
-            description: "This is my first blog :)",
-            websiteUrl:	"https://samurai.by.io/"
-        }       
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 404, ElementId, DataUpdate, InspectData)
-    })
-
-    it('shouldn`t delete blog`s element, status: 404', async () => {
-        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 404, ElementId, InspectData)
-    })
-
-    it('shouldn`t get blog`s element, status: 404', async () => {
-        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 404, ElementId)
-    })
-
-    it('shouldn`t get blog`s element by ID, status: 404', async () => {
-        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 404, ElementId)
-    })
-
-    it('shouldn`t create blog`s element, status: 400, empty title', async () => {
-        const CreateData = {
-            name: "",
-            description: "This is my first blog :)",
-            websiteUrl:	"https://samurai.it-incubator.io/"
-        }
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
-            errorsMessages: [
+                },
                 {
                     message: expect.any(String),
                     field: 'name'
                 }
             ]
         })
-    })
 
-    it('shouldn`t create blog`s element, status: 400, empty title and bad website URL', async () => {
-        const CreateData = {
+        DataUpdate = {
             name: "",
-            description: "This is my first blog :)",
-            websiteUrl:	"https:samurai.lt/"
+            description: "",
+            websiteUrl:	"https:.by.io/"
         }
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        UpdateElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
+        expect(UpdateElementResult).toEqual({
             errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'description'
+                },
                 {
                     message: expect.any(String),
                     field: 'name'
@@ -175,73 +148,15 @@ describe(SETTINGS.PATH.BLOG, () => {
                 {
                     message: expect.any(String),
                     field: 'websiteUrl'
-                },
+                }
             ]
         })
+
     })
 
-    it('shouldn`t create blog`s element, status: 401, Unauthorized', async () => {
-        const CreateData = {}
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdl"
-            }
-        }
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 401, CreateData, InspectData)
-    })
+    it('POST => GET | should get all blog elements with pagination and filters, status: 200', async () => {
 
-    it('shouldn`t update blog`s element, status: 401, Unauthorized', async () => {
-        const DataUpdate = {}
-        const UpdateElementResult = await TestModules.UpdateElementById(endpoint, 401, ElementId, DataUpdate, InspectData)
-    })
-
-    it('shouldn`t delete blog`s element, status: 401, Unauthorized', async () => {
-        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 401, ElementId, InspectData)
-    })
-
-    it('shouldn`t update blog`s element, status: 500, bad mongo object ID', async () => {
-
-        const DataUpdate = {
-            name: "My first blog",
-            description: "This is my first blog :)",
-            websiteUrl:	"https://samurai.by.io/"
-        }       
-
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
-            }
-        }
-
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, '574736bbffh4656664', DataUpdate, InspectData)
-    })
-
-    it('shouldn`t delete blog`s element, status: 500, bad mongo object ID', async () => {
-        const DeleteElementByIdResult = await TestModules.DeleteElementById(endpoint, 500, '574736bbffh4656664', InspectData)
-    })
-
-    it('shouldn`t get blog`s element, status: 500, bad mongo object ID', async () => {
-        const GetElementByIdResult = await TestModules.GetElementById(endpoint, 500, '574736bbffh4656664')
-    })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    it('should get all blog elements with pagination, status: 200', async () => {
-
-        const CreateData = [
+        CreateManyData = [
             {
                 name: "IT-Incubator",
                 description: "Blog about IT Incubator ;)",
@@ -330,20 +245,18 @@ describe(SETTINGS.PATH.BLOG, () => {
                 isMembership: false
             },
         ]
-        const CreateManyResult = await TestModules.InsertManyDataMongoDB(SETTINGS.MONGO.COLLECTIONS.blogs, CreateData)
-        
-        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        const CreateManyResult = await TestModules.InsertManyDataMongoDB(SETTINGS.MONGO.COLLECTIONS.blogs, CreateManyData)
+
+        let GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
         expect(GetAllElements).toEqual({
             pagesCount: 2,
             page: 1,
             pageSize: 10,
             totalCount: 11,
-            item: expect.any(Array)
+            items: expect.any(Array)
         }) 
-        expect(GetAllElements.item).toHaveLength(10)
-    })
+        expect(GetAllElements.items).toHaveLength(10)
 
-    it('should get all blog elements with pagination and filter name, status: 200', async () => {
         query = {
             searchNameTerm: 'IT-Incubator',
             pageNumber: null,
@@ -351,18 +264,16 @@ describe(SETTINGS.PATH.BLOG, () => {
             sortBy: null,
             sortDirection: null
         }
-        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
         expect(GetAllElements).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 10,
             totalCount: 1,
-            item: expect.any(Array)
+            items: expect.any(Array)
         }) 
-        expect(GetAllElements.item).toHaveLength(1)
-    })
+        expect(GetAllElements.items).toHaveLength(1)
 
-    it('should get all blog elements with pagination page 2, status: 200', async () => {
         query = {
             searchNameTerm: null,
             pageNumber: 2,
@@ -370,18 +281,16 @@ describe(SETTINGS.PATH.BLOG, () => {
             sortBy: null,
             sortDirection: null
         }
-        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
         expect(GetAllElements).toEqual({
             pagesCount: 2,
             page: 2,
             pageSize: 10,
             totalCount: 11,
-            item: expect.any(Array)
+            items: expect.any(Array)
         }) 
-        expect(GetAllElements.item).toHaveLength(1)
-    })
+        expect(GetAllElements.items).toHaveLength(1)
 
-    it('should get all blog elements with pagination page size 11, status: 200', async () => {
         query = {
             searchNameTerm: null,
             pageNumber: null,
@@ -389,43 +298,133 @@ describe(SETTINGS.PATH.BLOG, () => {
             sortBy: null,
             sortDirection: null
         }
-        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
         expect(GetAllElements).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 11,
             totalCount: 11,
-            item: expect.any(Array)
+            items: expect.any(Array)
         }) 
-        expect(GetAllElements.item).toHaveLength(11)
+        expect(GetAllElements.items).toHaveLength(11)
+
+
     })
 
-    it('should get all blog elements with pagination and sort: desc, status: 200', async () => {
-        query = {
-            searchNameTerm: null,
-            pageNumber: null,
-            pageSize: 11,
-            sortBy: null,
-            sortDirection: 'asc'
+    it('POST | should`t create a blog item, status: 400, bad request', async () => {
+
+        CreateData = {
+            name: "",
+            description: "The blog is about IT-Incubator",
+            websiteUrl:	"https://samurai.it-incubator.io/"
         }
-        const GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
-        expect(GetAllElements).toEqual({
-            pagesCount: 1,
-            page: 1,
-            pageSize: 11,
-            totalCount: 11,
-            item: expect.any(Array)
-        })
-        const sortedItems = GetAllElements.item.toSorted((a: any, b: any) => a.createdAt.localeCompare(b.createdAt));
-        expect(GetAllElements.item).toEqual(sortedItems)
 
-        
+        let CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
+        expect(CreateElementResult).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'name'
+                }
+            ]
+        })
+
+        CreateData = {
+            name: "",
+            description: "",
+            websiteUrl:	"https://samurai.it-incubator.io/"
+        }
+
+        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
+        expect(CreateElementResult).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'description'
+                },
+                {
+                    message: expect.any(String),
+                    field: 'name'
+                }
+            ]
+        })
+
+        CreateData = {
+            name: "",
+            description: "",
+            websiteUrl:	"it-incubator.io/"
+        }
+
+        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
+        expect(CreateElementResult).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'description'
+                },
+                {
+                    message: expect.any(String),
+                    field: 'name'
+                },
+                {
+                    message: expect.any(String),
+                    field: 'websiteUrl'
+                }
+            ]
+        })
+
     })
 
+    it('POST => PUT => DELETE | should`t create, update, delete a blog item, status: 401, Unauthorized', async () => {
 
+        CreateData = {
+            name: "Some name",
+            description: "The blog is about IT-Incubator",
+            websiteUrl:	"https://samurai.it-incubator.io/"
+        }
 
+        const DataUpdate = {
+            name: "IT-Incubator 2",
+            description: "I had some error, this blog is about IT-Incubator 2",
+            websiteUrl:	"https://samurai.by.io/"
+        }
 
+        InspectData = {
+            headers: {
+                basic_auth: "Basic YWRtaW46cXdl"
+            }
+        }
 
+        const CreateElementResult = await TestModules.CreateElement(endpoint, 401, CreateData, InspectData)
+        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 401, "66632889ba80092799c0ed81", DataUpdate, InspectData)
+        const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 401, "66632889ba80092799c0ed81", InspectData)
+    })
 
+    it('POST => PUT => DELETE => GET | should`t update, delete, get a blog item by ID, status: 500, bad mongo object ID', async () => {
+
+        CreateData = {
+            name: "Some name",
+            description: "The blog is about IT-Incubator",
+            websiteUrl:	"https://samurai.it-incubator.io/"
+        }
+
+        const DataUpdate = {
+            name: "IT-Incubator 2",
+            description: "I had some error, this blog is about IT-Incubator 2",
+            websiteUrl:	"https://samurai.by.io/"
+        }
+
+        InspectData = {
+            headers: {
+                basic_auth: "Basic YWRtaW46cXdlcnR5"
+            }
+        }
+
+        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
+        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, "66632889ba80092799", DataUpdate, InspectData)
+        const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 500, "66632889ba80092799", InspectData)
+        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 500, "66632889ba80092799")
+
+    })
 })
 
