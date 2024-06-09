@@ -7,11 +7,8 @@ import { clear } from 'console';
 describe(SETTINGS.PATH.POST, () => {
 
     const endpoint: string = SETTINGS.PATH.POST
-
-
     let InspectData: any;
     let query = {}
-
     let idBlog: string
     let blogName: string
     let DataUpdate: any = {}
@@ -32,7 +29,6 @@ describe(SETTINGS.PATH.POST, () => {
             description: "The blog is about IT-Incubator",
             websiteUrl:	"https://samurai.it-incubator.io/"
         }
-
         const CreatedBlog = await TestModules.CreateElement(SETTINGS.PATH.BLOG, 201, CreateData, InspectData)
         idBlog = CreatedBlog.id
         blogName = CreatedBlog.name
@@ -55,7 +51,6 @@ describe(SETTINGS.PATH.POST, () => {
     afterAll(async () => {
         const result = await TestModules.DeleteAllElements()
     })
-
 
     it('POST => GET | should create a post item, status: 201, return the item and get created item, status: 200, and status: 404 if element doesn`t found', async () => {
 

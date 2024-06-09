@@ -10,23 +10,12 @@ describe(SETTINGS.PATH.BLOG, () => {
     let query = {}
     let CreateData: any = {}
     let CreateManyData: any = []
+    let ElementId: string;
+    let DataUpdate: any;
+    let returnValues: any;
     
     beforeEach(async () => {
         const result = await TestModules.DeleteAllElements()
-    })
-
-    afterAll(async () => {
-        const result = await TestModules.DeleteAllElements()
-    })
-
-
-    it('POST => GET | should create a blog item, status: 201, return the item and get the item by ID, status: 200', async () => {
-
-        CreateData = {
-            name: "IT-Incubator",
-            description: "The blog is about IT-Incubator",
-            websiteUrl:	"https://samurai.it-incubator.io/"
-        }
 
         InspectData = {
             headers: {
@@ -34,6 +23,30 @@ describe(SETTINGS.PATH.BLOG, () => {
             }
         }
 
+        CreateData = {
+            name: "IT-Incubator",
+            description: "The blog is about IT-Incubator",
+            websiteUrl:	"https://samurai.it-incubator.io/"
+        }
+        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
+        ElementId = CreateElementResult.id
+        returnValues = {...CreateElementResult}
+
+        DataUpdate = {
+            name: "IT-Incubator 2",
+            description: "I had some error, this blog is about IT-Incubator 2",
+            websiteUrl:	"https://samurai.by.io/"
+        }
+
+
+    })
+
+    afterAll(async () => {
+        const result = await TestModules.DeleteAllElements()
+    })
+
+
+    it('POST => GET | should create a blog item, status: 201, return the item and get the item by ID, status: 200, if element doesn`t found, status: 404', async () => {
         const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
         expect(CreateElementResult).toEqual({
             id: expect.any(String),
@@ -44,24 +57,14 @@ describe(SETTINGS.PATH.BLOG, () => {
             isMembership: expect.any(Boolean)
         })
 
-        const returnValues = {...CreateElementResult}
         const ElementId = CreateElementResult.id
-
         const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId)
         expect(GetCreatedElementResult).toEqual(CreateElementResult) 
+
+        const GetElementResult = await TestModules.GetElementById(endpoint, 404, "66632889ba80092799c0ed81")
     })
 
     it('POST => PUT => GET | should update a blog item, status: 204 and get the item by ID, status: 200', async () => {
-        const DataUpdate = {
-            name: "IT-Incubator 2",
-            description: "I had some error, this blog is about IT-Incubator 2",
-            websiteUrl:	"https://samurai.by.io/"
-        }
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
-        const ElementId = CreateElementResult.id
-        const returnValues = {...CreateElementResult}
-
         const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 204, ElementId, DataUpdate, InspectData)
 
         const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId)
@@ -69,28 +72,12 @@ describe(SETTINGS.PATH.BLOG, () => {
     })
 
     it('POST => DELETE => GET | should delete a blog item, status: 204 and should`t get the item by ID, status: 404', async () => {
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
-        const ElementId = CreateElementResult.id
-
         let DeleteElementResult = await TestModules.DeleteElementById(endpoint, 204, ElementId, InspectData)
-
-        const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 404, ElementId)
-
+        const GetElementResult = await TestModules.GetElementById(endpoint, 404, ElementId)
         DeleteElementResult = await TestModules.DeleteElementById(endpoint, 404, ElementId, InspectData)
-
     })
 
     it('POST => PUT | should`t update a blog item, status: 400, bad request, and status: 404, not found', async () => {
-        let DataUpdate = {
-            name: "IT-Incubator 2",
-            description: "Some description",
-            websiteUrl:	"https://samurai.by.io/"
-        }
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
-        const ElementId = CreateElementResult.id
-
         let UpdateElementResult = await TestModules.UpdateElementById(endpoint, 404, "66632889ba80092799c0ed81", DataUpdate, InspectData)
 
         DataUpdate = {
@@ -152,7 +139,8 @@ describe(SETTINGS.PATH.BLOG, () => {
 
     })
 
-    it('POST => GET | should get all blog elements with pagination and filters, status: 200', async () => {
+    it('DELETE => POST => GET | should get all blog elements with pagination and filters, status: 200', async () => {
+        const result = await TestModules.DeleteAllElements()
 
         CreateManyData = [
             {
@@ -374,19 +362,6 @@ describe(SETTINGS.PATH.BLOG, () => {
     })
 
     it('POST => PUT => DELETE | should`t create, update, delete a blog item, status: 401, Unauthorized', async () => {
-
-        CreateData = {
-            name: "Some name",
-            description: "The blog is about IT-Incubator",
-            websiteUrl:	"https://samurai.it-incubator.io/"
-        }
-
-        const DataUpdate = {
-            name: "IT-Incubator 2",
-            description: "I had some error, this blog is about IT-Incubator 2",
-            websiteUrl:	"https://samurai.by.io/"
-        }
-
         InspectData = {
             headers: {
                 basic_auth: "Basic YWRtaW46cXdl"
@@ -399,30 +374,10 @@ describe(SETTINGS.PATH.BLOG, () => {
     })
 
     it('POST => PUT => DELETE => GET | should`t update, delete, get a blog item by ID, status: 500, bad mongo object ID', async () => {
-
-        CreateData = {
-            name: "Some name",
-            description: "The blog is about IT-Incubator",
-            websiteUrl:	"https://samurai.it-incubator.io/"
-        }
-
-        const DataUpdate = {
-            name: "IT-Incubator 2",
-            description: "I had some error, this blog is about IT-Incubator 2",
-            websiteUrl:	"https://samurai.by.io/"
-        }
-
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
-            }
-        }
-
         const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
         const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, "66632889ba80092799", DataUpdate, InspectData)
         const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 500, "66632889ba80092799", InspectData)
-        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 500, "66632889ba80092799")
-
+        const GetElementResult = await TestModules.GetElementById(endpoint, 500, "66632889ba80092799")
     })
 })
 

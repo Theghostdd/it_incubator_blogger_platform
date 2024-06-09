@@ -1,7 +1,7 @@
 import { SETTINGS } from "../../../src/settings";
 import { TestModules } from "../modules/modules";
 
-describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => {
+describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () => {
 
 
     const endpoint: string = SETTINGS.PATH.BLOG
@@ -9,13 +9,9 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
 
     let InspectData: any;
     let query: any = {}
-    const CreateDataBlog: any = {
-        name: "IT-Incubator",
-        description: "The blog is about IT-Incubator",
-        websiteUrl:	"https://samurai.it-incubator.io/"
-    }
-
     let CreateData: any = {}
+    let idBlog: string;
+    let blogName: string;
 
     beforeEach(async () => {
         const result = await TestModules.DeleteAllElements()
@@ -25,6 +21,21 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 basic_auth: "Basic YWRtaW46cXdlcnR5"
             }
         }
+
+        const CreateDataBlog: any = {
+            name: "IT-Incubator",
+            description: "The blog is about IT-Incubator",
+            websiteUrl:	"https://samurai.it-incubator.io/"
+        }
+        const CreateBlogElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataBlog, InspectData)
+        idBlog = CreateBlogElementResult.id
+        blogName = CreateBlogElementResult.name
+
+        CreateData = {
+            title: 'Some Title Post',
+            shortDescription: "Some short description",
+            content: "Some content"
+        }
     })
 
     afterAll(async () => {
@@ -32,22 +43,13 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
     })
 
     it(`POST => GET | should create a post item by blog ID, status: 201, return the item and get the item by ID, status: 200, and 404 if the item not found`, async () => {
-        const CreateBlogElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataBlog, InspectData)
-        const idBlog = CreateBlogElementResult.id
-
-        CreateData = {
-            title: 'Some Title Post',
-            shortDescription: "Some short description",
-            content: "Some content"
-        }
-        
         const CreateElementResult = await TestModules.CreateElement(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 201, CreateData, InspectData)
         expect(CreateElementResult).toEqual({
             id: expect.any(String),
             title: CreateData.title,
             shortDescription: CreateData.shortDescription,
             content: CreateData.content,
-            blogName: CreateDataBlog.name,
+            blogName: blogName,
             blogId: idBlog,
             createdAt: expect.any(String)
         })
@@ -71,8 +73,6 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
     })
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
-        const CreateBlogElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataBlog, InspectData)
-        const idBlog = CreateBlogElementResult.id
 
         const CreateManyData = [
             {
@@ -80,7 +80,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -89,7 +89,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -98,7 +98,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -107,7 +107,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -116,7 +116,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -125,7 +125,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -134,7 +134,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -143,7 +143,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -152,7 +152,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -161,7 +161,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
 
@@ -170,7 +170,7 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
-                blogName: 'IT-Incubator',
+                blogName: blogName,
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
         ]
@@ -223,9 +223,6 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
     })
 
     it('POST | should`t create a post item by blog ID, status: 400, bad request', async () => {
-        const CreateBlogElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataBlog, InspectData)
-        const idBlog = CreateBlogElementResult.id
-
         CreateData = {
             title: '',
             shortDescription: "Some short description",
@@ -286,11 +283,6 @@ describe(SETTINGS.PATH.BLOG + '/:id' +SETTINGS.PATH.additionalBlog.posts, () => 
     })
 
     it('POST | should`t create a post item by blog ID, status: 401, Unauthorized', async () => {
-        const CreateBlogElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataBlog, InspectData)
-        const idBlog = CreateBlogElementResult.id
-
-        CreateData = null;
-
         InspectData = {
             headers: {
                 basic_auth: "Basic YWRtaW46cXdl"
