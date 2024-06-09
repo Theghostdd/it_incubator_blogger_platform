@@ -6,9 +6,7 @@ describe(SETTINGS.PATH.BLOG, () => {
 
     const endpoint: string = SETTINGS.PATH.BLOG
 
-    // let returnValues: any;
     let InspectData: any;
-    // let ElementId: string;
     let query = {}
     let CreateData: any = {}
     let CreateManyData: any = []
