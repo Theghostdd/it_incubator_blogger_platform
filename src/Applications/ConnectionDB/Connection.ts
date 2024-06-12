@@ -4,7 +4,7 @@ import fs from 'fs'
 import { SaveError } from "../../Service/ErrorService/ErrorService";
 
 // Connect MongoDb 
-export const client = new MongoClient(SETTINGS.MONGO.URL_CLOUD, {
+export const client = new MongoClient(SETTINGS.MONGO.URL, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,

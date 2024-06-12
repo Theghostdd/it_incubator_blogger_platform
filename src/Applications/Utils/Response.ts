@@ -18,5 +18,18 @@ export const Response = {
     S202: {
         status: 202,
         elements: null
+    },
+    E500New: {
+        status: 500,
+        data: null
+    },
+    S204New: {
+        status: 204,
+        data: null
+    },
+    E404New: {
+        status: 404,
+        data: null
     }
+
 }

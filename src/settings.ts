@@ -6,6 +6,7 @@ export const SETTINGS = {
     PATH: {
         BLOG: "/api/blogs",
         POST: "/api/posts",
+        USER: '/api/users',
         additionalBlog: {
             posts: 'posts'
         }
@@ -21,9 +22,11 @@ export const SETTINGS = {
         DB_NAME: 'blog_platform',
         COLLECTIONS: {
             posts: 'posts',
-            blogs: 'blogs'
+            blogs: 'blogs',
+            users: 'users'
         }
     },
+    SALTRounds: 10
 
 }
 

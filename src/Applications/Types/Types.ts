@@ -68,3 +68,11 @@ export type PaginationType = {
     page: number
 }
 
+export type errorsApiFieldsType = {
+    errorsMessages: errorFieldType[]
+}
+
+type errorFieldType = {
+    message: string,
+    field: string
+}
