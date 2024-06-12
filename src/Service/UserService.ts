@@ -1,5 +1,5 @@
 import { genSaltAndHash } from "../Applications/Encrypted /encrypted";
-import { errorsApiFieldsType } from "../Applications/Types/Types";
+import { PaginationType, errorsApiFieldsType } from "../Applications/Types/Types";
 import { UserInputModel, UserOutputType } from "../Applications/Types/UserTypes/UserTypes";
 import { UserOutputMap } from "../Applications/Utils/map/UserMap";
 import { UserQueryRepo } from "../Repositories/UserRepo/UserQueryRepo";
@@ -44,6 +44,24 @@ export const UserService = {
         } catch (e) {
             SaveError(SETTINGS.PATH.USER, 'DELETE', 'Deleting a user', e)
             return Response.E500New
+        }
+    },
+
+    async CreatePagination (page: number, pageSize: number, filter: Object): Promise<PaginationType> {
+        try {
+            const getTotalCount = await UserQueryRepo.GetCountUsers(filter)
+            const totalCount = +getTotalCount 
+            const pagesCount = Math.ceil(totalCount / pageSize)
+            const skip = (page - 1) * pageSize
+            return {
+                totalCount: totalCount,
+                pagesCount: +pagesCount,
+                skip: +skip,
+                pageSize: +pageSize,
+                page: +page
+            }
+        } catch (e: any) {
+            throw new Error (e)
         }
     }
 }

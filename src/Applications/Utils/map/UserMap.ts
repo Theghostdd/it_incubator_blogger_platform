@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb"
-import { UserCreateModel, UserViewModel } from "../../Types/UserTypes/UserTypes"
+import { UserCreateModel, UserMongoOutputType, UserViewModel } from "../../Types/UserTypes/UserTypes"
 
 
 export const UserOutputMap = async (data: UserCreateModel, insertedId: ObjectId): Promise<UserViewModel> => {
@@ -9,4 +9,15 @@ export const UserOutputMap = async (data: UserCreateModel, insertedId: ObjectId)
         email: data.email,
         createdAt: data.createdAt
     }
+}
+
+export const UsersOutputMap = async (data: UserMongoOutputType[]): Promise<UserViewModel[]> => {
+    return data.map((user)=> {
+        return {
+            id: user._id.toString(),
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt
+        }
+    })
 }

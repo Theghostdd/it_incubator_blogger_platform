@@ -88,7 +88,9 @@ export const RuleValidations = {
         .default("desc")
         .isString()
         .isIn(["asc", "desc"]),
-    validSortBy: query("sortBy").default("createdAt").isString(),
+    validSortBy: query("sortBy")
+        .default("createdAt")
+        .isString(),
     validLogin: body("login")
         .isLength({ min: 3, max: 10 })
         .matches("^[a-zA-Z0-9_-]*$")

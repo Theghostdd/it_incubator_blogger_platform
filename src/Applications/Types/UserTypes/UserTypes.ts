@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb"
-import { errorsApiFieldsType } from "../Types"
+import { PaginationType, errorsApiFieldsType } from "../Types"
 
 
 export type UserInputModel = {
@@ -19,6 +19,8 @@ export type UserViewModel = {
     createdAt: string
 }
 
+
+
 export type UserMongoOutputType = {
     _id: ObjectId,
     login: string,
@@ -32,4 +34,22 @@ export type UserOutputType = {
     data: UserViewModel | errorsApiFieldsType | null
 }
 
+export type UsersOutputType = {
+    status: number;
+    data: {
+        pagesCount: number,
+        page: number,
+        pageSize: number,
+        totalCount: number,
+        items: UserViewModel[];
+    } | null
+};
 
+export type UserQueryParamsType = {
+    sortBy?: string,
+    sortDirection?: string,
+    pageNumber?: number,
+    pageSize?: number,
+    searchLoginTerm?: string,
+    searchEmailTerm?: string
+}

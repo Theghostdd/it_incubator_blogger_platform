@@ -1,15 +1,23 @@
-import { Request, Response, Router } from "express";
+import { Request, Response, Router, query } from "express";
 import { authValidation } from "../../Applications/Validations/auth/auth";
 import { RuleValidations, inputValidation } from "../../Applications/Validations/inputValidations/InputValidations";
-import { UserInputModel, UserOutputType, UserViewModel } from "../../Applications/Types/UserTypes/UserTypes";
+import { UserInputModel, UserOutputType, UserQueryParamsType, UserViewModel, UsersOutputType } from "../../Applications/Types/UserTypes/UserTypes";
 import { UserService } from "../../Service/UserService";
 import { errorsApiFieldsType } from "../../Applications/Types/Types";
+import { UserQueryRepo } from "../../Repositories/UserRepo/UserQueryRepo";
 
 
 export const UserRouter = Router()
 
-UserRouter.get('/', async (req: Request, res: Response) => {
-    res.send(200)
+UserRouter.get('/',
+    authValidation,
+    RuleValidations.validQueryPageSize,
+    RuleValidations.validQueryPageNumber,
+    RuleValidations.validQuerySortDirection,
+    RuleValidations.validSortBy,
+    async (req: Request<any, any, any, UserQueryParamsType>, res: Response) => {
+        const result: UsersOutputType = await UserQueryRepo.GetAllUsers(req.query)
+        res.status(result.status).json(result.data)
 })
 
 UserRouter.post('/', 
