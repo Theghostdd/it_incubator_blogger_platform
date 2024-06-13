@@ -7,8 +7,12 @@ export const SETTINGS = {
         BLOG: "/api/blogs",
         POST: "/api/posts",
         USER: '/api/users',
+        AUTH: '/api/auth',
         additionalBlog: {
             posts: 'posts'
+        },
+        additionalAuth: {
+            login: 'login'
         }
     },
     PATH_TEST: {

@@ -12,9 +12,9 @@ import { SaveError } from "../../Service/ErrorService/ErrorService"
 
 
 export const UserQueryRepo = {
-    async GetUserByLoginOrEmail (login: string, email: string): Promise<UserMongoOutputType | null> {
+    async GetUserByLoginOrEmail (login: string, email?: string): Promise<UserMongoOutputType | null> {
         try {
-            const result = await db.collection<UserMongoOutputType>(SETTINGS.MONGO.COLLECTIONS.users).findOne({$or: [{login: login}, {email: email}]})
+            const result = await db.collection<UserMongoOutputType>(SETTINGS.MONGO.COLLECTIONS.users).findOne({$or: [{login: login || email}, {email: email || login}]})
             return result
         } catch (e: any) {
             throw new Error(e)

@@ -101,7 +101,12 @@ export const RuleValidations = {
     validEmail: body("email")
         .notEmpty()
         .matches(`^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`)
-        .withMessage('Email is bad')
+        .withMessage('Email is bad'), 
+    validLoginOrEmail: body('loginOrEmail')
+        .notEmpty()
+        .isLength({max: 20})
+        .withMessage('Bad login or email'), 
+
 };
 
 

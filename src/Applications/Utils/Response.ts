@@ -30,6 +30,10 @@ export const Response = {
     E404New: {
         status: 404,
         data: null
+    },
+    E401: {
+        status: 401,
+        data: null
     }
 
 }
