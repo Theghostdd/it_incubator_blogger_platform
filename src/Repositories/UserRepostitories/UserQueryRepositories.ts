@@ -14,7 +14,7 @@ export const UserQueryRepositories = {
                 [query.sortBy!]: query.sortDirection!
             }
             const filter = {
-                $and: [
+                $or: [
                     {login: {$regex: query.searchLoginTerm, $options: 'i'}},
                     {email: {$regex: query.searchEmailTerm, $options: 'i'}}
                 ]

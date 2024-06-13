@@ -36,10 +36,15 @@ BlogRouter.get('/:id', async (req: Request<{id: string}>, res: Response<BlogView
 })
 
 BlogRouter.get(`/:id${ROUTERS_SETTINGS.BLOG.blogs_posts}`, 
-async (req: Request<{id: string}, {}, {}, SortAndPaginationQueryType>, res: Response<PostsViewModelType>) => {
+async (req: Request<{id: string}, {}, {}, SortAndPaginationQueryType>, res: Response<PostsViewModelType | null>) => {
     try {
+        const getBlog = await BlogQueryRepositories.GetBlogById(req.params.id)
+        if (!getBlog) {
+            return res.status(404).json(null)
+        }
+        
         const queryValue: SortAndPaginationQueryType = await defaultValueBasic.defaultPaginationAndSortValues(req.query)
-        const result = await PostQueryRepositories.GetAllBlogs(queryValue)
+        const result = await PostQueryRepositories.GetAllPost(queryValue)
         return res.status(200).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.BLOG.blogs}/:id${ROUTERS_SETTINGS.BLOG.blogs_posts}`, 'GET', 'Get all the post items by blog ID', e)

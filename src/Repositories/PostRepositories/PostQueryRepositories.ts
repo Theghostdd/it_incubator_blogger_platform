@@ -11,7 +11,7 @@ import { MONGO_SETTINGS } from "../../settings"
 
 
 export const PostQueryRepositories = {
-    async GetAllBlogs (query: SortAndPaginationQueryType): Promise<PostsViewModelType> {
+    async GetAllPost (query: SortAndPaginationQueryType): Promise<PostsViewModelType> {
         try {
             const sort = {
                 [query.sortBy!]: query.sortDirection!
@@ -32,7 +32,7 @@ export const PostQueryRepositories = {
         }
     },
 
-    async GetBlogById (id: string): Promise<PostViewModelType | null> {
+    async GetPostById (id: string): Promise<PostViewModelType | null> {
         try {
             const result = await db.collection<PostViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.posts).findOne({_id: new ObjectId(id)})
             return result ? await map.mapPost(result, null) : null

@@ -15,7 +15,7 @@ export const PostRouter = Router()
 PostRouter.get('/', async (req: Request<{},{},{},SortAndPaginationQueryType>, res: Response<PostsViewModelType>) => {
     try {
         const queryValue: SortAndPaginationQueryType = await defaultValueBasic.defaultPaginationAndSortValues(req.query)
-        const result = await PostQueryRepositories.GetAllBlogs(queryValue)
+        const result = await PostQueryRepositories.GetAllPost(queryValue)
         return res.status(200).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/`, 'GET', 'GET all a post items', e)
@@ -25,7 +25,7 @@ PostRouter.get('/', async (req: Request<{},{},{},SortAndPaginationQueryType>, re
 
 PostRouter.get('/:id', async (req: Request<{id: string}>, res: Response<PostViewModelType | null>) => {
     try {
-        const result = await PostQueryRepositories.GetBlogById(req.params.id)
+        const result = await PostQueryRepositories.GetPostById(req.params.id)
         return result ? res.status(200).json(result) : res.status(404).json(null)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/:id`, 'GET', 'GET the post item by ID', e)
