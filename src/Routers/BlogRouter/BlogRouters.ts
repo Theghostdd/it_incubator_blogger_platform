@@ -42,9 +42,9 @@ async (req: Request<{id: string}, {}, {}, SortAndPaginationQueryType>, res: Resp
         if (!getBlog) {
             return res.status(404).json(null)
         }
-        
+
         const queryValue: SortAndPaginationQueryType = await defaultValueBasic.defaultPaginationAndSortValues(req.query)
-        const result = await PostQueryRepositories.GetAllPost(queryValue)
+        const result = await PostQueryRepositories.GetAllPost(queryValue, req.params.id)
         return res.status(200).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.BLOG.blogs}/:id${ROUTERS_SETTINGS.BLOG.blogs_posts}`, 'GET', 'Get all the post items by blog ID', e)

@@ -11,16 +11,20 @@ import { MONGO_SETTINGS } from "../../settings"
 
 
 export const PostQueryRepositories = {
-    async GetAllPost (query: SortAndPaginationQueryType): Promise<PostsViewModelType> {
+    async GetAllPost (query: SortAndPaginationQueryType, blogId?: string): Promise<PostsViewModelType> {
         try {
             const sort = {
                 [query.sortBy!]: query.sortDirection!
             }
 
-            const pagination: CreatePaginationType = await PostService.CreatePagination(query.pageNumber!, query.pageSize!)
+            const filter = {
+                blogId: blogId ? blogId : {$ne: ''}
+            }
+
+            const pagination: CreatePaginationType = await PostService.CreatePagination(query.pageNumber!, query.pageSize!, filter)
 
             const result = await db.collection<PostViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.posts)
-                .find()
+                .find(filter)
                 .sort(sort)
                 .skip(pagination.skip)
                 .limit(pagination.pageSize)
@@ -41,9 +45,9 @@ export const PostQueryRepositories = {
         }
     },
 
-    async GetCountElements (): Promise<number> {
+    async GetCountElements (filter: Object): Promise<number> {
         try {
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).countDocuments()
+            return await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).countDocuments(filter)
         } catch (e: any) {
             throw new Error(e)
         }
