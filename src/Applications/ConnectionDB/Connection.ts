@@ -1,17 +1,16 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import { SETTINGS } from "../../settings"; 
-import fs from 'fs'
-import { SaveError } from "../../Service/ErrorService/ErrorService";
+import { MONGO_SETTINGS } from "../../settings"; 
+import { SaveError } from "../../Utils/error-utils/save-error";
 
 // Connect MongoDb 
-export const client = new MongoClient(SETTINGS.MONGO.URL_CLOUD, {
+export const client = new MongoClient(MONGO_SETTINGS.URL, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
   },
 });
-export const db = client.db(SETTINGS.MONGO.DB_NAME)
+export const db = client.db(MONGO_SETTINGS.DB_NAME)
 export async function startDB() {
     try {
         await client.connect()

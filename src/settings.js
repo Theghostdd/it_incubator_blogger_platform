@@ -1,8 +1,9 @@
-import { config } from 'dotenv'
-config()
-
-
-export const ROUTERS_SETTINGS = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthData = exports.SETTINGS = exports.MONGO_SETTINGS = exports.ROUTERS_SETTINGS = void 0;
+var dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
+exports.ROUTERS_SETTINGS = {
     BLOG: {
         blogs: '/api/blogs',
         blogs_posts: '/posts'
@@ -21,9 +22,8 @@ export const ROUTERS_SETTINGS = {
         test: '/api/testing',
         test_all_data: '/all-data'
     }
-}
-
-export const MONGO_SETTINGS = {
+};
+exports.MONGO_SETTINGS = {
     URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
     URL_CLOUD: process.env.MONGO_CLOUD_ULR || 'mongodb://0.0.0.0:27017',
     DB_NAME: 'blog_platform',
@@ -32,16 +32,14 @@ export const MONGO_SETTINGS = {
         blogs: 'blogs',
         users: 'users'
     }
-}
-
-export const SETTINGS = {
+};
+exports.SETTINGS = {
     PORT: process.env.PORT || "3000",
     SALTRounds: 10
-}
-
-export const AuthData = [
+};
+exports.AuthData = [
     {
         login: "admin",
         encode: "YWRtaW46cXdlcnR5"
     }
-]
+];

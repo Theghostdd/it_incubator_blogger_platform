@@ -1,19 +1,19 @@
 import express from 'express'
 import cors from 'cors'
-import { SETTINGS } from './settings'
+import { ROUTERS_SETTINGS, SETTINGS } from './settings'
 import { BlogRouter } from './Routers/BlogRouter/BlogRouters'
 import { PostRouter } from './Routers/PostRouter/PostRouter'
-import { TestRouter } from './Routers/TestRouter/TestRouter'
 import { UserRouter } from './Routers/UserRouter/UserRouter'
 import { AuthRouter } from './Routers/AuthRouter/AuthRouter'
+import { TestRouter } from './Routers/test-router/test-router'
 
 export const app = express()
 
 app.use(express.json())
 app.use(cors())
 
-app.use(SETTINGS.PATH.BLOG, BlogRouter)
-app.use(SETTINGS.PATH.POST, PostRouter)
-app.use(SETTINGS.PATH_TEST.TEST, TestRouter)
-app.use(SETTINGS.PATH.USER, UserRouter)
-app.use(SETTINGS.PATH.AUTH, AuthRouter)
+app.use(ROUTERS_SETTINGS.BLOG.blogs, BlogRouter)
+app.use(ROUTERS_SETTINGS.POST.post, PostRouter)
+app.use(ROUTERS_SETTINGS.TEST.test, TestRouter)
+app.use(ROUTERS_SETTINGS.USER.user, UserRouter)
+app.use(ROUTERS_SETTINGS.AUTH.auth, AuthRouter)
