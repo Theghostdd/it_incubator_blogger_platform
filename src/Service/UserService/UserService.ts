@@ -30,10 +30,10 @@ export const UserService = {
         }
     },
 
-    async DeleteUserById (id: string): Promise<number> {
+    async DeleteUserById (id: string): Promise<boolean> {
         try {
             const result: DeletedMongoSuccessType = await UserRepositories.DeleteUserById(id)
-            return result.deletedCount > 0 ? 204 : 404
+            return result.deletedCount > 0 ? true : false
         } catch (e: any) {
             throw new Error(e)
         }

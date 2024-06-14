@@ -15,7 +15,7 @@ export const PostRouter = Router()
 PostRouter.get('/', async (req: Request<{},{},{},SortAndPaginationQueryType>, res: Response<PostsViewModelType>) => {
     try {
         const queryValue: SortAndPaginationQueryType = await defaultValueBasic.defaultPaginationAndSortValues(req.query)
-        const result = await PostQueryRepositories.GetAllPost(queryValue)
+        const result: PostsViewModelType = await PostQueryRepositories.GetAllPost(queryValue)
         return res.status(200).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/`, 'GET', 'GET all a post items', e)
@@ -25,7 +25,7 @@ PostRouter.get('/', async (req: Request<{},{},{},SortAndPaginationQueryType>, re
 
 PostRouter.get('/:id', async (req: Request<{id: string}>, res: Response<PostViewModelType | null>) => {
     try {
-        const result = await PostQueryRepositories.GetPostById(req.params.id)
+        const result: PostViewModelType | null = await PostQueryRepositories.GetPostById(req.params.id)
         return result ? res.status(200).json(result) : res.status(404).json(null)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/:id`, 'GET', 'GET the post item by ID', e)
@@ -42,7 +42,7 @@ RuleValidations.validBlogId,
 inputValidation,
 async (req: Request<{}, {}, PostInputModelType>, res: Response<PostViewModelType | null>) => {
     try {
-        const result = await PostService.CreatePostItemByBlogId(req.body)
+        const result: PostViewModelType | null = await PostService.CreatePostItemByBlogId(req.body)
         return result ? res.status(201).json(result) : res.status(404).json(null)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/`, 'POST', 'Create the post by blog`s ID', e)
@@ -59,8 +59,8 @@ RuleValidations.validBlogId,
 inputValidation,
     async (req: Request<{id: string}, {}, PostInputModelType>, res: Response) => {
         try {
-            const result = await PostService.UpdatePostById(req.params.id, req.body)
-            return res.sendStatus(result)
+            const result: boolean = await PostService.UpdatePostById(req.params.id, req.body)
+            return result ? res.sendStatus(204) : res.sendStatus(404)
         } catch (e) {
             SaveError(`${ROUTERS_SETTINGS.POST.post}/:id`, 'PUT', 'Update the post by ID', e)
             return res.sendStatus(500)
@@ -71,8 +71,8 @@ PostRouter.delete('/:id',
 authValidation,
 async (req: Request<{id: string}>, res: Response) => {
     try {
-        const result = await PostService.DeletePostById(req.params.id)
-        return res.sendStatus(result)
+        const result: boolean = await PostService.DeletePostById(req.params.id)
+        return result ? res.sendStatus(204) : res.sendStatus(404)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/:id`, 'DELETE', 'Delete the post by ID', e)
         return res.sendStatus(500)

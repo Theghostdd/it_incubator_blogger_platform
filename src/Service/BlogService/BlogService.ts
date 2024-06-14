@@ -18,19 +18,19 @@ export const BlogService = {
         }
     },
 
-    async UpdateBlogById (id: string, data: BlogInputModelType): Promise<number> {
+    async UpdateBlogById (id: string, data: BlogInputModelType): Promise<boolean> {
         try {
             const result: UpdateMongoSuccessType = await BlogRepositories.UpdateBlogById(id, data)
-            return result.matchedCount > 0 ? 204 : 404
+            return result.matchedCount > 0 ? true : false
         } catch (e: any) {
             throw new Error(e)
         }
     },
 
-    async DeleteBlogById (id: string): Promise<number> {
+    async DeleteBlogById (id: string): Promise<boolean> {
         try {
             const result: DeletedMongoSuccessType = await BlogRepositories.DeleteBlogById(id)
-            return result.deletedCount > 0 ? 204 : 404
+            return result.deletedCount > 0 ? true : false
         } catch (e: any) {
             throw new Error(e)
         }

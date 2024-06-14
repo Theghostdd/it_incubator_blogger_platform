@@ -17,7 +17,7 @@ authValidation,
 async (req: Request<{}, {}, {}, UserQueryParamsType>, res: Response<UsersViewModelType>) => {
     try {
         const queryValue: UserQueryParamsType = await defaultUserValues.defaultQueryValue(req.query)
-        const result = await UserQueryRepositories.GetAllUsers(queryValue)
+        const result: UsersViewModelType = await UserQueryRepositories.GetAllUsers(queryValue)
         return res.status(200).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.USER.user}/`, 'GET', 'Get a user items', e)
@@ -33,7 +33,7 @@ RuleValidations.validEmail,
 inputValidation,
 async (req: Request<{}, {}, UserInputModelType>, res: Response<UserViewModelType | APIErrorsMessageType>) => {
     try {
-        const result = await UserService.CreateUserItem(req.body)
+        const result: UserViewModelType | APIErrorsMessageType = await UserService.CreateUserItem(req.body)
         return ('errorsMessages' in result) ? res.status(400).json(result) : res.status(201).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.USER.user}/`, 'POST', 'Create the user item', e)
@@ -45,8 +45,8 @@ UserRouter.delete('/:id',
 authValidation,
 async (req: Request<{id: string}>, res: Response) => {
     try {
-        const result = await UserService.DeleteUserById(req.params.id)
-        return res.sendStatus(result)
+        const result: boolean = await UserService.DeleteUserById(req.params.id)
+        return result ? res.sendStatus(204) : res.sendStatus(404)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.USER.user}/:id`, 'DELETE', 'Delete the user item by ID', e)
         return res.sendStatus(500)

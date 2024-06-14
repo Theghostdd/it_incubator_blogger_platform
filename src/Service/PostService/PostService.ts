@@ -28,19 +28,19 @@ export const PostService = {
         }
     },
 
-    async UpdatePostById (id: string, data: PostInputModelType): Promise<number> {
+    async UpdatePostById (id: string, data: PostInputModelType): Promise<boolean> {
         try {
             const result: UpdateMongoSuccessType = await PostRepositories.UpdatePostById(id, data)
-            return result.matchedCount > 0 ? 204 : 404
+            return result.matchedCount > 0 ? true : false
         } catch (e: any) {
             throw new Error(e)
         }   
     },
 
-    async DeletePostById (id: string): Promise<number> {
+    async DeletePostById (id: string): Promise<boolean> {
         try {
             const result: DeletedMongoSuccessType = await PostRepositories.DeletePostById(id)
-            return result.deletedCount > 0 ? 204 : 404
+            return result.deletedCount > 0 ? true : false
         } catch (e: any) {
             throw new Error(e)
         }
