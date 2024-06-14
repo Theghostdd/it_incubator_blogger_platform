@@ -2,9 +2,9 @@ import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
 import { CreatePaginationType, SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes"
 import { PostViewModelType, PostViewMongoModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes"
-import { PostService } from "../../Service/PostService/PostService"
 import { map } from "../../Utils/map/map"
 import { MONGO_SETTINGS } from "../../settings"
+import { createPostPagination } from "../../Utils/pagination/PostPagination"
 
 
 
@@ -21,7 +21,7 @@ export const PostQueryRepositories = {
                 blogId: blogId ? blogId : {$ne: ''}
             }
 
-            const pagination: CreatePaginationType = await PostService.CreatePagination(query.pageNumber!, query.pageSize!, filter)
+            const pagination: CreatePaginationType = await createPostPagination(query.pageNumber!, query.pageSize!, filter)
 
             const result = await db.collection<PostViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.posts)
                 .find(filter)

@@ -2,8 +2,8 @@ import { db } from "../../Applications/ConnectionDB/Connection"
 import { LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { CreatePaginationType } from "../../Applications/Types-Models/BasicTypes"
 import { UserInputModelType, UserQueryParamsType, UserViewModelType, UserViewMongoModelType, UsersViewModelType } from "../../Applications/Types-Models/User/UserTypes"
-import { UserService } from "../../Service/UserService/UserService"
 import { map } from "../../Utils/map/map"
+import { CreateUserPagination } from "../../Utils/pagination/UserPagination"
 import { MONGO_SETTINGS } from "../../settings"
 
 
@@ -20,7 +20,7 @@ export const UserQueryRepositories = {
                 ]
             }
 
-            const pagination: CreatePaginationType = await UserService.CreatePagination(query.pageNumber!, query.pageSize!, filter)
+            const pagination: CreatePaginationType = await CreateUserPagination(query.pageNumber!, query.pageSize!, filter)
 
             const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users)
                 .find(filter)

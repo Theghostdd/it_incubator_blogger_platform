@@ -5,17 +5,19 @@ import { UserQueryRepositories } from "../../Repositories/UserRepostitories/User
 
 
 export const AuthService = {
-    async AuthUser (data: LoginInputModelType): Promise<number> {
+    async AuthUser (data: LoginInputModelType): Promise<boolean> {
+        try {
+            const getUser: UserViewMongoModelType | null = await UserQueryRepositories.GetUserByLoginOrEmailWithOutMap(data)
+            if (!getUser) {
+                return false
+            }
 
-        const getUser: UserViewMongoModelType | null = await UserQueryRepositories.GetUserByLoginOrEmailWithOutMap(data)
-        if (!getUser) {
-            return 401
+            if (!await comparePass(data.password, getUser.password)) {
+                return false
+            }
+            return true
+        } catch (e: any) {
+            throw new Error(e)
         }
-
-        if (!await comparePass(data.password, getUser.password)) {
-            return 401
-        }
-
-        return 204
     }
 }

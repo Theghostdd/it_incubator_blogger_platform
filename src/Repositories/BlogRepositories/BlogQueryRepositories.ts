@@ -2,9 +2,9 @@ import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
 import { CreatePaginationType } from "../../Applications/Types-Models/BasicTypes"
 import { BlogQueryParamsType, BlogViewModelType, BlogViewMongoModelType, BlogsViewModelType } from "../../Applications/Types-Models/Blog/BlogTypes"
-import { BlogService } from "../../Service/BlogService/BlogService"
 import { map } from "../../Utils/map/map"
 import { MONGO_SETTINGS } from "../../settings"
+import { createBlogsPagination } from "../../Utils/pagination/BlogPagination"
 
 
 
@@ -19,7 +19,7 @@ export const BlogQueryRepositories = {
                 name: {$regex: query.searchNameTerm, $options: 'i'}
             }
 
-            const pagination: CreatePaginationType = await BlogService.CreatePagination(query.pageNumber!, query.pageSize!, filter)
+            const pagination: CreatePaginationType = await createBlogsPagination(query.pageNumber!, query.pageSize!, filter)
 
             const result = await db.collection<BlogViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.blogs)
                 .find(filter)

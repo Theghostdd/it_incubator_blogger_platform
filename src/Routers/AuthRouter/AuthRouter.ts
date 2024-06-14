@@ -3,7 +3,7 @@ import { ROUTERS_SETTINGS } from "../../settings";
 import { AuthService } from "../../Service/AuthService/AuthService";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
 import { LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes";
-
+import { SaveError } from "../../Utils/error-utils/save-error";
 
 export const AuthRouter = Router()
 
@@ -11,7 +11,12 @@ AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
 RuleValidations.validLoginOrEmail,
 RuleValidations.validPassword,
 inputValidation,
-    async (req: Request<{}, {}, LoginInputModelType>, res: Response) => {
+async (req: Request<{}, {}, LoginInputModelType>, res: Response) => {
+    try {
         const result = await AuthService.AuthUser(req.body)
-        res.sendStatus(result)
+        return result ? res.sendStatus(204) : res.sendStatus(401)
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.login}`, 'POST', 'Login the user', e)
+        return res.sendStatus(500)
+    }
 })
