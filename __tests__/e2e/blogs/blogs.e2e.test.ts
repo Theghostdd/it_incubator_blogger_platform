@@ -1,10 +1,9 @@
-import { ObjectId } from 'mongodb';
-import { SETTINGS } from '../../../src/settings'
+import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
 import { TestModules } from '../modules/modules'
 
-describe(SETTINGS.PATH.BLOG, () => {
+describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
 
-    const endpoint: string = SETTINGS.PATH.BLOG
+    const endpoint: string = ROUTERS_SETTINGS.BLOG.blogs
 
     let InspectData: any;
     let query = {}
@@ -58,22 +57,22 @@ describe(SETTINGS.PATH.BLOG, () => {
         })
 
         const ElementId = CreateElementResult.id
-        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId)
+        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId, InspectData)
         expect(GetCreatedElementResult).toEqual(CreateElementResult) 
 
-        const GetElementResult = await TestModules.GetElementById(endpoint, 404, "66632889ba80092799c0ed81")
+        const GetElementResult = await TestModules.GetElementById(endpoint, 404, "66632889ba80092799c0ed81", InspectData)
     })
 
     it('POST => PUT => GET | should update a blog item, status: 204 and get the item by ID, status: 200', async () => {
         const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 204, ElementId, DataUpdate, InspectData)
 
-        const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId)
+        const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId, InspectData)
         expect(GetUpdatedElementResult).toEqual({...returnValues, ...DataUpdate})
     })
 
     it('POST => DELETE => GET | should delete a blog item, status: 204 and should`t get the item by ID, status: 404', async () => {
         let DeleteElementResult = await TestModules.DeleteElementById(endpoint, 204, ElementId, InspectData)
-        const GetElementResult = await TestModules.GetElementById(endpoint, 404, ElementId)
+        const GetElementResult = await TestModules.GetElementById(endpoint, 404, ElementId, InspectData)
         DeleteElementResult = await TestModules.DeleteElementById(endpoint, 404, ElementId, InspectData)
     })
 
@@ -231,9 +230,9 @@ describe(SETTINGS.PATH.BLOG, () => {
                 isMembership: false
             },
         ]
-        const CreateManyResult = await TestModules.InsertManyDataMongoDB(SETTINGS.MONGO.COLLECTIONS.blogs, CreateManyData)
+        const CreateManyResult = await TestModules.InsertManyDataMongoDB(MONGO_SETTINGS.COLLECTIONS.blogs, CreateManyData)
 
-        let GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        let GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 2,
             page: 1,
@@ -250,7 +249,7 @@ describe(SETTINGS.PATH.BLOG, () => {
             sortBy: null,
             sortDirection: null
         }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 1,
             page: 1,
@@ -267,7 +266,7 @@ describe(SETTINGS.PATH.BLOG, () => {
             sortBy: null,
             sortDirection: null
         }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 2,
             page: 2,
@@ -284,7 +283,7 @@ describe(SETTINGS.PATH.BLOG, () => {
             sortBy: null,
             sortDirection: null
         }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 1,
             page: 1,
@@ -377,7 +376,7 @@ describe(SETTINGS.PATH.BLOG, () => {
         const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
         const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, "66632889ba80092799", DataUpdate, InspectData)
         const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 500, "66632889ba80092799", InspectData)
-        const GetElementResult = await TestModules.GetElementById(endpoint, 500, "66632889ba80092799")
+        const GetElementResult = await TestModules.GetElementById(endpoint, 500, "66632889ba80092799", InspectData)
     })
 })
 

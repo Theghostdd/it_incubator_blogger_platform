@@ -1,7 +1,6 @@
 import request from "supertest"
 import { app } from "../../../src/app"
-import { SETTINGS } from "../../../src/settings"
-import { InspectType } from '../../../src/Applications/Types/Types';
+import { ROUTERS_SETTINGS } from "../../../src/settings"
 import { db } from "../../../src/Applications/ConnectionDB/Connection";
 
 const GetRequest = () => {
@@ -9,6 +8,14 @@ const GetRequest = () => {
 }
 
 export const TestModules = {
+    async LoginModule (endpoint: string, status: number, LoginData: any, InspectData: any) {
+        const result = await GetRequest()
+        .post(endpoint)
+        .send(LoginData)
+        .expect(status)
+    return result.body
+    },
+
     async CreateElement (endpoint: string, status: number, CreateData: any, InspectData: any) {
         const result = await GetRequest()
             .post(endpoint)
@@ -18,17 +25,19 @@ export const TestModules = {
         return result.body
     },
 
-    async GetElementById (endpoint: string, status: number, id: string | number) {
+    async GetElementById (endpoint: string, status: number, id: string | number, InspectData: any) {
         const result = await GetRequest()
             .get(`${endpoint}/${id}`)
+            .set({'Authorization': InspectData.headers.basic_auth})
             .expect(status)
 
         return result.body;
     },
 
-    async GetAllElements (endpoint: string, status: number, query: any) {
+    async GetAllElements (endpoint: string, status: number, query: any, InspectData: any) {
         const result = await GetRequest()
             .get(endpoint)
+            .set({'Authorization': InspectData.headers.basic_auth})
             .query(query)
             .expect(status)
         return result.body;
@@ -53,7 +62,7 @@ export const TestModules = {
 
     async DeleteAllElements () {
         const result = await GetRequest()
-            .delete(`${SETTINGS.PATH_TEST.TEST}/${SETTINGS.PATH_TEST.TEST_ALL_DATA}`)
+            .delete(`${ROUTERS_SETTINGS.TEST.test}/${ROUTERS_SETTINGS.TEST.test_all_data}`)
             .expect(204)
         return;
     },

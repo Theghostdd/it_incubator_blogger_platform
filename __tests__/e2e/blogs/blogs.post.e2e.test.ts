@@ -1,17 +1,19 @@
-import { SETTINGS } from "../../../src/settings";
+import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
 import { TestModules } from "../modules/modules";
 
-describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () => {
+describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_posts, () => {
 
 
-    const endpoint: string = SETTINGS.PATH.BLOG
-    const additionalEndpointPost: string = SETTINGS.PATH.additionalBlog.posts
-
+    const endpoint: string = ROUTERS_SETTINGS.BLOG.blogs
+    const additionalEndpointPost: string = ROUTERS_SETTINGS.BLOG.blogs_posts
+    let endpointBlogAndPost: string
     let InspectData: any;
     let query: any = {}
     let CreateData: any = {}
     let idBlog: string;
     let blogName: string;
+
+
 
     beforeEach(async () => {
         const result = await TestModules.DeleteAllElements()
@@ -36,6 +38,8 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             shortDescription: "Some short description",
             content: "Some content"
         }
+
+        endpointBlogAndPost = `${endpoint}/${idBlog}${ROUTERS_SETTINGS.BLOG.blogs_posts}`
     })
 
     afterAll(async () => {
@@ -43,7 +47,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
     })
 
     it(`POST => GET | should create a post item by blog ID, status: 201, return the item and get the item by ID, status: 200, and 404 if the item not found`, async () => {
-        const CreateElementResult = await TestModules.CreateElement(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 201, CreateData, InspectData)
+        const CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 201, CreateData, InspectData)
         expect(CreateElementResult).toEqual({
             id: expect.any(String),
             title: CreateData.title,
@@ -56,7 +60,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
 
         const returnValues = {...CreateElementResult}
 
-        const GetCreatedElementResult = await TestModules.GetAllElements(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 200, query)
+        const GetCreatedElementResult = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
         expect(GetCreatedElementResult).toEqual({
             pagesCount: 1,
             page: 1,
@@ -69,11 +73,10 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             ]
         })
 
-        const GetElementResult = await TestModules.GetAllElements(`${endpoint}/66632889ba80092799c0ed81/${additionalEndpointPost}`, 404, query) 
+        const GetElementResult = await TestModules.GetAllElements(`${endpoint}/66632889ba80092799c0ed81${additionalEndpointPost}`, 404, query, InspectData) 
     })
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
-
         const CreateManyData = [
             {
                 title: 'Post is number 1',
@@ -175,9 +178,9 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             },
         ]
 
-        const CreateManyResult = await TestModules.InsertManyDataMongoDB(SETTINGS.MONGO.COLLECTIONS.posts, CreateManyData)
+        const CreateManyResult = await TestModules.InsertManyDataMongoDB(MONGO_SETTINGS.COLLECTIONS.posts, CreateManyData)
 
-        let GetAllElements = await TestModules.GetAllElements(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 200, query)
+        let GetAllElements = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 2,
             page: 1,
@@ -194,7 +197,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             sortBy: null,
             sortDirection: null
         }
-        GetAllElements = await TestModules.GetAllElements(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 2,
             page: 2,
@@ -211,7 +214,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             sortBy: null,
             sortDirection: null
         }
-        GetAllElements = await TestModules.GetAllElements(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 200, query)
+        GetAllElements = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
         expect(GetAllElements).toEqual({
             pagesCount: 1,
             page: 1,
@@ -228,7 +231,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             shortDescription: "Some short description",
             content: "Some content"
         }
-        let CreateElementResult = await TestModules.CreateElement(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 400, CreateData, InspectData)
+        let CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 400, CreateData, InspectData)
         expect(CreateElementResult).toEqual({
             errorsMessages: [
                 {
@@ -243,7 +246,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             shortDescription: "",
             content: "Some content"
         }
-        CreateElementResult = await TestModules.CreateElement(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 400, CreateData, InspectData)
+        CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 400, CreateData, InspectData)
         expect(CreateElementResult).toEqual({
             errorsMessages: [
                 {
@@ -262,7 +265,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             shortDescription: "",
             content: ""
         }
-        CreateElementResult = await TestModules.CreateElement(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 400, CreateData, InspectData)
+        CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 400, CreateData, InspectData)
         expect(CreateElementResult).toEqual({
             errorsMessages: [
                 {
@@ -289,7 +292,7 @@ describe(SETTINGS.PATH.BLOG + '/:id/' +SETTINGS.PATH.additionalBlog.posts, () =>
             }
         }
 
-        const CreateElementResult = await TestModules.CreateElement(`${endpoint}/${idBlog}/${additionalEndpointPost}`, 401, CreateData, InspectData)
+        const CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 401, CreateData, InspectData)
     })
 })
 
