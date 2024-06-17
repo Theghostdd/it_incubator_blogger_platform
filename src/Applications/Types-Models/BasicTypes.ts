@@ -51,7 +51,6 @@ export type DeletedMongoSuccessType = {
 *   API Error Types 
 *
 */
-
 export type APIErrorsMessageType = {
     errorsMessages: APIErrorMessageType[]
 }
@@ -59,4 +58,12 @@ export type APIErrorsMessageType = {
 type APIErrorMessageType = {
     message: string,
     field: string
+}
+/*
+*
+*   JWT Type
+*
+*/
+export type JwtType = {
+    accessToken: string
 }

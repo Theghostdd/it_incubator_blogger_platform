@@ -36,7 +36,8 @@ export const MONGO_SETTINGS = {
 
 export const SETTINGS = {
     PORT: process.env.PORT || "3000",
-    SALTRounds: 10
+    SALTRounds: 10,
+    JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY || "SecretKey"
 }
 
 export const AuthData = [

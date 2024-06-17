@@ -1,3 +1,5 @@
+import { JwtType } from "../BasicTypes"
+
 /*
 *
 *
@@ -9,3 +11,6 @@ export type LoginInputModelType = {
     loginOrEmail: string,
     password: string
 }
+
+export type AuthOutputType = JwtType
+
