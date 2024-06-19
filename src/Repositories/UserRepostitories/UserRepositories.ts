@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
 import { CreatedMongoSuccessType, DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
-import { UserCreateInputModelType } from "../../Applications/Types-Models/User/UserTypes"
+import { UserCreateInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { MONGO_SETTINGS } from "../../settings"
 
 
@@ -21,6 +21,14 @@ export const UserRepositories = {
     async DeleteUserById (id: string): Promise<DeletedMongoSuccessType> {
         try {
             return await db.collection(MONGO_SETTINGS.COLLECTIONS.users).deleteOne({_id: new ObjectId(id)})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+    async GetUserByIdWithoutMap (id: string): Promise<UserViewMongoModelType | null> {
+        try {
+            return await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({_id: new ObjectId(id)})
         } catch (e: any) {
             throw new Error(e)
         }

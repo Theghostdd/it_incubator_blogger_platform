@@ -3,8 +3,8 @@ import { APIErrorsMessageType, CreatePaginationType, CreatedMongoSuccessType, De
 import { UserCreateInputModelType, UserInputModelType, UserViewModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
-import { defaultUserValues } from "../../Utils/default-values/default-values"
-import { map } from "../../Utils/map/map"
+import { defaultUserValues } from "../../Utils/default-values/User/default-user-value"
+import { UserMap } from "../../Utils/map/User/UserMap"
 
 
 
@@ -21,10 +21,10 @@ export const UserService = {
                 return errors
             }
 
-            const CreateData: UserCreateInputModelType = {...data, password: await genSaltAndHash(data.password), ...await defaultUserValues.defaultCreateValues()}
+            const CreateData: UserCreateInputModelType = {...data, password: await genSaltAndHash(data.password), ...await defaultUserValues.defaultCreateValue()}
             const result: CreatedMongoSuccessType = await UserRepositories.CreateUser(CreateData)
 
-            return await map.mapUser(CreateData, result)
+            return await UserMap.mapUser(CreateData, result)
         } catch (e: any) {
             throw new Error(e)
         }

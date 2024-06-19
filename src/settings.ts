@@ -5,17 +5,19 @@ config()
 export const ROUTERS_SETTINGS = {
     BLOG: {
         blogs: '/api/blogs',
-        blogs_posts: '/posts'
+        blogs_posts: '/posts',
     },
     POST: {
-        post: '/api/posts'
+        post: '/api/posts',
+        comments: '/comments'
     },
     USER: {
         user: '/api/users'
     },
     AUTH: {
         auth: '/api/auth',
-        login: '/login'
+        login: '/login',
+        me: '/me'
     },
     TEST: {
         test: '/api/testing',
@@ -30,7 +32,8 @@ export const MONGO_SETTINGS = {
     COLLECTIONS: {
         posts: 'posts',
         blogs: 'blogs',
-        users: 'users'
+        users: 'users',
+        comments: 'comments'
     }
 }
 

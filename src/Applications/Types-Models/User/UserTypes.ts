@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 import { PaginationType, SortAndPaginationQueryType } from "../BasicTypes"
 
 /*
@@ -52,9 +53,21 @@ export type UserQueryParamsType = SortAndPaginationQueryType & {
 *
 */
 export type UserViewMongoModelType = {
-    _id: string,
+    _id: ObjectId,
     login: string,
     password: string,
     email: string,
     createdAt: string
+}
+/*
+*
+*
+*       User me model type
+*
+*
+*/
+export type UserMeModelViewType = {
+    login: string,
+    email: string,
+    userId: string
 }

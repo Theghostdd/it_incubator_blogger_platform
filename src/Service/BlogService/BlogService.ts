@@ -1,9 +1,8 @@
-import { CreatePaginationType, CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
+import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { BlogCreateInputModelType, BlogInputModelType, BlogViewModelType } from "../../Applications/Types-Models/Blog/BlogTypes"
-import { BlogQueryRepositories } from "../../Repositories/BlogRepositories/BlogQueryRepositories"
 import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogRepositories"
-import { defaultBlogValues } from "../../Utils/default-values/default-values"
-import { map } from "../../Utils/map/map"
+import { defaultBlogValues } from "../../Utils/default-values/Blog/default-blog-value"
+import { BlogMapper } from "../../Utils/map/Blog/BlogMap"
 
 export const BlogService = {
 
@@ -12,7 +11,7 @@ export const BlogService = {
             const CreateData: BlogCreateInputModelType = {...data, ...await defaultBlogValues.defaultCreateValues()}
             const result: CreatedMongoSuccessType = await BlogRepositories.CreateBlog(CreateData)
 
-            return await map.mapBlog(CreateData, result)
+            return await BlogMapper.mapBlog(CreateData, result)
         } catch (e: any) {
             throw new Error(e)
         }

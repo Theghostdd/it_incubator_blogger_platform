@@ -67,3 +67,31 @@ type APIErrorMessageType = {
 export type JwtType = {
     accessToken: string
 }
+
+export type PayloadJwtToken = {
+    userId: string
+}
+
+
+
+
+
+/*
+*
+*   Response Notification Type Enum
+*
+*/
+export enum ResultNotificationEnum {
+    'Success' = 'Success',
+    'NotFound' = 'NotFound',
+    'BadRequest' = 'BadRequest',
+    'Forbidden' = 'Forbidden',
+    'Unauthorized' = 'Unauthorized'
+}
+
+export type ResultNotificationType<T = null> = {
+    status: ResultNotificationEnum,
+    errorMessage?: string,
+    errorField?: APIErrorsMessageType
+    data?: T
+}

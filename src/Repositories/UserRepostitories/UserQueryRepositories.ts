@@ -1,10 +1,11 @@
+import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
 import { LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
-import { CreatePaginationType } from "../../Applications/Types-Models/BasicTypes"
-import { UserInputModelType, UserQueryParamsType, UserViewModelType, UserViewMongoModelType, UsersViewModelType } from "../../Applications/Types-Models/User/UserTypes"
-import { map } from "../../Utils/map/map"
+import { CreatePaginationType, PayloadJwtToken } from "../../Applications/Types-Models/BasicTypes"
+import { UserInputModelType, UserMeModelViewType, UserQueryParamsType, UserViewModelType, UserViewMongoModelType, UsersViewModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { CreateUserPagination } from "../../Utils/pagination/UserPagination"
 import { MONGO_SETTINGS } from "../../settings"
+import { UserMap } from "../../Utils/map/User/UserMap"
 
 
 export const UserQueryRepositories = {
@@ -29,7 +30,7 @@ export const UserQueryRepositories = {
                 .limit(pagination.pageSize)
                 .toArray()
 
-            return await map.mapUsers(result, pagination)
+            return await UserMap.mapUsers(result, pagination)
         } catch (e: any) { 
             throw new Error(e)
         }
@@ -44,7 +45,7 @@ export const UserQueryRepositories = {
                 ]
             }
             const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne(filter)
-            return result ? await map.mapUser(result, null) : null
+            return result ? await UserMap.mapUser(result, null) : null
         } catch (e: any) {
             throw new Error(e)
         }
@@ -60,6 +61,24 @@ export const UserQueryRepositories = {
             }
             const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne(filter)
             return result ? result : null
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+    async GetUserByIdAuthByJwtToken (id: string): Promise<PayloadJwtToken | null> {
+        try {
+            const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({_id: new ObjectId(id)})
+            return result ? await UserMap.UserMapperAuthByAccessToken(result) :  null
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+    async GetUserByIdAuthMe (id: string): Promise<UserMeModelViewType | null> {
+        try {
+            const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({_id: new ObjectId(id)})
+            return result ? await UserMap.UserMapperAuthMeView(result) : null
         } catch (e: any) {
             throw new Error(e)
         }

@@ -6,8 +6,8 @@ import { ROUTERS_SETTINGS } from "../../settings";
 import { UserInputModelType, UserQueryParamsType, UserViewModelType, UsersViewModelType } from "../../Applications/Types-Models/User/UserTypes";
 import { UserService } from "../../Service/UserService/UserService";
 import { APIErrorsMessageType } from "../../Applications/Types-Models/BasicTypes";
-import { defaultUserValues } from "../../Utils/default-values/default-values";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
+import { defaultUserValues } from "../../Utils/default-values/User/default-user-value";
 
 
 export const UserRouter = Router()

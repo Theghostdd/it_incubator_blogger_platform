@@ -12,5 +12,27 @@ export type LoginInputModelType = {
     password: string
 }
 
-export type AuthOutputType = JwtType
+
+
+
+
+
+
+/*
+*
+*
+*       Auth output model
+*
+*
+*/
+export type AuthOutputModelType = JwtType
+
+
+
+
+
+
+
+
+
 

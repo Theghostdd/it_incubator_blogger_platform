@@ -4,13 +4,14 @@ import { authValidation } from "../../Applications/Middleware/auth/AdminAuth";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { BlogInputModelType, BlogQueryParamsType, BlogViewModelType, BlogsViewModelType } from "../../Applications/Types-Models/Blog/BlogTypes";
-import { defaultBlogValues, defaultValueBasic } from "../../Utils/default-values/default-values";
 import { BlogQueryRepositories } from "../../Repositories/BlogRepositories/BlogQueryRepositories";
 import { BlogService } from "../../Service/BlogService/BlogService";
 import { PostInputModelType, PostViewModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes";
 import { PostService } from "../../Service/PostService/PostService";
 import { SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
+import { defaultBlogValues } from "../../Utils/default-values/Blog/default-blog-value";
+import { defaultPaginationAndSortValue } from "../../Utils/default-values/Pagination/default-pagination-and-sort-value";
 
 export const BlogRouter = Router()
 
@@ -43,7 +44,7 @@ async (req: Request<{id: string}, {}, {}, SortAndPaginationQueryType>, res: Resp
             return res.status(404).json(null)
         }
 
-        const queryValue: SortAndPaginationQueryType = await defaultValueBasic.defaultPaginationAndSortValues(req.query)
+        const queryValue: SortAndPaginationQueryType = await defaultPaginationAndSortValue.defaultPaginationAndSortValues(req.query)
         const result: PostsViewModelType = await PostQueryRepositories.GetAllPost(queryValue, req.params.id)
         return res.status(200).json(result)
     } catch (e) {
@@ -51,7 +52,6 @@ async (req: Request<{id: string}, {}, {}, SortAndPaginationQueryType>, res: Resp
         return res.sendStatus(500)
     }
 })
-
 
 BlogRouter.post('/', 
 authValidation,
