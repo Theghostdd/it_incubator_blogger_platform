@@ -1,7 +1,5 @@
 import { UserQueryParamsType } from "../../../Applications/Types-Models/User/UserTypes"
 
-
-
 export const defaultUserValues = {
     async defaultQueryValue (query: UserQueryParamsType): Promise<UserQueryParamsType> {
         return {

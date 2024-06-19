@@ -4,12 +4,12 @@ import { authValidation } from "../../Applications/Middleware/auth/AdminAuth";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { PostService } from "../../Service/PostService/PostService";
-import { PostInputModelType, PostViewModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes";
-import { ResultNotificationEnum, ResultNotificationType, SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes";
+import { PostInputModelType, PostQueryValues, PostViewModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes";
+import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
-import { defaultPaginationAndSortValue } from "../../Utils/default-values/Pagination/default-pagination-and-sort-value";
 import { CommentInputModelType, CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes";
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
+import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value";
 
 
 export const PostRouter = Router()
@@ -17,9 +17,9 @@ export const PostRouter = Router()
 /* 
 * Get all the post items with pagination 
 */
-PostRouter.get('/', async (req: Request<{},{},{},SortAndPaginationQueryType>, res: Response<PostsViewModelType>) => {
+PostRouter.get('/', async (req: Request<{},{},{},PostQueryValues>, res: Response<PostsViewModelType>) => {
     try {
-        const queryValue: SortAndPaginationQueryType = await defaultPaginationAndSortValue.defaultPaginationAndSortValues(req.query)
+        const queryValue: PostQueryValues = await defaultPostValues.defaultQueryValues(req.query)
         const result: PostsViewModelType = await PostQueryRepositories.GetAllPost(queryValue)
         return res.status(200).json(result)
     } catch (e) {

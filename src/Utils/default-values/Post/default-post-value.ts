@@ -1,10 +1,5 @@
 import { PostQueryValues } from "../../../Applications/Types-Models/Post/PostTypes"
 
-
-
-
-
-
 export const defaultPostValues = {
     async defaultQueryValues (query: PostQueryValues): Promise<PostQueryValues> {
         return {

@@ -44,7 +44,11 @@ export type BlogsViewModelType = PaginationType & {
 *
 *
 */
-export type BlogQueryParamsType = SortAndPaginationQueryType & {
+export type BlogQueryParamsType = {
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
+    pageNumber?: number,
+    pageSize?: number,
     searchNameTerm?: string
 }
 /*
@@ -62,5 +66,3 @@ export type BlogViewMongoModelType = {
     createdAt: string,
     isMembership: boolean
 }
-
-

@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
-import { CreatePaginationType, SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes"
+import { CreatePaginationType } from "../../Applications/Types-Models/BasicTypes"
 import { PostQueryValues, PostViewModelType, PostViewMongoModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes"
 import { MONGO_SETTINGS } from "../../settings"
 import { createPostPagination } from "../../Utils/pagination/PostPagination"

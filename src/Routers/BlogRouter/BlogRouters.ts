@@ -11,7 +11,6 @@ import { PostService } from "../../Service/PostService/PostService";
 import { ResultNotificationEnum, ResultNotificationType, SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
 import { defaultBlogValues } from "../../Utils/default-values/Blog/default-blog-value";
-import { defaultPaginationAndSortValue } from "../../Utils/default-values/Pagination/default-pagination-and-sort-value";
 import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value";
 
 export const BlogRouter = Router()
