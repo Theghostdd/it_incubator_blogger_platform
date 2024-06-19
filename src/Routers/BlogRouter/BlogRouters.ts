@@ -8,7 +8,7 @@ import { BlogQueryRepositories } from "../../Repositories/BlogRepositories/BlogQ
 import { BlogService } from "../../Service/BlogService/BlogService";
 import { PostInputModelType, PostQueryValues, PostViewModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes";
 import { PostService } from "../../Service/PostService/PostService";
-import { ResultNotificationEnum, ResultNotificationType, SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes";
+import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
 import { defaultBlogValues } from "../../Utils/default-values/Blog/default-blog-value";
 import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value";
@@ -53,7 +53,7 @@ BlogRouter.get('/:id', async (req: Request<{id: string}>, res: Response<BlogView
 * 5. Sends a 500 (Internal Server Error) response if an unexpected error occurs.
 */ 
 BlogRouter.get(`/:id${ROUTERS_SETTINGS.BLOG.blogs_posts}`, 
-async (req: Request<{id: string}, {}, {}, SortAndPaginationQueryType>, res: Response<PostsViewModelType | null>) => {
+async (req: Request<{id: string}, {}, {}, PostQueryValues>, res: Response<PostsViewModelType | null>) => {
     try {
         const queryValue: PostQueryValues = await defaultPostValues.defaultQueryValues(req.query)
         const result: PostsViewModelType = await PostQueryRepositories.GetAllPost(queryValue, req.params.id)

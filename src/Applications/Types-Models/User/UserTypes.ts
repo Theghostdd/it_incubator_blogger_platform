@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb"
-import { PaginationType, SortAndPaginationQueryType } from "../BasicTypes"
+import { PaginationType } from "../BasicTypes"
 
 /*
 *
@@ -41,7 +41,11 @@ export type UsersViewModelType = PaginationType & {
 *
 *
 */
-export type UserQueryParamsType = SortAndPaginationQueryType & {
+export type UserQueryParamsType = {
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
+    pageNumber?: number,
+    pageSize?: number,
     searchLoginTerm?: string,
     searchEmailTerm?: string
 }

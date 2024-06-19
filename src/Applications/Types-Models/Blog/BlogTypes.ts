@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb"
-import { PaginationType, SortAndPaginationQueryType } from "../BasicTypes"
+import { PaginationType } from "../BasicTypes"
 
 /*
 *

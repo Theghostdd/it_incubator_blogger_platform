@@ -11,18 +11,6 @@ export type PaginationType = {
     pageSize: number,
     totalCount: number,
 }
-/*
-*
-*   Sorting and Pagination Query Types 
-*
-*/
-export type SortAndPaginationQueryType = {
-    sortBy?: string,
-    sortDirection?: 'asc' | 'desc'
-    pageNumber?: number,
-    pageSize?: number
-}
-
 export type CreatePaginationType = PaginationType & {
     skip: number
 }
@@ -71,11 +59,6 @@ export type JwtType = {
 export type PayloadJwtToken = {
     userId: string
 }
-
-
-
-
-
 /*
 *
 *   Response Notification Type Enum
