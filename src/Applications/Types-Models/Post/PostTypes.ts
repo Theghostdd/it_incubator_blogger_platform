@@ -55,3 +55,16 @@ export type PostViewMongoModelType = {
     blogName: string,
     createdAt: string
 }
+/*
+*
+*
+*       Post query values
+*
+*
+*/
+export type PostQueryValues = {
+    sortBy?: string
+    sortDirection?: 'asc' | 'desc'
+    pageNumber?: number
+    pageSize?: number
+}

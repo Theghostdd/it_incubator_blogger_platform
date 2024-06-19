@@ -60,7 +60,7 @@ async (req: Request<{}, {}, PostInputModelType>, res: Response<PostViewModelType
         const result: ResultNotificationType<PostViewModelType> = await PostService.CreatePostItemByBlogId(req.body)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                return res.status(200).json(result.data);
+                return res.status(201).json(result.data);
             case ResultNotificationEnum.NotFound:
                 return res.sendStatus(404);
             default: return res.sendStatus(500)
@@ -90,7 +90,7 @@ async (req: Request<{id: string}, {}, PostInputModelType>, res: Response) => {
         const result: ResultNotificationType = await PostService.UpdatePostById(req.params.id, req.body)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                return res.status(204);
+                return res.sendStatus(204);
             case ResultNotificationEnum.NotFound:
                 return res.sendStatus(404);
             default: return res.sendStatus(500)
@@ -115,7 +115,7 @@ async (req: Request<{id: string}>, res: Response) => {
         const result: ResultNotificationType = await PostService.DeletePostById(req.params.id)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                return res.status(204);
+                return res.sendStatus(204);
             case ResultNotificationEnum.NotFound:
                 return res.sendStatus(404);
             default: return res.sendStatus(500)
@@ -135,14 +135,14 @@ async (req: Request<{id: string}>, res: Response) => {
 *    - If an unexpected error occurs, logs the error using `SaveError` and returns status 500.
 */
 PostRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
-RuleValidations.validContentComment,
 AuthUser.AuthUserByAccessToken,
+RuleValidations.validContentComment,
 async (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelType>) => {
     try {
         const result: ResultNotificationType<CommentViewModelType> = await PostService.CreateCommentByPostId(req.body, req.params.id, req.user.userId)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                return res.status(200).json(result.data);
+                return res.sendStatus(200).json(result.data);
             case ResultNotificationEnum.NotFound:
                 return res.sendStatus(404);
             default: return res.sendStatus(500)

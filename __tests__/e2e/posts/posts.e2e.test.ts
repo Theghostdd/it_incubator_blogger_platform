@@ -1,34 +1,27 @@
 import { TestModules } from '../modules/modules'
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
+import { CreateBlog, DeleteAllDb, GetRequest, AdminAuth, CreatedPost, CreateManyDataUniversal } from '../modules/modules2';
 
 
 
 describe(ROUTERS_SETTINGS.POST.post, () => {
 
     const endpoint: string = ROUTERS_SETTINGS.POST.post
-    let InspectData: any;
-    let query = {}
-    let idBlog: string
-    let blogName: string
+
     let DataUpdate: any = {}
     let CreateDataPost: any = {}
-
-    
+    let idBlog: string
+    let blogName: string
+    let CreateDataBlog: any = {} 
     beforeEach(async () => {
-        const result = await TestModules.DeleteAllElements()
+        await DeleteAllDb()
 
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
-            }
-        }
-
-        const CreateData = {
+        CreateDataBlog = {
             name: "IT-Incubator",
             description: "The blog is about IT-Incubator",
             websiteUrl:	"https://samurai.it-incubator.io/"
         }
-        const CreatedBlog = await TestModules.CreateElement(ROUTERS_SETTINGS.BLOG.blogs, 201, CreateData, InspectData)
+        const CreatedBlog = await CreateBlog(CreateDataBlog)
         idBlog = CreatedBlog.id
         blogName = CreatedBlog.name
 
@@ -48,13 +41,17 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
     })
 
     afterAll(async () => {
-        const result = await TestModules.DeleteAllElements()
+        await DeleteAllDb()
     })
 
     it('POST => GET | should create a post item, status: 201, return the item and get created item, status: 200, and status: 404 if element doesn`t found', async () => {
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataPost, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where creating post item
+        const CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateDataPost)
+            .expect(201)
+        expect(CreateElementResult.body).toEqual({
             id: expect.any(String),
             title: CreateDataPost.title,
             shortDescription: CreateDataPost.shortDescription,
@@ -63,105 +60,157 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             blogId: idBlog,
             createdAt: expect.any(String)
         })
-
-        const returnValues = {...CreateElementResult}
-        const ElementId = CreateElementResult.id
-
-        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId, InspectData)
-        expect(GetCreatedElementResult).toEqual(CreateElementResult) 
-
-        const GetElementResult = await TestModules.GetElementById(endpoint, 404, "66632889ba80092799c0ed81", InspectData)
+        // This simulates a scenario we get created item
+        let GetElementResult = await GetRequest()
+            .get(`${endpoint}/${CreateElementResult.body.id}`)
+            .expect(200)
+        expect(GetElementResult.body).toEqual(CreateElementResult.body)
+        // This simulates a scenario we don`t get created item, because this id not found
+        GetElementResult = await GetRequest()
+            .get(`${endpoint}/66632889ba80092799c0ed81`)
+            .expect(404)
     })
 
-    it('POST => PUT => GET | should update a post item, status: 204 and get the item by ID, status: 200', async () => {
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataPost, InspectData)
-        const ElementId = CreateElementResult.id
-        const returnValues = {...CreateElementResult}
-
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 204, ElementId, DataUpdate, InspectData)
-
-        const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 200, ElementId, InspectData)
-        expect(GetUpdatedElementResult).toEqual({...returnValues, ...DataUpdate})
+    it('POST => DELETE => GET => DELETE | should delete a post item, status: 204 and should`t get the item by ID, status: 404 and where user delete item again status: 404', async () => {
+        // Create the post item
+        const CreateElementResult =  await CreatedPost(CreateDataPost)
+        // This simulates a scenario where the post item success deleted
+        let DeleteElementResult = await GetRequest()
+            .delete(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .expect(204)
+        // This simulates a scenario where the post item not found because was deleted
+        const GetElementResult = await GetRequest()
+            .get(`${endpoint}/${CreateElementResult.id}`)
+            .expect(404)
+        // This simulates a scenario where user want to delete the post item but it was deleted
+        DeleteElementResult = await GetRequest()
+            .delete(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .expect(404)
     })
 
-    it('POST => DELETE => GET | should delete a post item, status: 204 and should`t get the item by ID, status: 404', async () => {
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataPost, InspectData)
-        const ElementId = CreateElementResult.id
-
-        let DeleteElementResult = await TestModules.DeleteElementById(endpoint, 204, ElementId, InspectData)
-
-        const GetUpdatedElementResult = await TestModules.GetElementById(endpoint, 404, ElementId, InspectData)
-
-        DeleteElementResult = await TestModules.DeleteElementById(endpoint, 404, ElementId, InspectData)
+    it('POST => PUT => GET | should update the post item by id, status: 204 and get updated the item by ID', async () => {
+        // Create the post item
+        const CreateElementResult =  await CreatedPost(CreateDataPost)
+        // This simulates a scenario where user want to update the post item
+        const UpdateElementResult = await GetRequest()
+            .put(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(204)
+        // This simulates a scenario where user want to look to updated the post item
+        const GetElementResult = await GetRequest()
+            .get(`${endpoint}/${CreateElementResult.id}`)
+            .expect(200)
+        expect(GetElementResult.body).toEqual({
+            id: CreateElementResult.id,
+            title: DataUpdate.title,
+            shortDescription: DataUpdate.shortDescription,
+            content: DataUpdate.content,
+            blogName: blogName,
+            blogId: idBlog,
+            createdAt: CreateElementResult.createdAt
+        })
     })
 
-    it('POST => PUT | should`t update a post item, status: 400, bad request, and status: 404, not found', async () => {
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataPost, InspectData)
-        const ElementId = CreateElementResult.id
-
-        let UpdateElementResult = await TestModules.UpdateElementById(endpoint, 404, "66632889ba80092799c0ed81", DataUpdate, InspectData)
-
+    it('POST => GET => PUT | should`t update a post item, status: 400, bad request, and status: 404, not found', async () => {
+        // Create the post item
+        const CreateElementResult =  await CreatedPost(CreateDataPost)
+        // This simulates a scenario where post not found
+        let UpdateElementResult = await GetRequest()
+            .put(`${endpoint}/66632889ba80092799c0ed81`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(404)
+        // This simulates a scenario where post data to update has bad shortDescription
         DataUpdate.shortDescription = '';
-        UpdateElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
-        expect(UpdateElementResult).toEqual({
-                    errorsMessages: [
-                        {
-                            message: expect.any(String),
-                            field: 'shortDescription'
-                        }
-                    ]
-                })
-
-        DataUpdate = {
-            title: '',
-            shortDescription: "",
-            content: "Some content 2",
-            blogId: idBlog
-        }
-        UpdateElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
-        expect(UpdateElementResult).toEqual({
-            errorsMessages: [
-                {
-                    message: expect.any(String),
-                    field: 'title'
-                },
-                {
-                    message: expect.any(String),
-                    field: 'shortDescription'
-                }
-            ]
-        })
-
-        DataUpdate = {
-            title: '',
-            shortDescription: "",
-            content: "",
-            blogId: idBlog
-        }
-        UpdateElementResult = await TestModules.UpdateElementById(endpoint, 400, ElementId, DataUpdate, InspectData)
-        expect(UpdateElementResult).toEqual({
-            errorsMessages: [
-                {
-                    message: expect.any(String),
-                    field: 'title'
-                },
-                {
-                    message: expect.any(String),
-                    field: 'shortDescription'
-                },
-                {
-                    message: expect.any(String),
-                    field: 'content'
-                }
-            ]
-        })
-
+        UpdateElementResult = await GetRequest()
+            .put(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(400)
+        expect(UpdateElementResult.body).toEqual({
+                errorsMessages: [
+                    {
+                        message: expect.any(String),
+                        field: 'shortDescription'
+                    }
+                ]
+            })
+        // This simulates a scenario where post data to update has bad shortDescription, title
+        DataUpdate.title = '';
+        UpdateElementResult = await GetRequest()
+            .put(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(400)
+        expect(UpdateElementResult.body).toEqual({
+                errorsMessages: [
+                    {
+                        message: expect.any(String),
+                        field: 'title'
+                    },
+                    {
+                        message: expect.any(String),
+                        field: 'shortDescription'
+                    }
+                ]
+            })
+        // This simulates a scenario where post data to update has bad shortDescription, title, content
+        DataUpdate.content = '';
+        UpdateElementResult = await GetRequest()
+            .put(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(400)
+        expect(UpdateElementResult.body).toEqual({
+                errorsMessages: [
+                    {
+                        message: expect.any(String),
+                        field: 'title'
+                    },
+                    {
+                        message: expect.any(String),
+                        field: 'shortDescription'
+                    },
+                    {
+                        message: expect.any(String),
+                        field: 'content'
+                    }
+                ]
+            })
+        // This simulates a scenario where post data to update has bad shortDescription, title, content, blogId
+        DataUpdate.blogId = '66632889ba80092799c0ed81';
+        UpdateElementResult = await GetRequest()
+            .put(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(400)
+        expect(UpdateElementResult.body).toEqual({
+                errorsMessages: [
+                    {
+                        message: expect.any(String),
+                        field: 'title'
+                    },
+                    {
+                        message: expect.any(String),
+                        field: 'shortDescription'
+                    },
+                    {
+                        message: expect.any(String),
+                        field: 'content'
+                    },
+                    {
+                        message: expect.any(String),
+                        field: 'blogId'
+                    }
+                ]
+            })
     })
 
     it('POST => GET | should get all post elements with pagination and filters, status: 200', async () => {
-
+        // Create data 
         const CreateManyData = [
             {
                 title: 'Post is number 1',
@@ -262,59 +311,56 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
         ]
-        const CreateManyResult = await TestModules.InsertManyDataMongoDB(MONGO_SETTINGS.COLLECTIONS.posts, CreateManyData)
-
-        let GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        // Insert many data to Mongo
+        await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.posts)
+        // This simulates a scenario where user want to get all items without query params
+        let GetAllElements = await GetRequest()
+            .get(endpoint)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 2,
             page: 1,
             pageSize: 10,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(10)
-
-        query = {
-            searchNameTerm: null,
-            pageNumber: 2,
-            pageSize: null,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(10)
+        // This simulates a scenario where user want to get all items with query, page number 2
+        GetAllElements = await GetRequest()
+            .get(endpoint)
+            .query({pageNumber: 2})
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 2,
             page: 2,
             pageSize: 10,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(1)
-
-        query = {
-            searchNameTerm: null,
-            pageNumber: null,
-            pageSize: 11,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(1)
+        // This simulates a scenario where user want to get all items with query, element on page 11
+        GetAllElements = await GetRequest()
+            .get(endpoint)
+            .query({pageSize: 11})
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 11,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(11)
+        expect(GetAllElements.body.items).toHaveLength(11)
     })
 
     it('POST | should`t create a post item, status: 400, bad request', async () => {
-
+        // This simulates a scenario where user send bad title
         CreateDataPost.title = ''
-
-        let CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateDataPost, InspectData)
-        expect(CreateElementResult).toEqual({
+        let CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateDataPost)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -322,16 +368,13 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
                 }
             ]
         })
-
-        CreateDataPost = {
-            title: '',
-            shortDescription: "",
-            content: "Some content",
-            blogId: idBlog
-        }
-
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateDataPost, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where user send bad title, shortDescription
+        CreateDataPost.shortDescription = ''
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateDataPost)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -343,15 +386,13 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
                 }
             ]
         })
-
-        CreateDataPost = {
-            title: '',
-            shortDescription: "",
-            content: "",
-            blogId: idBlog
-        }
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateDataPost, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where user send bad title, shortDescription, content
+        CreateDataPost.content = ''
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateDataPost)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -367,15 +408,13 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
                 }
             ]
         })
-
-        CreateDataPost = {
-            title: '',
-            shortDescription: "",
-            content: "",
-            blogId: '66632889ba80092799c0ed89'
-        }
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateDataPost, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where user send bad title, shortDescription, content, blogId
+        CreateDataPost.blogId = '66632889ba80092799c0ed89'
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateDataPost)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -395,24 +434,41 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
                 }
             ]
         })
-
     })
 
     it('POST => PUT => DELETE | should`t create, update, delete a blog item, status: 401, Unauthorized', async () => {
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdl"
-            }
-        }
-
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 401, CreateDataPost, InspectData)
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 401, "66632889ba80092799c0ed81", DataUpdate, InspectData)
-        const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 401, "66632889ba80092799c0ed81", InspectData)
+        // This simulates a scenario where user want to create a post item but he doesn`t have login or password
+        const CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set({})
+            .expect(401)
+        // This simulates a scenario where user want to update the post item but he doesn`t have login or password
+        const UpdateCreatedElementResult = await GetRequest()
+            .put(`${endpoint}/66632889ba80092799c0ed81`)
+            .set({Authorization: "Basic YWRtaW46cXdl"})
+            .expect(401)
+        // This simulates a scenario where user want to delete the post item but he doesn`t have login or password
+        const DeleteElementResult = await GetRequest()
+            .delete(`${endpoint}/66632889ba80092799c0ed81`)
+            .set({Authorization: "Basic YWRtaW46cXdl"})
+            .expect(401)
     })
 
     it('POST => PUT => DELETE => GET | should`t update, delete, get a blog item by ID, status: 500, bad mongo object ID', async () => {
-        const UpdateCreatedElementResult = await TestModules.UpdateElementById(endpoint, 500, "66632889ba80092799", DataUpdate, InspectData)
-        const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 500, "66632889ba80092799", InspectData)
-        const GetCreatedElementResult = await TestModules.GetElementById(endpoint, 500, "66632889ba80092799", InspectData)
+        // This simulates a scenario where user want to update the post but post`s id not object ID
+        const UpdateCreatedElementResult = await GetRequest()
+            .put(`${endpoint}/66632889ba80092`)
+            .set(AdminAuth)
+            .send(DataUpdate)
+            .expect(500)
+        // This simulates a scenario where user want to delete the post but post`s id not object ID
+        const DeleteElementResult = await GetRequest()
+            .delete(`${endpoint}/66632889ba80092`)
+            .set(AdminAuth)
+            .expect(500)
+        // This simulates a scenario where user want to get the post but post`s id not object ID
+        const GetElementResult = await GetRequest()
+            .get(`${endpoint}/66632889ba80092`)
+            .expect(500)
     })
 })

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
 import { CreatePaginationType, SortAndPaginationQueryType } from "../../Applications/Types-Models/BasicTypes"
-import { PostViewModelType, PostViewMongoModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes"
+import { PostQueryValues, PostViewModelType, PostViewMongoModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes"
 import { MONGO_SETTINGS } from "../../settings"
 import { createPostPagination } from "../../Utils/pagination/PostPagination"
 import { PostMapper } from "../../Utils/map/Post/PostMap"
@@ -23,7 +23,7 @@ export const PostQueryRepositories = {
     * 5. Maps the retrieved posts and pagination data to create a structured view model.
     * 6. Returns the structured view model containing the retrieved posts and pagination information.
     */
-    async GetAllPost (query: SortAndPaginationQueryType, blogId?: string): Promise<PostsViewModelType> {
+    async GetAllPost (query: PostQueryValues, blogId?: string): Promise<PostsViewModelType> {
         try {
             const sort = {
                 [query.sortBy!]: query.sortDirection!

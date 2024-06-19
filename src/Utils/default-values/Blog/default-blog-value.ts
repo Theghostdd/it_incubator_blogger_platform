@@ -1,9 +1,6 @@
 import { BlogQueryParamsType } from "../../../Applications/Types-Models/Blog/BlogTypes"
 
 
-
-
-
 export const defaultBlogValues = {
     async defaultQueryValue (query: BlogQueryParamsType): Promise<BlogQueryParamsType> {
         return {

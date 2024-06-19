@@ -43,7 +43,6 @@ export const PostService = {
             if (!getCreatedPost) {
                 return {status: ResultNotificationEnum.NotFound}
             }
-
             return {status: ResultNotificationEnum.Success, data: await PostMapper.MapCreatePost(getCreatedPost)}
         } catch (e: any) {
             throw new Error(e)

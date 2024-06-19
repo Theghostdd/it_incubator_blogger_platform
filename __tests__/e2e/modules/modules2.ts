@@ -5,7 +5,7 @@ import { db } from "../../../src/Applications/ConnectionDB/Connection";
 
 
 
-const AdminAuth: any = {
+export const AdminAuth: any = {
     Authorization: 'Basic YWRtaW46cXdlcnR5'
 }
 
@@ -13,34 +13,11 @@ export const GetRequest = () => {
     return request(app)
 }
 
-export const TestModules2 = {
-    async PostRequest (endpoint: string, status: number, queryData: any, bodyData: any, headersData: any) {
-        const result = await GetRequest()
-        .post(endpoint)
-        .set(headersData)
-        .query(queryData)
-        .send(bodyData)
-        .expect(status)
-    return result.body
-    },
-
-    async GetRequest (endpoint: string, status: number, queryData: any, headersData: any) {
-        const result = await GetRequest()
-            .post(endpoint)
-            .set(headersData)
-            .query(queryData)
-            .expect(status)
-        return result.body
-    },
-
-    async PutRequest () {
-
-    }, 
-
-    async DeleteRequest () {
-
-    }
-} 
+export const DeleteAllDb = async () => {
+    const result = await GetRequest()
+        .delete(ROUTERS_SETTINGS.TEST.test + ROUTERS_SETTINGS.TEST.test_all_data)
+    return result
+}
 
 export const CreateUser = async (data: any) => {
     const result = await GetRequest()
@@ -57,11 +34,22 @@ export const LoginUser = async (data: any) => {
     return result.body
 }
 
-
-
-
-export const DeleteAllDb = async () => {
+export const CreateBlog = async (data: any) => {
     const result = await GetRequest()
-        .delete(ROUTERS_SETTINGS.TEST.test + ROUTERS_SETTINGS.TEST.test_all_data)
-    return result
+        .post(ROUTERS_SETTINGS.BLOG.blogs)
+        .set(AdminAuth)
+        .send(data)
+    return result.body
+}
+
+export const CreatedPost = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.POST.post)
+        .set(AdminAuth)
+        .send(data)
+    return result.body
+}
+
+export const CreateManyDataUniversal = async (data: any, collectionName: string) => {
+    return await db.collection(collectionName).insertMany(data)
 }
