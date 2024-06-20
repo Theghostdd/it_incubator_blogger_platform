@@ -1,6 +1,5 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
-import { TestModules } from "../modules/modules";
-import { CreateUser, DeleteAllDb, GetRequest, LoginUser } from "../modules/modules2";
+import { ROUTERS_SETTINGS } from "../../../src/settings";
+import { CreateUser, DeleteAllDb, GetRequest, LoginUser } from "../modules/modules";
 
 describe(ROUTERS_SETTINGS.AUTH.auth, () => {
 

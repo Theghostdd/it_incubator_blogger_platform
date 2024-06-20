@@ -3,7 +3,7 @@ import { TestRepositories } from "../../Repositories/test-repositories/test-repo
 export const TestService = {
     async DellAllElements () {
         try {
-            await TestRepositories.deleteManyAllData()
+            return await TestRepositories.deleteManyAllData()
         } catch (e: any) {
             throw new Error(e)
         }

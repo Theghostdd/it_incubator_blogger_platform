@@ -8,6 +8,7 @@ export const TestRepositories = {
             await db.collection(MONGO_SETTINGS.COLLECTIONS.blogs).deleteMany({})
             await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).deleteMany({})
             await db.collection(MONGO_SETTINGS.COLLECTIONS.users).deleteMany({})
+            return 
         } catch (e: any) {
             throw new Error(e)
         }

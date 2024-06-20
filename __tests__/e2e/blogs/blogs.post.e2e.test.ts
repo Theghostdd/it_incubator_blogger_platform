@@ -1,5 +1,5 @@
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
-import { TestModules } from "../modules/modules";
+import { AdminAuth, CreateBlog, CreateManyDataUniversal, DeleteAllDb, GetRequest } from "../modules/modules";
 
 describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_posts, () => {
 
@@ -7,29 +7,19 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
     const endpoint: string = ROUTERS_SETTINGS.BLOG.blogs
     const additionalEndpointPost: string = ROUTERS_SETTINGS.BLOG.blogs_posts
     let endpointBlogAndPost: string
-    let InspectData: any;
-    let query: any = {}
     let CreateData: any = {}
     let idBlog: string;
     let blogName: string;
 
-
-
     beforeEach(async () => {
-        const result = await TestModules.DeleteAllElements()
-
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
-            }
-        }
-
+        await DeleteAllDb()
+        
         const CreateDataBlog: any = {
             name: "IT-Incubator",
             description: "The blog is about IT-Incubator",
             websiteUrl:	"https://samurai.it-incubator.io/"
         }
-        const CreateBlogElementResult = await TestModules.CreateElement(endpoint, 201, CreateDataBlog, InspectData)
+        const CreateBlogElementResult = await CreateBlog(CreateDataBlog)
         idBlog = CreateBlogElementResult.id
         blogName = CreateBlogElementResult.name
 
@@ -43,40 +33,48 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
     })
 
     afterAll(async () => {
-        const result = await TestModules.DeleteAllElements()
+        await DeleteAllDb()
     })
 
     it(`POST => GET | should create a post item by blog ID, status: 201, return the item and get the item by ID, status: 200, and 404 if the item not found`, async () => {
-        const CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 201, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
-            id: expect.any(String),
-            title: CreateData.title,
-            shortDescription: CreateData.shortDescription,
-            content: CreateData.content,
-            blogName: blogName,
-            blogId: idBlog,
-            createdAt: expect.any(String)
+        // This simulates a scenario where creating post item by blog ID in URI params
+        const CreateElementResult = await GetRequest()
+            .post(endpointBlogAndPost)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(201)
+        expect(CreateElementResult.body).toEqual({
+                id: expect.any(String),
+                title: CreateData.title,
+                shortDescription: CreateData.shortDescription,
+                content: CreateData.content,
+                blogName: blogName,
+                blogId: idBlog,
+                createdAt: expect.any(String)
         })
-
-        const returnValues = {...CreateElementResult}
-
-        const GetCreatedElementResult = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
-        expect(GetCreatedElementResult).toEqual({
+        // This simulates a scenario where getting all post items by Blog id in URI params
+        const GetCreatedElementResult = await GetRequest()
+            .get(endpointBlogAndPost)
+            .expect(200)
+        expect(GetCreatedElementResult.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 10,
             totalCount: 1,
             items: [
                 {
-                ...returnValues
+                ...CreateElementResult.body
                 }
             ]
         })
-
-        const GetElementResult = await TestModules.GetAllElements(`${endpoint}/66632889ba80092799c0ed81${additionalEndpointPost}`, 404, query, InspectData) 
+        // This simulates a scenario where post by id into URI params not found
+        const GetElementResult = await GetRequest()
+            .get(`${endpoint}/66632889ba80092799c0ed81${additionalEndpointPost}`)
+            .expect(404)
     })
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
+        // Create many data in DB
         const CreateManyData = [
             {
                 title: 'Post is number 1',
@@ -177,62 +175,56 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
         ]
-
-        const CreateManyResult = await TestModules.InsertManyDataMongoDB(MONGO_SETTINGS.COLLECTIONS.posts, CreateManyData)
-
-        let GetAllElements = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        const CreateManyResult = await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.posts)
+        // This simulates a scenario where getting post item by blog ID in URI params without query params
+        let GetAllElements = await GetRequest()
+            .get(endpointBlogAndPost)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 2,
             page: 1,
             pageSize: 10,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(10)
-
-        query = {
-            searchNameTerm: null,
-            pageNumber: 2,
-            pageSize: null,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(10)
+        // This simulates a scenario where getting post item by blog ID in URI params with query params: pageNumber
+        GetAllElements = await GetRequest()
+            .get(endpointBlogAndPost)
+            .query({pageNumber: 2})
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 2,
             page: 2,
             pageSize: 10,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(1)
-
-        query = {
-            searchNameTerm: null,
-            pageNumber: null,
-            pageSize: 11,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpointBlogAndPost, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(1)
+        // This simulates a scenario where getting post item by blog ID in URI params with query params: pageSize
+        GetAllElements = await GetRequest()
+            .get(endpointBlogAndPost)
+            .query({pageSize: 11})
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 11,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(11)
+        expect(GetAllElements.body.items).toHaveLength(11)
     })
 
     it('POST | should`t create a post item by blog ID, status: 400, bad request', async () => {
-        CreateData = {
-            title: '',
-            shortDescription: "Some short description",
-            content: "Some content"
-        }
-        let CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where should`t creating post by blog id into URI params because bad data: title
+        CreateData.title = ''
+        let CreateElementResult = await GetRequest()
+            .post(endpointBlogAndPost)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -240,14 +232,14 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 }
             ]
         })
-
-        CreateData = {
-            title: '',
-            shortDescription: "",
-            content: "Some content"
-        }
-        CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where should`t creating post by blog id into URI params because bad data: title, shortDescription
+        CreateData.shortDescription = ''
+        CreateElementResult = await GetRequest()
+            .post(endpointBlogAndPost)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -259,14 +251,14 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 }
             ]
         })
-
-        CreateData = {
-            title: '',
-            shortDescription: "",
-            content: ""
-        }
-        CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where should`t creating post by blog id into URI params because bad data: title, shortDescription, content
+        CreateData.content = ''
+        CreateElementResult =await GetRequest()
+            .post(endpointBlogAndPost)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -286,13 +278,11 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
     })
 
     it('POST | should`t create a post item by blog ID, status: 401, Unauthorized', async () => {
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdl"
-            }
-        }
-
-        const CreateElementResult = await TestModules.CreateElement(endpointBlogAndPost, 401, CreateData, InspectData)
+        // This simulates a scenario where should`t creating post by blog id into URI params because user Unauthorized
+        const CreateElementResult = await GetRequest()
+            .post(endpointBlogAndPost)
+            .set({})
+            .expect(401)
     })
 })
 

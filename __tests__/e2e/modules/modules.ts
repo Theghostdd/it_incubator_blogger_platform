@@ -3,72 +3,53 @@ import { app } from "../../../src/app"
 import { ROUTERS_SETTINGS } from "../../../src/settings"
 import { db } from "../../../src/Applications/ConnectionDB/Connection";
 
-const GetRequest = () => {
+
+
+export const AdminAuth: any = {
+    Authorization: 'Basic YWRtaW46cXdlcnR5'
+}
+
+export const GetRequest = () => {
     return request(app)
 }
 
-export const TestModules = {
-    async LoginModule (endpoint: string, status: number, LoginData: any, InspectData: any) {
-        const result = await GetRequest()
-        .post(endpoint)
-        .send(LoginData)
-        .expect(status)
+export const DeleteAllDb = async () => {
+    const result = await GetRequest()
+        .delete(ROUTERS_SETTINGS.TEST.test + ROUTERS_SETTINGS.TEST.test_all_data)
+    return result.body    
+}
+
+export const CreateUser = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.USER.user)
+        .set(AdminAuth)
+        .send(data)
     return result.body
-    },
+}
 
-    async CreateElement (endpoint: string, status: number, CreateData: any, InspectData: any) {
-        const result = await GetRequest()
-            .post(endpoint)
-            .set({'Authorization': InspectData.headers.basic_auth})
-            .send(CreateData)
-            .expect(status)
-        return result.body
-    },
+export const LoginUser = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.login)
+        .send(data)
+    return result.body
+}
 
-    async GetElementById (endpoint: string, status: number, id: string | number, InspectData: any) {
-        const result = await GetRequest()
-            .get(`${endpoint}/${id}`)
-            .set({'Authorization': InspectData.headers.basic_auth})
-            .expect(status)
+export const CreateBlog = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.BLOG.blogs)
+        .set(AdminAuth)
+        .send(data)
+    return result.body
+}
 
-        return result.body;
-    },
+export const CreatedPost = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.POST.post)
+        .set(AdminAuth)
+        .send(data)
+    return result.body
+}
 
-    async GetAllElements (endpoint: string, status: number, query: any, InspectData: any) {
-        const result = await GetRequest()
-            .get(endpoint)
-            .set({'Authorization': InspectData.headers.basic_auth})
-            .query(query)
-            .expect(status)
-        return result.body;
-    },
-
-    async UpdateElementById (endpoint: string, status: number, id: string | number, UpdateData: any, InspectData: any) {
-        const result = await GetRequest()
-            .put(`${endpoint}/${id}`)
-            .set({'Authorization': InspectData.headers.basic_auth})
-            .send(UpdateData)
-            .expect(status)
-        return result.body;
-    },
-
-    async DeleteElementById (endpoint: string, status: number, id: string | number, InspectData: any) {
-        const result = await GetRequest()
-            .delete(`${endpoint}/${id}`)
-            .set({'Authorization': InspectData.headers.basic_auth})
-            .expect(status)
-        return;
-    },
-
-    async DeleteAllElements () {
-        const result = await GetRequest()
-            .delete(`${ROUTERS_SETTINGS.TEST.test}/${ROUTERS_SETTINGS.TEST.test_all_data}`)
-            .expect(204)
-        return;
-    },
-
-    async InsertManyDataMongoDB (collection: string, data: any) {
-        const result = await db.collection(collection).insertMany(data)
-        return result
-    }
-} 
+export const CreateManyDataUniversal = async (data: any, collectionName: string) => {
+    return await db.collection(collectionName).insertMany(data)
+}

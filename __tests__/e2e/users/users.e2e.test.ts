@@ -1,23 +1,15 @@
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
-import { TestModules } from "../modules/modules";
+import { AdminAuth, CreateManyDataUniversal, CreateUser, DeleteAllDb, GetRequest } from "../modules/modules";
 
 describe(ROUTERS_SETTINGS.USER.user, () => {
 
 
     const endpoint: string = ROUTERS_SETTINGS.USER.user
 
-    let InspectData: any;
-    let query: any = {}
     let CreateData: any = {}
 
     beforeEach(async () => {
-        const result = await TestModules.DeleteAllElements()
-
-        InspectData = {
-            headers: {
-                basic_auth: "Basic YWRtaW46cXdlcnR5"
-            }
-        }
+        await DeleteAllDb()
 
         CreateData = {
             login: 'TestLogin',
@@ -27,38 +19,49 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
     })
 
     afterAll(async () => {
-        const result = await TestModules.DeleteAllElements()
+        await DeleteAllDb()
     })
 
     it(`POST => GET | Super admin should create a user item, status: 201, return the map item and get all item, status: 200`, async () => {
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where super admin creating new user
+        const CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(201)
+        expect(CreateElementResult.body).toEqual({
             id: expect.any(String),
             login: CreateData.login,
             email: CreateData.email,
             createdAt: expect.any(String)
         })
-
-        const returnValues = {...CreateElementResult}
-
-        const GetCreatedElementResult = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetCreatedElementResult).toEqual({
+        // This simulates a scenario where super admin getting all user
+        const GetCreatedElementResult = await GetRequest()
+            .get(endpoint)
+            .set(AdminAuth)
+            .expect(200)
+        expect(GetCreatedElementResult.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 10,
             totalCount: 1,
             items: [
                 {
-                ...returnValues
+                ...CreateElementResult.body
                 }
             ]
         })
     })
 
-    it(`POST => GET | Super admin should\`t create a user item, status: 400, bad login, email, password`, async () => {
+    it(`POST | Super admin should\`t create a user item, status: 400, bad login, email, password`, async () => {
+        // This simulates a scenario where super admin should`t creating new user because bad login
         CreateData.login = '';
-        let CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        let CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -66,14 +69,14 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 }
             ]
         })
-
-        CreateData = {
-            login: 'TestLoginTTestLoginTTestLoginTTestLoginTTestLoginTTestLoginT',
-            password: "sw",
-            email: "example@mail.ru"
-        }
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        // This simulates a scenario where super admin should`t creating new user because bad login, password
+        CreateData.password = 'sw'
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -85,14 +88,18 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 }
             ]
         })
-
+        // This simulates a scenario where super admin should`t creating new user because bad login, password, email
         CreateData = {
             login: 'TestLoginTTestLoginTTestLoginTTestLoginTTestLoginTTestLoginT',
             password: "s",
             email: "examplemail.ru"
         }
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -110,16 +117,17 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
         })
     })
 
-    it(`POST => GET | Super admin should\`t create a user item, status: 400, not uniq email and login`, async () => {
-        let CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
-
-        CreateData = {
-            login: 'TestLogin',
-            password: "somePass",
-            email: "example2@mail.ru"
-        }
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+    it(`POST | Super admin should\`t create a user item, status: 400, not uniq email and login`, async () => {
+        // Create the user
+        let CreateElementResult = await CreateUser(CreateData)
+        // This simulates a scenario where super admin should`t creating new user because not uniq login
+        CreateData.email = 'example2@mail.ru'
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -127,14 +135,18 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 }
             ]
         })
-
+        // This simulates a scenario where super admin should`t creating new user because not uniq email
         CreateData = {
             login: 'Login',
             password: "somePass",
             email: "example@mail.ru"
         }
-        CreateElementResult = await TestModules.CreateElement(endpoint, 400, CreateData, InspectData)
-        expect(CreateElementResult).toEqual({
+        CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set(AdminAuth)
+            .send(CreateData)
+            .expect(400)
+        expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
                     message: expect.any(String),
@@ -146,23 +158,39 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
 
     })
 
-    it(`POST => GET | Super admin should\`t create, get and delete the user item, status: 401, Unauthorized`, async () => {
-        InspectData.headers.basic_auth = "Basic YWRtaW46cXd"
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 401, CreateData, InspectData)
-        const GetElementResult = await TestModules.GetAllElements(endpoint, 401, query, InspectData)
-        const DeleteElementResult = await TestModules.DeleteElementById(endpoint, 401, 'elementId', InspectData)
+    it(`POST => GET => DELETE | Super admin should\`t create, get and delete the user item, status: 401, Unauthorized`, async () => {
+        // This simulates a scenario where super admin should`t creating, delete new user because Unauthorized
+        const CreateElementResult = await GetRequest()
+            .post(endpoint)
+            .set({})
+            .expect(401)
+        const GetElementResult = await GetRequest()
+            .post(endpoint)
+            .set({Authorization: ''})
+            .expect(401)
+        const DeleteElementResult = await GetRequest()
+            .post(endpoint)
+            .set({Authorization: 'frfrfrfrfr'})
+            .expect(401)
     })
 
     it(`POST => GET | Super admin should delete item by ID, and get error 404 when want to delete again`, async () => {
-        const CreateElementResult = await TestModules.CreateElement(endpoint, 201, CreateData, InspectData)
-        const ElementId = CreateElementResult.id
-
-        let DeleteElementResult = await TestModules.DeleteElementById(endpoint, 204, ElementId, InspectData)
-        DeleteElementResult = await TestModules.DeleteElementById(endpoint, 404, ElementId, InspectData)
-
+        // Create user
+        const CreateElementResult = await CreateUser(CreateData)
+        // This simulates a scenario where super admin should delete the user by id
+        let DeleteElementResult = await GetRequest()
+            .delete(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .expect(204)
+        // This simulates a scenario where super admin want to delete the user by id but user deleted
+        DeleteElementResult = await GetRequest()
+            .delete(`${endpoint}/${CreateElementResult.id}`)
+            .set(AdminAuth)
+            .expect(404)
     })
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
+        // Create many data
         const CreateManyData = [
             {
                 login: 'Some Login',
@@ -230,72 +258,62 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
         ]
-
-        const CreateManyResult = await TestModules.InsertManyDataMongoDB(MONGO_SETTINGS.COLLECTIONS.users, CreateManyData)
-
-        let GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        const CreateManyResult = await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.users)
+        // This simulates a scenario where super admin want to get all user without query params
+        let GetAllElements = await GetRequest()
+            .get(endpoint)
+            .set(AdminAuth)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 2,
             page: 1,
             pageSize: 10,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(10)
-
-        query = {
-            searchLoginTerm: null,
-            searchEmailTerm: null,
-            pageNumber: 2,
-            pageSize: null,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(10)
+        // This simulates a scenario where super admin want to get all user with query params: pageNumber
+        GetAllElements = await GetRequest()
+            .get(endpoint)
+            .query({pageNumber: 2})
+            .set(AdminAuth)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 2,
             page: 2,
             pageSize: 10,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(1)
-
-        query = {
-            searchLoginTerm: null,
-            searchEmailTerm: null,            
-            pageNumber: null,
-            pageSize: 11,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(1)
+        // This simulates a scenario where super admin want to get all user with query params: pageSize
+        GetAllElements = await GetRequest()
+            .get(endpoint)
+            .query({pageSize: 11})
+            .set(AdminAuth)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 11,
             totalCount: 11,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(11)
-
-        query = {
-            searchLoginTerm: 'S',
-            searchEmailTerm: '.com',            
-            pageNumber: null,
-            pageSize: null,
-            sortBy: null,
-            sortDirection: null
-        }
-        GetAllElements = await TestModules.GetAllElements(endpoint, 200, query, InspectData)
-        expect(GetAllElements).toEqual({
+        expect(GetAllElements.body.items).toHaveLength(11)
+        // This simulates a scenario where super admin want to get all user with query params: searchLoginTerm, searchEmailTerm
+        GetAllElements = await GetRequest()
+            .get(endpoint)
+            .query({searchLoginTerm: 'S', searchEmailTerm: '.com'})
+            .set(AdminAuth)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 10,
             totalCount: 8,
             items: expect.any(Array)
         }) 
-        expect(GetAllElements.items).toHaveLength(8)
+        expect(GetAllElements.body.items).toHaveLength(8)
     })
 })
 

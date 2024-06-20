@@ -1,6 +1,5 @@
-import { TestModules } from '../modules/modules'
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
-import { CreateBlog, DeleteAllDb, GetRequest, AdminAuth, CreatedPost, CreateManyDataUniversal } from '../modules/modules2';
+import { CreateBlog, DeleteAllDb, GetRequest, AdminAuth, CreatedPost, CreateManyDataUniversal } from '../modules/modules';
 
 
 
@@ -360,6 +359,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             .post(endpoint)
             .set(AdminAuth)
             .send(CreateDataPost)
+            .expect(400)
         expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
@@ -374,6 +374,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             .post(endpoint)
             .set(AdminAuth)
             .send(CreateDataPost)
+            .expect(400)
         expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
@@ -392,6 +393,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             .post(endpoint)
             .set(AdminAuth)
             .send(CreateDataPost)
+            .expect(400)
         expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
@@ -414,6 +416,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             .post(endpoint)
             .set(AdminAuth)
             .send(CreateDataPost)
+            .expect(400)
         expect(CreateElementResult.body).toEqual({
             errorsMessages: [
                 {
