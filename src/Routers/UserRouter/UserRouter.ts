@@ -25,7 +25,8 @@ async (req: Request<{}, {}, {}, UserQueryParamsType>, res: Response<UsersViewMod
     try {
         const queryValue: UserQueryParamsType = await defaultUserValues.defaultQueryValue(req.query)
         const result: UsersViewModelType = await UserQueryRepositories.GetAllUsers(queryValue)
-        return result.items!.length > 0 ? res.status(200).json(result) : res.sendStatus(404)
+        // return result.items!.length > 0 ? res.status(200).json(result) : res.sendStatus(404)
+        return res.status(200).json(result)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.USER.user}/`, 'GET', 'Get a user items', e)
         return res.sendStatus(500)

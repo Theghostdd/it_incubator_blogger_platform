@@ -115,18 +115,53 @@
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -152,11 +187,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">29x</span>
-<span class="cline-any cline-yes">29x</span>
-<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,6 +225,18 @@ import { BlogMapper } from "../../Utils/map/Blog/BlogMap"
 &nbsp;
 &nbsp;
 export const BlogQueryRepositories = {
+    /*
+    * 1. Constructs sorting criteria (`sort`) based on `query.sortBy` and `query.sortDirection`.
+    * 2. Constructs a filter (`filter`) to search for blogs by name using a case-insensitive regex match (`$regex`).
+    * 3. Create pagination settings.
+    * 4. Queries the database collection 
+    *    - Finds blogs that match the filter criteria.
+    *    - Sorts the results using the sorting criteria.
+    *    - Applies pagination to limit the number of results returned.
+    * 5. Maps the queried results (`result`) and pagination settings.
+    * 6. Returns a mapped blog data and pagination information.
+    * 7. If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
+    */
     async GetAllBlogs (query: BlogQueryParamsType): Promise&lt;BlogsViewModelType&gt; {
         try {
             const sort = {
@@ -197,21 +255,32 @@ export const BlogQueryRepositories = {
                 .limit(pagination.pageSize)
                 .toArray()
 &nbsp;
-            return await BlogMapper.mapBlogs(result, pagination)
+            return await BlogMapper.MapBlogs(result, pagination)
         } catch (e: any) { 
 <span class="cstat-no" title="statement not covered" >            throw new Error(e)</span>
         }
     },
-&nbsp;
+    /*
+    * 1. Queries the database collection to find a blog item by its ID.
+    * 2. Map the retrieved database model.
+    * 3. Returns the mapped data if a blog item is found (`result` is not null).
+    * 4. Returns `null` if no blog item is found (`result` is null).
+    * 5. If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
+    */ 
     async GetBlogById (id: string): Promise&lt;BlogViewModelType | null&gt; {
         try {
             const result = await db.collection&lt;BlogViewMongoModelType&gt;(MONGO_SETTINGS.COLLECTIONS.blogs).findOne({_id: new ObjectId(id)})
-            return result ? await BlogMapper.mapBlog(result, null) : null
+            return result ? await BlogMapper.MapBlog(result) : null
         } catch (e: any) {
             throw new Error(e)
         }
     },
-&nbsp;
+    /* The function performs the following steps:
+    * 1. Queries the MongoDB collection
+    * 2. Counts the number of documents that match the provided `filter`.
+    * 3. Returns the count of matching documents as a number.
+    * 4. If an error occurs during the counting process, catch the error and throw it as a generic Error.
+    */ 
     async GetCountElements (filter: Object): Promise&lt;number&gt; {
         try {
             return await db.collection(MONGO_SETTINGS.COLLECTIONS.blogs).countDocuments(filter)
@@ -226,7 +295,7 @@ export const BlogQueryRepositories = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-06-18T18:30:23.273Z
+                at 2024-06-20T15:33:19.536Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
