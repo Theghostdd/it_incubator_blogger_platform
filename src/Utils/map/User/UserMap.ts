@@ -5,13 +5,21 @@ import { UserMeModelViewType, UserViewModelType, UserViewMongoModelType, UsersVi
 
 
 export const UserMap = {
-
+    /* 
+    * 1. Takes user data.
+    * 2. Maps the user`s model view type to JWT Access Token.
+    * 3. Returns a structured JWT payload object.
+    */
     async UserMapperAuthByAccessToken (data: UserViewMongoModelType): Promise<PayloadJwtTokenType> {
         return {
             userId: data._id.toString()
         }
     },
-
+    /* 
+    * 1. Takes user data.
+    * 2. Maps the user`s model view for endpoint '/auth/me'.
+    * 3. Returns a structured object.
+    */
     async UserMapperAuthMeView (data: UserViewMongoModelType): Promise<UserMeModelViewType> {
         return {
             login: data.login,
@@ -19,7 +27,11 @@ export const UserMap = {
             userId: data._id.toString()
         }
     },
-
+    /* 
+    * 1. Takes user data.
+    * 2. Maps the user`s model view for service when creating new user.
+    * 3. Returns a structured object.
+    */
     async UserMapperCreateView (data: UserViewMongoModelType): Promise<UserViewModelType> {
         return {
             id: data._id.toString(),
@@ -28,8 +40,12 @@ export const UserMap = {
             createdAt: data.createdAt
         }
     },
-
-
+    /* 
+    * 1. Takes users and pagination data.
+    * 2. Maps the user`s models view for query repositories to return all users data with pagination.
+    * 3. If users data have empty array then 'items' must be empty array.
+    * 4. Returns a structured object.
+    */
     async UsersMapperView (data: UserViewMongoModelType[], pagination: CreatePaginationType): Promise<UsersViewModelType> {
         return {
             pagesCount: pagination.pagesCount,

@@ -7,7 +7,7 @@ import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogReposi
 import { CommentRepositories } from "../../Repositories/CommentRepositories/CommentRepositories"
 import { PostRepositories } from "../../Repositories/PostRepositories/PostRepositories"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
-import { CreateDefaultValueDate } from "../../Utils/default-values/Date/CreateDefaultDate"
+import { defaultCommentValues } from "../../Utils/default-values/Comment/default-blog-value"
 import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value"
 import { CommentsMap } from "../../Utils/map/Comments/CommentsMap"
 import { PostMapper } from "../../Utils/map/Post/PostMap"
@@ -115,7 +115,7 @@ export const PostService = {
                     blogId: getPost.blogId,
                     blogName: getPost.blogName
                 },
-                createdAt: await CreateDefaultValueDate.DefaultNowDate()
+                ...await defaultCommentValues.defaultCreateValues()
             }
 
             const resultCreate: CreatedMongoSuccessType = await CommentRepositories.CreateComment(CreateData)

@@ -1,6 +1,9 @@
 import { UserQueryParamsType } from "../../../Applications/Types-Models/User/UserTypes"
 
 export const defaultUserValues = {
+    /*
+    * Sets default values for user query parameters if they are not provided or invalid.
+    */
     async defaultQueryValue (query: UserQueryParamsType): Promise<UserQueryParamsType> {
         return {
             sortBy: query.sortBy ? query.sortBy : 'createdAt',
@@ -11,7 +14,9 @@ export const defaultUserValues = {
             searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : ''
         }
     },
-
+    /*
+    * Sets default values for creating the new user.
+    */
     async defaultCreateValue () {
         return {
             createdAt: new Date().toISOString()
