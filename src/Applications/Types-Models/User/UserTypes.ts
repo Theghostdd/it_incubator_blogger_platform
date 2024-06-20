@@ -75,3 +75,15 @@ export type UserMeModelViewType = {
     email: string,
     userId: string
 }
+/*
+*
+*
+*       User login and email 
+*
+*
+*/
+export type userLogin = {
+    login: string,
+    email: string,
+    userId: string
+}

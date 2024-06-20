@@ -11,13 +11,6 @@ export type LoginInputModelType = {
     loginOrEmail: string,
     password: string
 }
-
-
-
-
-
-
-
 /*
 *
 *
@@ -26,9 +19,6 @@ export type LoginInputModelType = {
 *
 */
 export type AuthOutputModelType = JwtType
-
-
-
 
 
 

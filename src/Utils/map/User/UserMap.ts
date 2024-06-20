@@ -1,12 +1,12 @@
-import { CreatePaginationType, CreatedMongoSuccessType, PayloadJwtToken } from "../../../Applications/Types-Models/BasicTypes"
-import { UserCreateInputModelType, UserMeModelViewType, UserViewModelType, UserViewMongoModelType, UsersViewModelType } from "../../../Applications/Types-Models/User/UserTypes"
+import { CreatePaginationType, PayloadJwtTokenType } from "../../../Applications/Types-Models/BasicTypes"
+import { UserMeModelViewType, UserViewModelType, UserViewMongoModelType, UsersViewModelType } from "../../../Applications/Types-Models/User/UserTypes"
 
 
 
 
 export const UserMap = {
 
-    async UserMapperAuthByAccessToken (data: UserViewMongoModelType): Promise<PayloadJwtToken> {
+    async UserMapperAuthByAccessToken (data: UserViewMongoModelType): Promise<PayloadJwtTokenType> {
         return {
             userId: data._id.toString()
         }
@@ -20,23 +20,7 @@ export const UserMap = {
         }
     },
 
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    async GetUserMap (data: UserViewMongoModelType ): Promise<UserViewModelType> {
+    async UserMapperCreateView (data: UserViewMongoModelType): Promise<UserViewModelType> {
         return {
             id: data._id.toString(),
             login: data.login,
@@ -45,7 +29,8 @@ export const UserMap = {
         }
     },
 
-    async mapUsers (data: UserViewMongoModelType[], pagination: CreatePaginationType): Promise<UsersViewModelType> {
+
+    async UsersMapperView (data: UserViewMongoModelType[], pagination: CreatePaginationType): Promise<UsersViewModelType> {
         return {
             pagesCount: pagination.pagesCount,
             page: pagination.page,
@@ -60,15 +45,6 @@ export const UserMap = {
                 }
             })
 
-        }
-    },
-
-    async mapUser (data: UserCreateInputModelType | UserViewMongoModelType , mongoSuc: CreatedMongoSuccessType | null): Promise<UserViewModelType> {
-        return {
-            id: mongoSuc ? mongoSuc.insertedId.toString() : ('_id' in data ? data._id.toString() : (() => { throw new Error('ID Not transmitted') })()),
-            login: data.login,
-            email: data.email,
-            createdAt: data.createdAt
         }
     },
 }

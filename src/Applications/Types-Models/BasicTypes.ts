@@ -56,7 +56,7 @@ export type JwtType = {
     accessToken: string
 }
 
-export type PayloadJwtToken = {
+export type PayloadJwtTokenType = {
     userId: string
 }
 /*

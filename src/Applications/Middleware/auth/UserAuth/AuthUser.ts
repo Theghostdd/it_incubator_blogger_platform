@@ -1,7 +1,8 @@
 import { NextFunction, Response, Request } from "express"
 import { credentialJWT } from "../../../JWT/jwt"
-import { UserQueryRepositories } from "../../../../Repositories/UserRepostitories/UserQueryRepositories"
-import { PayloadJwtToken } from "../../../Types-Models/BasicTypes"
+import { UserRepositories } from "../../../../Repositories/UserRepostitories/UserRepositories"
+import { UserViewMongoModelType } from "../../../Types-Models/User/UserTypes"
+import { UserMap } from "../../../../Utils/map/User/UserMap"
 
 
 export const AuthUser = {
@@ -15,11 +16,11 @@ export const AuthUser = {
             const verify: any = await credentialJWT.VerifyJWT(token)
 
             if (verify.userId) {
-                const getUser: PayloadJwtToken | null = await UserQueryRepositories.GetUserByIdAuthByJwtToken(verify.userId)
+                const getUser: UserViewMongoModelType | null = await UserRepositories.GetUserByIdWithoutMap(verify.userId)
                 if (!getUser) {
                     return res.sendStatus(401)
                 }
-                req.user = {userId: getUser!.userId}
+                req.user = {...await UserMap.UserMapperAuthByAccessToken(getUser)} 
                 return next()
             }
     
