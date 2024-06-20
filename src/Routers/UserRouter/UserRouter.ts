@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { authValidation } from "../../Applications/Middleware/auth/AdminAuth";
+import { authValidation } from "../../Applications/Middleware/auth/AdminAuth/AdminAuth";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ROUTERS_SETTINGS } from "../../settings";

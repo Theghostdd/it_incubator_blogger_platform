@@ -1,15 +1,17 @@
 import { Router, Request, Response } from "express";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { authValidation } from "../../Applications/Middleware/auth/AdminAuth";
+import { authValidation } from "../../Applications/Middleware/auth/AdminAuth/AdminAuth";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { PostService } from "../../Service/PostService/PostService";
 import { PostInputModelType, PostQueryValues, PostViewModelType, PostsViewModelType } from "../../Applications/Types-Models/Post/PostTypes";
 import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
-import { CommentInputModelType, CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes";
+import { CommentInputModelType, CommentQueryType, CommentViewModelType, CommentsViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes";
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
 import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value";
+import { defaultCommentValues } from "../../Utils/default-values/Comment/default-comment-value";
+import { CommentQueryRepositories } from "../../Repositories/CommentRepositories/CommentQueryRepositories";
 
 
 export const PostRouter = Router()
@@ -125,7 +127,7 @@ async (req: Request<{id: string}>, res: Response) => {
         return res.sendStatus(500)
     }
 })
-/* The function performs the following steps:
+/* 
 * 1. Validates the request body and URL parameters using applied middleware
 * 2. Calls service to create a new comment on the post identified by the ID in the URL (`req.params.id`).
 *    The comment is associated with the authenticated user identified by `req.user.userId`.
@@ -137,18 +139,35 @@ async (req: Request<{id: string}>, res: Response) => {
 PostRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
 AuthUser.AuthUserByAccessToken,
 RuleValidations.validContentComment,
+inputValidation,
 async (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelType>) => {
     try {
         const result: ResultNotificationType<CommentViewModelType> = await PostService.CreateCommentByPostId(req.body, req.params.id, req.user.userId)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                return res.sendStatus(200).json(result.data);
+                return res.status(200).json(result.data);
             case ResultNotificationEnum.NotFound:
                 return res.sendStatus(404);
             default: return res.sendStatus(500)
         }
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.POST.post}/:id${ROUTERS_SETTINGS.POST.comments}`, 'POST', 'Create comment by post ID', e)
+        return res.sendStatus(500)
+    }
+})
+/* 
+* 1. Get all the comment items with pagination.
+* 2. If items array null then send 404 error.
+* 3. If process has some error throw 500 error
+*/
+PostRouter.get(`/:id${ROUTERS_SETTINGS.POST.comments}`, 
+async (req: Request<{id: string}, {}, {}, CommentQueryType>, res: Response<CommentsViewModelType>) => {
+    try {
+        const queryValue: CommentQueryType = await defaultCommentValues.defaultQueryValue(req.query)
+        const result = await CommentQueryRepositories.GetAllComments(queryValue, req.params.id)
+        return result.items.length > 0 ? res.status(200).json(result) : res.sendStatus(404)
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.POST.post}/:id${ROUTERS_SETTINGS.POST.comments}`, 'GET', 'Get all comments by post ID', e)
         return res.sendStatus(500)
     }
 })

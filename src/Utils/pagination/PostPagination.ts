@@ -3,7 +3,7 @@ import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQ
 /* 1. Creates pagination metadata for querying post.
 *       - page - Page number (1-based index).
 *       - pageSize - Number of items per page.
-*       - filter - Filter criteria for querying blogs.
+*       - filter - Filter criteria for querying post.
 * 2. Throws an error if there's an issue retrieving total count or calculating pagination.
 */
 export const createPostPagination = async (page: number, pageSize: number, filter: Object): Promise<CreatePaginationType> => {

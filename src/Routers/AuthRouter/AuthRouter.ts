@@ -10,7 +10,15 @@ import { UserMeModelViewType } from "../../Applications/Types-Models/User/UserTy
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
 
 export const AuthRouter = Router()
-
+/*
+* 1. Validates data with use middleware.
+* 2. Attempts to authenticate the user by calling service with the login data.
+* 3. Handles the result returned from service:
+*    - If authentication is successful (`ResultNotificationEnum.Success`), responds with status 200 and returns the authentication data (`result.data`).
+*    - If authentication fails due to invalid credentials (`ResultNotificationEnum.Unauthorized`), responds with status 401 (Unauthorized).
+*    - For any other authentication failure, responds with status 500.
+* 4. Catches any exceptions that occur during the authentication process.
+*/
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
 RuleValidations.validLoginOrEmail,
 RuleValidations.validPassword,
@@ -25,7 +33,7 @@ async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelT
             case ResultNotificationEnum.Unauthorized:
                 res.sendStatus(401)
                 break;
-            default: res.sendStatus(401)
+            default: res.sendStatus(500)
         }
         return;
     } catch (e) {
@@ -33,7 +41,16 @@ async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelT
         return res.sendStatus(500)
     }
 })
-
+/*
+* 1. Authenticates the user.
+* 2. Attempts to retrieve the authenticated user's information by calling query repositories with the user ID (`req.user.userId`):
+*    - The user ID is extracted from the authenticated user's access token.
+*    - The method returns user details or `null` if the user is not found.
+* 3. Handles the result returned from `UserQueryRepositories.GetUserByIdAuthMe`:
+*    - If the user is found, responds with status 200 and returns the user's details in JSON format.
+*    - If no user is found, responds with status 404 (Not Found).
+* 4. Catches any exceptions that occur during the process.
+*/
 AuthRouter.get(`${ROUTERS_SETTINGS.AUTH.me}`, 
 AuthUser.AuthUserByAccessToken,
 async (req: Request, res: Response<UserMeModelViewType>) => {

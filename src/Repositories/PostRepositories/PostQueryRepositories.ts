@@ -11,7 +11,7 @@ import { PostMapper } from "../../Utils/map/Post/PostMap"
 
 
 export const PostQueryRepositories = {
-    /* The function performs the following steps:
+    /* 
     * 1. Constructs sorting criteria 
     * 2. Constructs a filter to optionally include posts only from a specific blog
     * 3. Generates pagination settings
@@ -46,7 +46,7 @@ export const PostQueryRepositories = {
             throw new Error(e)
         }
     },
-    /* The function performs the following steps:
+    /* 
     * 1. Convert the `id` from a string to a MongoDB `ObjectId`.
     * 2. Attempt to find and retrieve the post from the `posts` collection where `_id` matches the converted `ObjectId`.
     * 3. If a matching post is found (`result` is truthy), map the retrieved post
@@ -61,7 +61,7 @@ export const PostQueryRepositories = {
             throw new Error(e)
         }
     },
-    /* The function performs the following steps:
+    /* 
     * 1. Queries the MongoDB collection
     * 2. Counts the number of documents that match the provided `filter`.
     * 3. Returns the count of matching documents as a number.

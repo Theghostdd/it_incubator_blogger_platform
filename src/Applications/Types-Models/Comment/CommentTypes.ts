@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { PaginationType } from "../BasicTypes"
 
 /*
 *
@@ -24,6 +25,9 @@ export type CommentViewModelType = {
     createdAt: string
 }
 
+export type CommentsViewModelType = PaginationType & {
+    items:  CommentViewModelType[]
+}
 /*
 *
 *
@@ -60,7 +64,19 @@ type  CommentatorInfo = {
 *
 *
 */
-
 export type CommentMongoViewType = {
     _id: ObjectId
 } & CommentCreateType
+/*
+*
+*
+*       Comment query type
+*
+*
+*/
+export type CommentQueryType = {
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string, 
+    sortDirection: 'asc' | 'desc',
+}

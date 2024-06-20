@@ -19,6 +19,9 @@ export const ROUTERS_SETTINGS = {
         login: '/login',
         me: '/me'
     },
+    COMMENTS: {
+        comments: '/api/comments'
+    },
     TEST: {
         test: '/api/testing',
         test_all_data: '/all-data'

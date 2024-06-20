@@ -7,7 +7,7 @@ import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogReposi
 import { CommentRepositories } from "../../Repositories/CommentRepositories/CommentRepositories"
 import { PostRepositories } from "../../Repositories/PostRepositories/PostRepositories"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
-import { defaultCommentValues } from "../../Utils/default-values/Comment/default-blog-value"
+import { defaultCommentValues } from "../../Utils/default-values/Comment/default-comment-value"
 import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value"
 import { CommentsMap } from "../../Utils/map/Comments/CommentsMap"
 import { PostMapper } from "../../Utils/map/Post/PostMap"

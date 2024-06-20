@@ -29,7 +29,7 @@ export const BlogMapper = {
     
         }
     },
-        /* 
+    /* 
     * 1. Takes blog data.
     * 2. Maps the blog`s model view for query repositories when getting blog by ID.
     * 3. Returns a structured object.

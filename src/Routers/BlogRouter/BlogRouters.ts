@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { authValidation } from "../../Applications/Middleware/auth/AdminAuth";
+import { authValidation } from "../../Applications/Middleware/auth/AdminAuth/AdminAuth";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { BlogInputModelType, BlogQueryParamsType, BlogViewModelType, BlogsViewModelType } from "../../Applications/Types-Models/Blog/BlogTypes";
