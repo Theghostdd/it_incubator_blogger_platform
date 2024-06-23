@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb"
 import { PaginationType } from "../BasicTypes"
+import { RegistrationConfirm } from "../Registration/RegistrationTypes"
 
 /*
 *
@@ -61,6 +62,7 @@ export type UserViewMongoModelType = {
     login: string,
     password: string,
     email: string,
+    userConfirm: RegistrationConfirm
     createdAt: string
 }
 /*

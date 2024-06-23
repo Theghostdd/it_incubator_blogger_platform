@@ -17,7 +17,10 @@ export const ROUTERS_SETTINGS = {
     AUTH: {
         auth: '/api/auth',
         login: '/login',
-        me: '/me'
+        me: '/me',
+        registration: '/registration',
+        registration_confirmation: '/registration-confirmation',
+        registration_email_resending: '/registration-email-resending',
     },
     COMMENTS: {
         comments: '/api/comments'
@@ -52,3 +55,12 @@ export const AuthData = [
         encode: "YWRtaW46cXdlcnR5"
     }
 ]
+
+export const MAIL_SETTINGS = {
+    MAIL_SERVICE: 'gmail',
+    MAIL_FROM: {
+        address: 'mixailmar4uk78@gmail.com',
+        name: 'Mikhail',
+        password: process.env.PASSWORD_MAIL_AGENT || ' '
+    }
+}

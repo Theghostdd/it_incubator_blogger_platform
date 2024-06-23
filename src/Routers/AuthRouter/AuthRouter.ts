@@ -6,7 +6,7 @@ import { AuthOutputModelType, LoginInputModelType} from "../../Applications/Type
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ResultNotificationType, ResultNotificationEnum } from "../../Applications/Types-Models/BasicTypes";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
-import { UserMeModelViewType } from "../../Applications/Types-Models/User/UserTypes";
+import { UserInputModelType, UserMeModelViewType } from "../../Applications/Types-Models/User/UserTypes";
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
 
 export const AuthRouter = Router()
@@ -59,6 +59,34 @@ async (req: Request, res: Response<UserMeModelViewType>) => {
         return result ? res.status(200).json(result) : res.sendStatus(404)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.me}`, 'GET', 'Get information about current user by accessToken.', e)
+        return res.sendStatus(500)
+    }
+})
+
+
+
+
+
+
+
+
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration}`, 
+RuleValidations.validLogin,
+RuleValidations.validEmail,
+RuleValidations.validPassword,
+inputValidation,
+async (req: Request<{}, {}, UserInputModelType>, res: Response) => {
+    try {
+        const result: ResultNotificationType = await AuthService.RegistrationUser(req.body)
+        switch(result.status) {
+            case ResultNotificationEnum.Success:
+                return res.sendStatus(204);
+            case ResultNotificationEnum.BadRequest: 
+                return res.status(400).json(result.errorField);
+            default: return res.sendStatus(500)
+        }
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'Registration new user', e)
         return res.sendStatus(500)
     }
 })

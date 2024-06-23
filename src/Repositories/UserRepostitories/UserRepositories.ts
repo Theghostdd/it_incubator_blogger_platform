@@ -4,6 +4,7 @@ import { CreatedMongoSuccessType, DeletedMongoSuccessType } from "../../Applicat
 import { UserCreateInputModelType, UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { MONGO_SETTINGS } from "../../settings"
 import { LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { RegistrationCreateType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
 
 
 
@@ -17,7 +18,7 @@ export const UserRepositories = {
     * 2. Returns the result of the insertion operation, which includes the ID of the newly created user.
     * If an error occurs during the insertion, the method throws an error to be handled by the calling code.
     */ 
-    async CreateUser (data: UserCreateInputModelType): Promise<CreatedMongoSuccessType> {
+    async CreateUser (data: UserCreateInputModelType | RegistrationCreateType): Promise<CreatedMongoSuccessType> {
         try {
             return await db.collection(MONGO_SETTINGS.COLLECTIONS.users).insertOne({...data})
         } catch (e: any) {
@@ -68,6 +69,4 @@ export const UserRepositories = {
             throw new Error(e)
         }
     },
-
-
 }
