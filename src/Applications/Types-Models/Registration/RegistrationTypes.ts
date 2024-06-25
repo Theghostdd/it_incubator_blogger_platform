@@ -23,3 +23,7 @@ export type RegistrationConfirm = {
     confirmationCode: string,
     dataExpire: string
 }
+
+export type ResendConfirmCodeInputType = {
+    email: string
+}

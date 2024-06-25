@@ -53,3 +53,7 @@ export const CreatedPost = async (data: any) => {
 export const CreateManyDataUniversal = async (data: any, collectionName: string) => {
     return await db.collection(collectionName).insertMany(data)
 }
+
+export const InsertOneUniversal =async (data: any, collectionName: string) => {
+    return await db.collection(collectionName).insertOne(data)
+}

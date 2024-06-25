@@ -1,15 +1,14 @@
 import { credentialJWT } from "../../Applications/Middleware/auth/UserAuth/jwt"
 import { comparePass, genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
-import { AuthOutputModelType, LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
-import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
+import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
-import { RegistrationCreateType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
+import { RegistrationCreateType, ResendConfirmCodeInputType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
 import { RegistrationDefaultValue } from "../../Utils/default-values/Registration/registration-default-value"
 import { sendEmail } from "../../Applications/Nodemailer/nodemailer"
 import { GenerateUuid } from "../../Utils/generate-uuid/generate-uuid"
-
-import { addDays} from "date-fns";
+import { addDays, compareAsc} from "date-fns";
 import { PatternsMail } from "../../Applications/Nodemailer/patterns/patterns"
 import { PatternMail } from "../../Applications/Types-Models/PatternsMail/patternsMailTypes"
 
@@ -17,7 +16,7 @@ import { PatternMail } from "../../Applications/Types-Models/PatternsMail/patter
 
 export const AuthService = {
     /* 
-    * 1. Constructs a filter object to find a user document by login or email.
+    * 1. Check user.
     * 2. Queries the MongoDB collection.
     * 3. Checks if a user document is found:
     *    a. If no user is found, returns a failure status (Unauthorized).
@@ -28,8 +27,8 @@ export const AuthService = {
         try {
             const filter = {
                 $or: [
-                    {login: data.loginOrEmail},
-                    {email: data.loginOrEmail}
+                    {email: data.loginOrEmail},
+                    {login: data.loginOrEmail}
                 ]
             }
             const getUser: UserViewMongoModelType | null = await UserRepositories.GetUserByLoginOrEmailWithOutMap(filter)
@@ -53,19 +52,17 @@ export const AuthService = {
         }
     },
     /*
-    * 1. Constructs a filter object to find a user document by login or email.
-    * 2. Queries to db.
-    * 3. . Checks if a user document is found:
+    * 1. . Checks if a user document is found:
     *    a. If no user is found, next step.
     *    b. If a user is found, return error not uniq values and return this values.
-    * 4. Generate confirm`s code for confirm email user with uuid.
-    * 5. Next step is create data object for create new user in db
+    * 2. Generate confirm`s code for confirm email user with uuid.
+    * 3. Next step is create data object for create new user in db
     *   a. Creating hash password.
     *   b. Creating current date + 1 day to this day for tracking expire data confirm email.
-    * 6. Create user, use repositories.
-    * 7. Getting email pattern for confirm email.
-    * 8. Send email to user.
-    * 9. If process has some error throw error in the "catch"
+    * 4. Create user, use repositories.
+    * 5. Getting email pattern for confirm email.
+    * 6. Send email to user.
+    * 7. If process has some error throw error in the "catch"
     */
     async RegistrationUser (data: UserInputModelType): Promise<ResultNotificationType> {
         try {
@@ -75,6 +72,7 @@ export const AuthService = {
                     {login: data.login}
                 ]
             }
+
             const checkLoginAndEmail: UserViewMongoModelType | null = await UserRepositories.GetUserByLoginOrEmailWithOutMap(filter)
             if (checkLoginAndEmail) {
                 const errors: APIErrorsMessageType = {errorsMessages: []};  
@@ -99,10 +97,110 @@ export const AuthService = {
             const getPatternMail: PatternMail = await PatternsMail.ConfirmMail(generateConfirmCode)
             const send = await sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
 
-            // const createTrackingRegistration = '';
             return {status: ResultNotificationEnum.Success}
         } catch (e: any) {
             throw new Error(e)
         }
-    } 
+    },
+    /*
+    * 1. Checks if a user document is found by confirmation code:
+    *    a. If no user is found, next step return error invalid code.
+    *    b. If a user is found, next step.
+    * 2. Check that email has been confirmed.
+    *    a. If email has been confirmed return error.
+    *    b. If email doesn`t confirmed next step. 
+    * 3. Check that the current date and time is less than the code expiration date    
+    *   a. If date and time is less, next step.
+    *   b. If date and time is more, send error.
+    * 4. Send id and data update object to repositories for update.
+    * 5. Check that 'matchedCount' is less than 0.
+    *   a. If 'matchedCount' is more than 0 than return success.
+    *   b. If 'matchedCount' is less 0, than return error not found.
+    * 6. If process has some error throw error in the "catch"
+    */
+    async RegistrationUserConfirmUserByEmail (data: ConfirmCodeInputModelType): Promise<ResultNotificationType> {
+        try {
+            const checkConfirmCode: UserViewMongoModelType | null = await UserRepositories.GetUserByConfirmationCode(data.code)
+            if (!checkConfirmCode) {
+                const errors: APIErrorsMessageType = {errorsMessages: [
+                    {
+                        message: 'Code not found',
+                        field: 'code'
+                    }
+                ]};  
+                return {status: ResultNotificationEnum.BadRequest, errorField: errors}
+            }
+
+
+            if (checkConfirmCode.userConfirm.ifConfirm) {
+                return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages: [
+                        {
+                            message: 'Email has been confirmed',
+                            field: 'code'
+                        }
+                    ]}
+                }
+            }
+    
+            if (compareAsc(new Date(), checkConfirmCode.userConfirm.dataExpire) === 1) {
+                return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages: [
+                        {
+                            message: 'The confirmation code has expired',
+                            field: 'code'
+                        }
+                    ]}
+                }
+            }
+
+            const dataUpdate = {$set: {'userConfirm.ifConfirm': true}}
+            const ConfirmUser: UpdateMongoSuccessType = await UserRepositories.UpdateUserById(checkConfirmCode._id.toString(), dataUpdate)
+
+            return ConfirmUser.matchedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+
+
+
+
+    async RegistrationResendConfirmCodeToEmail (data: ResendConfirmCodeInputType): Promise<ResultNotificationType> {
+        try {
+            const filter = {
+                $or: [
+                    {email: data.email}
+                ]
+            }
+            const checkUserByEmail: UserViewMongoModelType | null = await UserRepositories.GetUserByLoginOrEmailWithOutMap(filter)
+            if (!checkUserByEmail) {
+                return {status: ResultNotificationEnum.NotFound}
+            }
+
+
+            if (checkUserByEmail.userConfirm.ifConfirm) {
+                return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages: [
+                        {
+                            message: 'Email has been confirmed',
+                            field: 'email'
+                        }
+                    ]}
+                }
+            }
+
+            const generateConfirmCode = await GenerateUuid.GenerateCodeForConfirmEmail()
+            const dataUpdate = {$set: {'userConfirm.confirmationCode': generateConfirmCode}}
+            const getPatternMail: PatternMail = await PatternsMail.ConfirmMail(generateConfirmCode)
+            const send = await sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
+            const UpdateUser: UpdateMongoSuccessType = await UserRepositories.UpdateUserById(checkUserByEmail._id.toString(), dataUpdate)
+        
+            return UpdateUser.matchedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
 }

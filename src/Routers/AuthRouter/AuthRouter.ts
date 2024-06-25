@@ -2,12 +2,13 @@ import { Router, Request, Response } from "express";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { AuthService } from "../../Service/AuthService/AuthService";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { AuthOutputModelType, LoginInputModelType} from "../../Applications/Types-Models/Auth/AuthTypes";
+import { AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType} from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ResultNotificationType, ResultNotificationEnum } from "../../Applications/Types-Models/BasicTypes";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
 import { UserInputModelType, UserMeModelViewType } from "../../Applications/Types-Models/User/UserTypes";
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
+import { ResendConfirmCodeInputType } from "../../Applications/Types-Models/Registration/RegistrationTypes";
 
 export const AuthRouter = Router()
 /*
@@ -87,6 +88,50 @@ async (req: Request<{}, {}, UserInputModelType>, res: Response) => {
         }
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'Registration new user', e)
+        return res.sendStatus(500)
+    }
+})
+
+
+
+
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_confirmation}`, 
+RuleValidations.validConfirmCode,
+inputValidation,
+async (req: Request<{}, {}, ConfirmCodeInputModelType>, res: Response) => {
+    try {
+        const result: ResultNotificationType = await AuthService.RegistrationUserConfirmUserByEmail(req.body)
+        switch(result.status) {
+            case ResultNotificationEnum.Success:
+                return res.sendStatus(204);
+            case ResultNotificationEnum.BadRequest: 
+                return res.status(400).json(result.errorField);
+            default: return res.sendStatus(500)
+        }
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'Confirm new user by email', e)
+        return res.sendStatus(500)
+    }
+})
+
+
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_email_resending}`, 
+RuleValidations.validEmail,
+inputValidation,
+async (req: Request<{}, {}, ResendConfirmCodeInputType>, res: Response) => {
+    try {
+        const result: ResultNotificationType = await AuthService.RegistrationResendConfirmCodeToEmail(req.body)
+        switch(result.status) {
+            case ResultNotificationEnum.Success:
+                return res.sendStatus(204);
+            case ResultNotificationEnum.BadRequest: 
+                return res.status(400).json(result.errorField);
+            case ResultNotificationEnum.NotFound:
+                return res.sendStatus(404)
+            default: return res.sendStatus(500)
+        }
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'Reconfirm user by email', e)
         return res.sendStatus(500)
     }
 })

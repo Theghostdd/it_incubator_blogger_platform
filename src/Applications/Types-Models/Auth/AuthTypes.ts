@@ -19,9 +19,16 @@ export type LoginInputModelType = {
 *
 */
 export type AuthOutputModelType = JwtType
-
-
-
+/*
+*
+*
+*       Auth output model
+*
+*
+*/
+export type ConfirmCodeInputModelType = {
+    code: string
+}
 
 
 

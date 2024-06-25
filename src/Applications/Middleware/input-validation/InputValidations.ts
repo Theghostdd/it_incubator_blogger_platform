@@ -108,7 +108,11 @@ export const RuleValidations = {
         .withMessage('Bad login or email'),
     validContentComment: body('content')
         .trim()
-        .isLength({min: 20, max: 300})
+        .isLength({min: 20, max: 300}),
+    validConfirmCode: body('code')
+        .trim()
+        .notEmpty()
+        .isLength({min: 1})
 
 };
 

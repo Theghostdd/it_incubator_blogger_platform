@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
-import { CreatedMongoSuccessType, DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
+import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { UserCreateInputModelType, UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { MONGO_SETTINGS } from "../../settings"
 import { LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
@@ -69,4 +69,21 @@ export const UserRepositories = {
             throw new Error(e)
         }
     },
+    async GetUserByConfirmationCode (code: string): Promise<UserViewMongoModelType | null> {
+        try {
+            const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({'userConfirm.confirmationCode': code})
+            return result ? result : null
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+    async UpdateUserById(id: string, data: Object): Promise<UpdateMongoSuccessType> {
+        try {
+            const result = await db.collection<UpdateMongoSuccessType>(MONGO_SETTINGS.COLLECTIONS.users).updateOne({_id: new ObjectId(id)}, data)
+            return result
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    }
 }
