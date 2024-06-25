@@ -61,6 +61,6 @@ export const MAIL_SETTINGS = {
     MAIL_FROM: {
         address: 'mixailmar4uk78@gmail.com',
         name: 'Mikhail',
-        password: process.env.PASSWORD_MAIL_AGENT || ' '
+        password: process.env.PASSWORD_MAIL_AGENT || 'somepassformail'
     }
 }
