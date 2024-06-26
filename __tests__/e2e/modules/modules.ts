@@ -50,6 +50,27 @@ export const CreatedPost = async (data: any) => {
     return result.body
 }
 
+export const RegistrationUser = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.AUTH.auth +ROUTERS_SETTINGS.AUTH.registration)
+        .send(data)
+    return result.body
+}
+
+export const RegistrationConfirmCode = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirmation)
+        .send(data)
+    return result.body
+}
+
+export const RegistrationResendConfirmCode = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_email_resending)
+        .send(data)
+    return result.body
+}
+
 export const CreateManyDataUniversal = async (data: any, collectionName: string) => {
     return await db.collection(collectionName).insertMany(data)
 }

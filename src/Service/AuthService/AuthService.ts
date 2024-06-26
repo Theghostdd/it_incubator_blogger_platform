@@ -36,6 +36,17 @@ export const AuthService = {
                 return {status: ResultNotificationEnum.Unauthorized}
             }
 
+            if (!getUser.userConfirm.ifConfirm) {
+                return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages: [
+                        {
+                            message: 'Email has been confirmed',
+                            field: 'code'
+                        }
+                    ]}
+                }
+            }
+            
             if (!await comparePass(data.password, getUser.password)) {
                 return {status: ResultNotificationEnum.Unauthorized}
             }

@@ -1,4 +1,3 @@
-import { StatSyncFn } from "fs"
 import { sendEmail } from "../../../src/Applications/Nodemailer/nodemailer"
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
 import { AdminAuth, CreateUser, DeleteAllDb, GetRequest, InsertOneUniversal } from "../modules/modules"
@@ -11,10 +10,12 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     const endpoint: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration
     const endpointUsers: string = ROUTERS_SETTINGS.USER.user
     const endpointRegistrationConfirm: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirmation
+    const endpointRegistrationResendConfirmationCode: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_email_resending
 
     let CreatedUserData: any = {}
     let InsertOneData: any = {}
     let ConfirmUserData: any = {}
+    let ResendConfirmCodeData: any = {}
 
     beforeEach(async () => {
         await DeleteAllDb()
@@ -24,8 +25,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
             password: "SomePass",
             email: "example@mail.ru"
         }
-
-
+        
         InsertOneData = {
             login : "somLogin",
             email : "mixailmar4uk@yandex.ru",
@@ -40,6 +40,10 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
 
         ConfirmUserData = {
             code: InsertOneData.userConfirm.confirmationCode
+        }
+
+        ResendConfirmCodeData = {
+            email: InsertOneData.email
         }
 
 
@@ -213,5 +217,57 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
             ]
         })
     })
+
+    it('POST | should resend confirmation code, status: 204', async () => {
+        // Create user
+        const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
+        // This simulates a scenario where user want to get the new confirmation code
+        const RegistrationUser = await GetRequest()
+            .post(endpointRegistrationResendConfirmationCode)
+            .send(ResendConfirmCodeData)
+            .expect(204)
+    })
+
+    it('POST | shouldn`t resend confirmation code, status: 400 and 404', async () => {
+        // Create user
+        InsertOneData.userConfirm.ifConfirm = true
+        const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
+        // This simulates a scenario where user want to get the new confirmation code but email not found
+        ResendConfirmCodeData.email = 'someemail@mail.ru'
+        let RegistrationUser = await GetRequest()
+            .post(endpointRegistrationResendConfirmationCode)
+            .send(ResendConfirmCodeData)
+            .expect(404)
+        ResendConfirmCodeData.email = InsertOneData.email
+        // This simulates a scenario where user want to get the new confirmation code but email has been confirmed
+        RegistrationUser = await GetRequest()
+            .post(endpointRegistrationResendConfirmationCode)
+            .send(ResendConfirmCodeData)
+            .expect(400)
+        expect(RegistrationUser.body).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: "email"
+                }, 
+            ]
+        })
+        ResendConfirmCodeData.email = 'someemailmail.ru'
+        // This simulates a scenario where the user wants to receive a new confirmation code without sending an incorrect email
+        RegistrationUser = await GetRequest()
+            .post(endpointRegistrationResendConfirmationCode)
+            .send(ResendConfirmCodeData)
+            .expect(400)
+        expect(RegistrationUser.body).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: "email"
+                }, 
+            ]
+        })
+    })
+
+        
 
 })

@@ -4,7 +4,7 @@ import { AuthService } from "../../Service/AuthService/AuthService";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
 import { AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType} from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SaveError } from "../../Utils/error-utils/save-error";
-import { ResultNotificationType, ResultNotificationEnum } from "../../Applications/Types-Models/BasicTypes";
+import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType } from "../../Applications/Types-Models/BasicTypes";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
 import { UserInputModelType, UserMeModelViewType } from "../../Applications/Types-Models/User/UserTypes";
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
@@ -24,19 +24,18 @@ AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
 RuleValidations.validLoginOrEmail,
 RuleValidations.validPassword,
 inputValidation,
-async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelType>) => {
+async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) => {
     try {
-        const result: ResultNotificationType<AuthOutputModelType> = await AuthService.AuthUser(req.body)
+        const result: ResultNotificationType<AuthOutputModelType | APIErrorsMessageType> = await AuthService.AuthUser(req.body)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                res.status(200).json(result.data)
-                break;
+                return res.status(200).json(result.data)
             case ResultNotificationEnum.Unauthorized:
-                res.sendStatus(401)
-                break;
-            default: res.sendStatus(500)
+                return res.sendStatus(401);
+            case ResultNotificationEnum.BadRequest:
+                return res.status(400).json(result.errorField)
+            default: return res.sendStatus(500)
         }
-        return;
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.login}`, 'POST', 'Login the user', e)
         return res.sendStatus(500)
