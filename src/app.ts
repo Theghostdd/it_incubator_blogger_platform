@@ -15,9 +15,8 @@ export const app = express()
 let MemoryRequest: any = []
 
 app.use(async (req: Request, res: Response, next: NextFunction) => {
-    console.error(req.ip)
     if (MemoryRequest.includes(req.ip)) {
-        return res.status(400).json({errorRequest: 'a lot of request, try again later'})
+        return res.status(400).json({errorRequest: `a lot of request, try again later your IP: ${req.ip}`, })
     }
     MemoryRequest.push(req.ip)
     setTimeout(() => {
