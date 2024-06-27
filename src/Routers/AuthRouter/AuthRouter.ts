@@ -125,8 +125,6 @@ async (req: Request<{}, {}, ResendConfirmCodeInputType>, res: Response) => {
                 return res.sendStatus(204);
             case ResultNotificationEnum.BadRequest: 
                 return res.status(400).json(result.errorField);
-            case ResultNotificationEnum.NotFound:
-                return res.sendStatus(404)
             default: return res.sendStatus(500)
         }
     } catch (e) {

@@ -38,7 +38,6 @@ describe(ROUTERS_SETTINGS.AUTH.auth, () => {
             .post(endpointLogin)
             .send(LoginData)
             .expect(200)
-
         expect(LoginByLoginResult.body).toEqual({
             accessToken: expect.any(String)
         })

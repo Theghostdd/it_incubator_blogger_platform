@@ -46,7 +46,7 @@ export const AuthService = {
                     ]}
                 }
             }
-            
+
             if (!await comparePass(data.password, getUser.password)) {
                 return {status: ResultNotificationEnum.Unauthorized}
             }
@@ -187,7 +187,14 @@ export const AuthService = {
             }
             const checkUserByEmail: UserViewMongoModelType | null = await UserRepositories.GetUserByLoginOrEmailWithOutMap(filter)
             if (!checkUserByEmail) {
-                return {status: ResultNotificationEnum.NotFound}
+                return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages: [
+                        {
+                            message: 'Email is not found',
+                            field: 'email'
+                        }
+                    ]}
+                }
             }
 
 

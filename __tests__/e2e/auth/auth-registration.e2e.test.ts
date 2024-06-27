@@ -25,7 +25,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
             password: "SomePass",
             email: "example@mail.ru"
         }
-        
+
         InsertOneData = {
             login : "somLogin",
             email : "mixailmar4uk@yandex.ru",
@@ -237,7 +237,15 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
         let RegistrationUser = await GetRequest()
             .post(endpointRegistrationResendConfirmationCode)
             .send(ResendConfirmCodeData)
-            .expect(404)
+            .expect(400)
+        expect(RegistrationUser.body).toEqual({
+                errorsMessages: [
+                    {
+                        message: expect.any(String),
+                        field: "email"
+                    }, 
+                ]
+            })
         ResendConfirmCodeData.email = InsertOneData.email
         // This simulates a scenario where user want to get the new confirmation code but email has been confirmed
         RegistrationUser = await GetRequest()
