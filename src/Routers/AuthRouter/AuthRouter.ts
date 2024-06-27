@@ -62,14 +62,15 @@ async (req: Request, res: Response<UserMeModelViewType>) => {
         return res.sendStatus(500)
     }
 })
-
-
-
-
-
-
-
-
+/*
+* 1. Validation includes data into middleware.
+* 2. Calls service to register the user.
+* 4. Processes the result returned by `AuthService.RegistrationUser`:
+*    - If `result.status` equals `ResultNotificationEnum.Success`, it returns a 204 status (No Content), indicating successful registration.
+*    - If `result.status` equals `ResultNotificationEnum.BadRequest`, it returns a 400 status (Bad Request) and the error details in JSON format (`result.errorField`).
+*    - For any other status values, it returns a 500 status (Internal Server Error).
+* 5. Catches any exceptions that occur during the registration process, return error 500.
+*/
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration}`, 
 RuleValidations.validLogin,
 RuleValidations.validEmail,
@@ -90,10 +91,15 @@ async (req: Request<{}, {}, UserInputModelType>, res: Response) => {
         return res.sendStatus(500)
     }
 })
-
-
-
-
+/*
+* 1. Validation data into middleware.
+* 2. Calls service to confirm the user's registration:
+* 3. Processes the result returned by `AuthService.RegistrationUserConfirmUserByEmail`:
+*    - If `result.status` equals `ResultNotificationEnum.Success`, it returns a 204 status (No Content), indicating successful confirmation.
+*    - If `result.status` equals `ResultNotificationEnum.BadRequest`, it returns a 400 status (Bad Request) and the error details in JSON format (`result.errorField`).
+*    - For any other status values, it returns a 500 status (Internal Server Error).
+* 4. Catches any exceptions that occur during the confirmation process return error 500.
+*/
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_confirmation}`, 
 RuleValidations.validConfirmCode,
 inputValidation,
@@ -112,8 +118,15 @@ async (req: Request<{}, {}, ConfirmCodeInputModelType>, res: Response) => {
         return res.sendStatus(500)
     }
 })
-
-
+/*
+* 1. Validation data into middleware.
+* 2. Calls service to resend the confirmation code:
+* 3. Processes the result returned by `AuthService.RegistrationResendConfirmCodeToEmail`:
+*    - If `result.status` equals `ResultNotificationEnum.Success`, it returns a 204 status (No Content), indicating that the confirmation code was successfully resent.
+*    - If `result.status` equals `ResultNotificationEnum.BadRequest`, it returns a 400 status (Bad Request) and the error details in JSON format (`result.errorField`).
+*    - For any other status values, it returns a 500 status (Internal Server Error).
+* 4. Catches any exceptions that occur during the process of resending the confirmation code return error 500.
+*/
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_email_resending}`, 
 RuleValidations.validEmail,
 inputValidation,

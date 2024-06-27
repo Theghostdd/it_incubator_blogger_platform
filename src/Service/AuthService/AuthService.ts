@@ -173,11 +173,20 @@ export const AuthService = {
             throw new Error(e)
         }
     },
-
-
-
-
-
+    /*
+    * 1. Checks if a user document is found by email:
+    *    a. If no user is found, next step return error invalid code.
+    *    b. If a user is found, next step.
+    * 2. Check that email has been confirmed.
+    *    a. If email has been confirmed return error.
+    *    b. If email doesn`t confirmed next step. 
+    * 3. Generate new confirmation code.
+    * 4. Create object for update field.
+    * 5. Get mail patter for send to user`s email.
+    * 6. Send email to user`s email.
+    * 7. Update user`s field by user`s id into collection.
+    * 8. If process has some error throw error in the "catch"
+    */
     async RegistrationResendConfirmCodeToEmail (data: ResendConfirmCodeInputType): Promise<ResultNotificationType> {
         try {
             const filter = {
@@ -220,5 +229,4 @@ export const AuthService = {
             throw new Error(e)
         }
     },
-
 }

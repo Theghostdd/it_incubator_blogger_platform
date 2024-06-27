@@ -69,6 +69,13 @@ export const UserRepositories = {
             throw new Error(e)
         }
     },
+    /* 
+    * 1. Queries the MongoDB collection.
+    * 2. Uses the `findOne` method to find a single document that matches the given filter by confirmation code.
+    * 3. Returns the found document if it exists, or null if no document matches the filter.
+    * 4. We get filter from service.
+    * 5. Catch some error and return new error if process has some error.
+    */
     async GetUserByConfirmationCode (code: string): Promise<UserViewMongoModelType | null> {
         try {
             const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({'userConfirm.confirmationCode': code})
@@ -77,7 +84,12 @@ export const UserRepositories = {
             throw new Error(e)
         }
     },
-
+    /* 
+    * 1. Update field in collection by user`s id.
+    * 2. Returns the mongo db success type.
+    * 4. We get data to update from service.
+    * 5. Catch some error and return new error if process has some error.
+    */
     async UpdateUserById(id: string, data: Object): Promise<UpdateMongoSuccessType> {
         try {
             const result = await db.collection<UpdateMongoSuccessType>(MONGO_SETTINGS.COLLECTIONS.users).updateOne({_id: new ObjectId(id)}, data)
