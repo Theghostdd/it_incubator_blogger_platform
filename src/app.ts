@@ -14,9 +14,19 @@ export const app = express()
 
 let MemoryRequest: any = []
 
+
+app.set('trust proxy', true);
+
+app.use(express.json())
+app.use(cors())
+
 app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (MemoryRequest.includes(req.ip)) {
-        return res.status(400).json({errorRequest: `a lot of request, try again later your IP: ${req.ip}`, })
+        return res.status(400).json({
+            errorRequest: `a lot of request, try again later your IP: ${req.ip}`, 
+            xForwardedFor: `${req.headers['x-forwarded-for']}`,
+            reqHeaders: `${JSON.stringify(req.headers, null, 2)}`
+    })
     }
     MemoryRequest.push(req.ip)
     setTimeout(() => {
@@ -24,9 +34,6 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
     }, 10000)
     next()
 }) 
-
-app.use(express.json())
-app.use(cors())
 
 app.use(ROUTERS_SETTINGS.BLOG.blogs, BlogRouter)
 app.use(ROUTERS_SETTINGS.POST.post, PostRouter)
