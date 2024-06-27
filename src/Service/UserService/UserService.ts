@@ -1,5 +1,6 @@
 import { genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
 import { APIErrorsMessageType, CreatedMongoSuccessType, DeletedMongoSuccessType, ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
+import { RegistrationCreateType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
 import { UserCreateInputModelType, UserInputModelType, UserViewModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
 import { defaultUserValues } from "../../Utils/default-values/User/default-user-value"
@@ -39,9 +40,14 @@ export const UserService = {
                 return {status: ResultNotificationEnum.BadRequest, errorField: errors}
             }
 
-            const CreateData: UserCreateInputModelType = {
+            const CreateData: RegistrationCreateType = {
                 ...data, 
-                password: await genSaltAndHash(data.password), 
+                password: await genSaltAndHash(data.password),
+                userConfirm: {
+                    ifConfirm: true,
+                    confirmationCode: 'nullcode',
+                    dataExpire: "2000-06-28T09:49:06.729Z"
+                },
                 ...await defaultUserValues.defaultCreateValue()
             }
             const result: CreatedMongoSuccessType = await UserRepositories.CreateUser(CreateData)
