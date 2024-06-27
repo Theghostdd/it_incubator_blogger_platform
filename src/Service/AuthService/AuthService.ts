@@ -219,7 +219,7 @@ export const AuthService = {
             }
 
             const generateConfirmCode = await GenerateUuid.GenerateCodeForConfirmEmail()
-            const dataUpdate = {$set: {'userConfirm.confirmationCode': generateConfirmCode}}
+            const dataUpdate = {$set: {'userConfirm.confirmationCode': generateConfirmCode, 'userConfirm.dataExpire': addDays(new Date(), 1).toISOString()}}
             const getPatternMail: PatternMail = await PatternsMail.ConfirmMail(generateConfirmCode)
             const send = await sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
             const UpdateUser: UpdateMongoSuccessType = await UserRepositories.UpdateUserById(checkUserByEmail._id.toString(), dataUpdate)
