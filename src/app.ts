@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction } from 'express'
 import cors from 'cors'
 import { ROUTERS_SETTINGS, SETTINGS } from './settings'
 import { BlogRouter } from './Routers/BlogRouter/BlogRouters'
@@ -7,8 +7,24 @@ import { UserRouter } from './Routers/UserRouter/UserRouter'
 import { AuthRouter } from './Routers/AuthRouter/AuthRouter'
 import { TestRouter } from './Routers/test-router/test-router'
 import { CommentsRouter } from './Routers/CommentsRouter/CommentsRouter'
+import { Router, Request, Response } from "express";
+
 
 export const app = express()
+
+let MemoryRequest: any = []
+
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+    console.error(req.ip)
+    if (MemoryRequest.includes(req.ip)) {
+        return res.status(400).json({errorRequest: 'a lot of request, try again later'})
+    }
+    MemoryRequest.push(req.ip)
+    setTimeout(() => {
+        MemoryRequest = []
+    }, 10000)
+    next()
+}) 
 
 app.use(express.json())
 app.use(cors())
