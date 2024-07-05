@@ -3,7 +3,7 @@ import { MONGO_SETTINGS } from "../../settings";
 import { SaveError } from "../../Utils/error-utils/save-error";
 
 // Connect MongoDb 
-export const client = new MongoClient(MONGO_SETTINGS.URL, {
+export const client = new MongoClient(MONGO_SETTINGS.URL_CLOUD, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
