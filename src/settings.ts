@@ -21,6 +21,8 @@ export const ROUTERS_SETTINGS = {
         registration: '/registration',
         registration_confirmation: '/registration-confirmation',
         registration_email_resending: '/registration-email-resending',
+        refresh_token: '/refresh-token',
+        logout: '/logout'
     },
     COMMENTS: {
         comments: '/api/comments'
@@ -39,14 +41,16 @@ export const MONGO_SETTINGS = {
         posts: 'posts',
         blogs: 'blogs',
         users: 'users',
-        comments: 'comments'
+        comments: 'comments',
+        token_black_list: 'token_black_list'
     }
 }
 
 export const SETTINGS = {
     PORT: process.env.PORT || "3000",
     SALTRounds: 10,
-    JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY || "SecretKey"
+    JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY || "SecretKey",
+    JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY || "SecretKey2"
 }
 
 export const AuthData = [

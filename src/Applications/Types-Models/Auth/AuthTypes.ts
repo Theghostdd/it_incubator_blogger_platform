@@ -1,4 +1,4 @@
-import { JwtType } from "../BasicTypes"
+import { ObjectId } from "mongodb"
 
 /*
 *
@@ -18,7 +18,12 @@ export type LoginInputModelType = {
 *
 *
 */
-export type AuthOutputModelType = JwtType
+export type AuthOutputModelType = {
+    accessToken: string
+}
+export type AuthModelServiceType = AuthOutputModelType & {
+    refreshToken: string
+}
 /*
 *
 *
@@ -29,7 +34,23 @@ export type AuthOutputModelType = JwtType
 export type ConfirmCodeInputModelType = {
     code: string
 }
+/*
+*
+*
+*       Token Mongo View Type
+*
+*
+*/ 
+export type TokenBlackListMongoViewType = {
+    _id: ObjectId,
+    token: string,
+    userId: string,
+    exp: number
+}
 
-
-
+export type TokenInputModelType = {
+    token: string
+    userId: string,
+    exp: number
+}
 

@@ -1,39 +1,21 @@
-import express, { NextFunction } from 'express'
+import express from 'express'
 import cors from 'cors'
-import { ROUTERS_SETTINGS, SETTINGS } from './settings'
+import cookieParser from 'cookie-parser'
+import { ROUTERS_SETTINGS } from './settings'
 import { BlogRouter } from './Routers/BlogRouter/BlogRouters'
 import { PostRouter } from './Routers/PostRouter/PostRouter'
 import { UserRouter } from './Routers/UserRouter/UserRouter'
 import { AuthRouter } from './Routers/AuthRouter/AuthRouter'
 import { TestRouter } from './Routers/test-router/test-router'
 import { CommentsRouter } from './Routers/CommentsRouter/CommentsRouter'
-import { Router, Request, Response } from "express";
-
 
 export const app = express()
 
-let MemoryRequest: any = []
-
-
-app.set('trust proxy', true);
-
 app.use(express.json())
 app.use(cors())
+app.use(cookieParser())
 
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-    if (MemoryRequest.includes(req.ip)) {
-        return res.status(400).json({
-            errorRequest: `a lot of request, try again later your IP: ${req.ip}`, 
-            xForwardedFor: `${req.headers['x-forwarded-for']}`,
-            reqHeaders: `${JSON.stringify(req.headers, null, 2)}`
-    })
-    }
-    MemoryRequest.push(req.ip)
-    setTimeout(() => {
-        MemoryRequest = []
-    }, 10000)
-    next()
-}) 
+
 
 app.use(ROUTERS_SETTINGS.BLOG.blogs, BlogRouter)
 app.use(ROUTERS_SETTINGS.POST.post, PostRouter)

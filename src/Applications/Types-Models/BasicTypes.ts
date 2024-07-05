@@ -47,15 +47,6 @@ type APIErrorMessageType = {
     message: string,
     field: string
 }
-/*
-*
-*   JWT Type
-*
-*/
-export type JwtType = {
-    accessToken: string
-}
-
 export type PayloadJwtTokenType = {
     userId: string
 }
@@ -77,4 +68,51 @@ export type ResultNotificationType<T = null> = {
     errorMessage?: string,
     errorField?: APIErrorsMessageType
     data?: T
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*
+*   NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW
+*
+*/
+
+/*
+*
+*   Query Types
+*
+*/
+type SortQueryBasicModelType = {
+    sortBy: string,
+    sortDirection: 'asc' | 'desc'
+}
+
+type PaginationQueryBasicModelType = {
+    pageNumber: number,
+    pageSize: number
+}
+/*
+*
+*   Pagination Type
+*
+*/
+type PaginationBasicModelType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+}
+
+type CreatePaginationBasicModelType = PaginationBasicModelType & {
+    skip: number
 }

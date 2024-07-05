@@ -1,6 +1,5 @@
-import { credentialJWT } from "../../Applications/Middleware/auth/UserAuth/jwt"
 import { comparePass, genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
-import { AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { AuthModelServiceType, AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType, TokenBlackListMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
@@ -11,6 +10,8 @@ import { GenerateUuid } from "../../Utils/generate-uuid/generate-uuid"
 import { addDays, compareAsc} from "date-fns";
 import { PatternsMail } from "../../Applications/Nodemailer/patterns/patterns"
 import { PatternMail } from "../../Applications/Types-Models/PatternsMail/patternsMailTypes"
+import { credentialJWT } from "../../Applications/JWT/jwt"
+import { AuthRepositories } from "../../Repositories/AuthRepositories/AuthRepositories"
 
 
 
@@ -23,7 +24,7 @@ export const AuthService = {
     *    b. If a user is found, verifies the provided password against the stored password using bcrypt.
     *       - If the password doesn't match, returns a failure status (Unauthorized).
     */
-    async AuthUser (data: LoginInputModelType): Promise<ResultNotificationType<AuthOutputModelType>> {
+    async AuthUser (data: LoginInputModelType): Promise<ResultNotificationType<AuthModelServiceType>> {
         try {
             const filter = {
                 $or: [
@@ -55,7 +56,7 @@ export const AuthService = {
             return {
                 status: ResultNotificationEnum.Success,
                 data: {
-                    accessToken: await credentialJWT.SignJWT({userId: getUser._id})
+                    ...await credentialJWT.SignJWT({userId: getUser._id}) 
                 }
             }
         } catch (e: any) {
@@ -225,6 +226,55 @@ export const AuthService = {
             const UpdateUser: UpdateMongoSuccessType = await UserRepositories.UpdateUserById(checkUserByEmail._id.toString(), dataUpdate)
         
             return UpdateUser.matchedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+    async RefreshToken (token: string): Promise<ResultNotificationType<AuthModelServiceType>> {
+        try {
+            const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
+            if (!verifyJWT) {
+                return {status: ResultNotificationEnum.Unauthorized}
+            }
+
+            const {userId, exp} = verifyJWT
+
+            const checkToken: TokenBlackListMongoViewType | null = await AuthRepositories.GetTokenBlackList(token)
+            if (checkToken) {
+                return {status: ResultNotificationEnum.Unauthorized}
+            }
+
+            await AuthRepositories.AddTokenToBlackList({userId: userId, token: token, exp: exp})
+
+            return {
+                status: ResultNotificationEnum.Success,
+                data: {
+                    ...await credentialJWT.SignJWT({userId: userId})
+                }
+            }
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+
+    async LogOut (token: string): Promise<ResultNotificationType> {
+        try {
+            const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
+            if (!verifyJWT) {
+                return {status: ResultNotificationEnum.Unauthorized}
+            }
+
+            const {userId, exp} = verifyJWT
+
+            const checkToken: TokenBlackListMongoViewType | null = await AuthRepositories.GetTokenBlackList(token)
+            if (checkToken) {
+                return {status: ResultNotificationEnum.Unauthorized}
+            }
+
+            await AuthRepositories.AddTokenToBlackList({userId: userId, token: token, exp: exp})
+
+            return {status: ResultNotificationEnum.Success}
         } catch (e: any) {
             throw new Error(e)
         }

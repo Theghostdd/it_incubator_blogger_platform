@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { AuthService } from "../../Service/AuthService/AuthService";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType} from "../../Applications/Types-Models/Auth/AuthTypes";
+import { AuthModelServiceType, AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType} from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType } from "../../Applications/Types-Models/BasicTypes";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
@@ -16,6 +16,7 @@ export const AuthRouter = Router()
 * 2. Attempts to authenticate the user by calling service with the login data.
 * 3. Handles the result returned from service:
 *    - If authentication is successful (`ResultNotificationEnum.Success`), responds with status 200 and returns the authentication data (`result.data`).
+*       - Destructure "result.data" and send refresh token in cookies
 *    - If authentication fails due to invalid credentials (`ResultNotificationEnum.Unauthorized`), responds with status 401 (Unauthorized).
 *    - For any other authentication failure, responds with status 500.
 * 4. Catches any exceptions that occur during the authentication process.
@@ -26,10 +27,15 @@ RuleValidations.validPassword,
 inputValidation,
 async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) => {
     try {
-        const result: ResultNotificationType<AuthOutputModelType | APIErrorsMessageType> = await AuthService.AuthUser(req.body)
+        const result: ResultNotificationType<AuthModelServiceType> = await AuthService.AuthUser(req.body)
         switch (result.status) {
             case ResultNotificationEnum.Success:
-                return res.status(200).json(result.data)
+                const {refreshToken, ...data} = result.data!
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    secure: true                
+                });
+                return res.status(200).json(data)
             case ResultNotificationEnum.Unauthorized:
                 return res.sendStatus(401);
             case ResultNotificationEnum.BadRequest:
@@ -142,6 +148,60 @@ async (req: Request<{}, {}, ResendConfirmCodeInputType>, res: Response) => {
         }
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'Reconfirm user by email', e)
+        return res.sendStatus(500)
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.refresh_token}`,
+async (req: Request, res: Response<AuthOutputModelType>) => {
+    try {
+        const result: ResultNotificationType<AuthModelServiceType> = await AuthService.RefreshToken(req.cookies.refreshToken)
+        switch (result.status) {
+            case ResultNotificationEnum.Success:
+                const {refreshToken, ...data} = result.data!
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    secure: true                
+                });
+                return res.status(200).json(data)
+            case ResultNotificationEnum.Unauthorized:
+                return res.sendStatus(401);
+            default: return res.sendStatus(500)
+        }
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.refresh_token}`, 'POST', 'Send to clint new pair access and refresh token', e)
+        return res.sendStatus(500)
+    }
+})
+
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.logout}`,
+async (req: Request, res: Response) => {
+    try {
+        const result: ResultNotificationType = await AuthService.LogOut(req.cookies.refreshToken)
+        switch (result.status) {
+            case ResultNotificationEnum.Success:
+                res.clearCookie('refreshToken')
+                return res.sendStatus(204)
+            case ResultNotificationEnum.Unauthorized:
+                return res.sendStatus(401);
+            default: return res.sendStatus(500)
+        }
+    } catch (e) {
+        SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.logout}`, 'POST', 'Logout client and revoked token', e)
         return res.sendStatus(500)
     }
 })

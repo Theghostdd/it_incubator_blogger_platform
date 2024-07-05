@@ -1,9 +1,11 @@
-import { sendEmail } from "../../../src/Applications/Nodemailer/nodemailer"
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
 import { AdminAuth, CreateUser, DeleteAllDb, GetRequest, InsertOneUniversal } from "../modules/modules"
 import { GenerateUuid } from "../../../src/Utils/generate-uuid/generate-uuid"
 import { addMinutes } from "date-fns"
 
+jest.mock('../../../src/Applications/Nodemailer/nodemailer', () => ({
+    sendEmail: jest.fn().mockResolvedValue(()=> true),  
+}));
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => {
 
