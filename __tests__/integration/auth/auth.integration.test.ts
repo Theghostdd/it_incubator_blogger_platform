@@ -21,6 +21,7 @@ const collectionTokenBlackList = MONGO_SETTINGS.COLLECTIONS.token_black_list
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.login, () => {
     let AuthData: any;
     beforeEach( async () => {
+        jest.clearAllMocks()
         await dropCollections.dropUserCollection()
         AuthData = AuthDto.AuthUserData
     })
@@ -68,6 +69,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.login, () => {
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.refresh_token, () => {
     let AuthData: any;
     beforeEach( async () => {
+        jest.clearAllMocks()
         await dropCollections.dropUserCollection()
         AuthData = AuthDto.AuthUserData
     })
@@ -107,6 +109,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.refresh_token, () =>
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.logout, () => {
     let AuthData: any;
     beforeEach( async () => {
+        jest.clearAllMocks()
         await dropCollections.dropUserCollection()
         AuthData = AuthDto.AuthUserData
     })

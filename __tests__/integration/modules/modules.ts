@@ -15,8 +15,11 @@ export const dropCollections = {
 
     async dropUserCollection () {
         await db.dropCollection(MONGO_SETTINGS.COLLECTIONS.users)
+    },
 
-    }
+    async dropBlogCollection () {
+        await db.dropCollection(MONGO_SETTINGS.COLLECTIONS.blogs)
+    },
 }
 
 

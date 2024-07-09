@@ -16,13 +16,17 @@ import { AuthRepositories } from "../../Repositories/AuthRepositories/AuthReposi
 
 
 export const AuthService = {
-    /* 
-    * 1. Check user.
-    * 2. Queries the MongoDB collection.
-    * 3. Checks if a user document is found:
-    *    a. If no user is found, returns a failure status (Unauthorized).
-    *    b. If a user is found, verifies the provided password against the stored password using bcrypt.
-    *       - If the password doesn't match, returns a failure status (Unauthorized).
+    /*
+    * 1. Creates a filter to search for a user in the database using either the provided email or login from the input data.
+    * 2. Calls repositories to retrieve the user from the database matching the filter.
+    *    - If no matching user is found, returns a result with status Unauthorized.
+    * 3. Checks if the user's email is confirmed (`getUser.userConfirm.ifConfirm`).
+    *    - If the email is not confirmed, returns a result with status badRequest and includes an error message indicating the email confirmation issue.
+    * 4. Verifies the provided password against the stored hashed password using `comparePass`.
+    *    - If the password verification fails, returns a result with status Unauthorized.
+    * 5. Generates new JWT tokens using JWT`s util with the user's ID.
+    *    - If successful, returns a result with status Success and includes the new tokens in the `data` property.
+    * 6. Catches any exceptions that occur during the authentication process and rethrows them as errors.
     */
     async AuthUser (data: LoginInputModelType): Promise<ResultNotificationType<AuthModelServiceType>> {
         try {
@@ -230,7 +234,17 @@ export const AuthService = {
             throw new Error(e)
         }
     },
-
+    /*
+    * 1. Verifies the provided refresh token using JWT`s util.
+    *    - If the token verification fails, returns a result with status Unauthorized.
+    * 2. Extracts `userId` and `exp` (expiration time) from the verified token.
+    * 3. Checks if the refresh token is in the blacklist using auth repositories.
+    *    - If the token is found in the blacklist, returns a result with status Unauthorized.
+    * 4. Adds the refresh token to the blacklist using auth repositories to prevent future reuse.
+    * 5. Generates new JWT tokens using JWT`s util with the user's ID.
+    *    - If successful, returns a result with status Success and includes the new tokens in the `data` property.
+    * 6. Catches any exceptions that occur during the refresh token process and rethrows them as errors.
+    */
     async RefreshToken (token: string): Promise<ResultNotificationType<AuthModelServiceType>> {
         try {
             const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
@@ -257,7 +271,16 @@ export const AuthService = {
             throw new Error(e)
         }
     },
-
+    /*
+    * 1. Verifies the provided refresh token using JWT`s util.
+    *    - If the token verification fails, returns a result with status Unauthorized.
+    * 2. Extracts `userId` and `exp` (expiration time) from the verified token.
+    * 3. Checks if the refresh token is in the blacklist using auth repositories.
+    *    - If the token is found in the blacklist, returns a result with status Unauthorized.
+    * 4. Adds the refresh token to the blacklist using auth repositories to ensure the token is invalidated.
+    * 5. Returns a result with status Success, indicating that the logout process was completed successfully.
+    * 6. Catches any exceptions that occur during the logout process and rethrows them as errors.
+    */
     async LogOut (token: string): Promise<ResultNotificationType> {
         try {
             const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)

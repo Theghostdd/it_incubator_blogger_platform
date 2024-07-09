@@ -15,6 +15,14 @@ export const AuthDto = {
     }
 }
 
+export const BlogDto = {
+    CreateBlogData: {
+        name: "My Blog",
+        description: "This is my blog",
+        websiteUrl: "https://my-blog.ru"
+    }
+}
+
 export const InsertDto = {
     UserInsertData: {
         login: RegistrationDto.RegistrationUserData.login,

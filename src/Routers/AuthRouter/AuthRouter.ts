@@ -151,20 +151,16 @@ async (req: Request<{}, {}, ResendConfirmCodeInputType>, res: Response) => {
         return res.sendStatus(500)
     }
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+* 1. Attempts to refresh the authentication token using the refresh token provided in the request cookies.
+* 2. Calls the service with the refresh token to obtain a new set of tokens.
+* 3. Handles the result returned from the service:
+*    - If the refresh is successful (`ResultNotificationEnum.Success`), responds with status 200 and returns the new authentication data (`result.data`).
+*       - Destructures the new refresh token from "result.data" and sets it in the cookies.
+*    - If the refresh fails due to invalid credentials (`ResultNotificationEnum.Unauthorized`), responds with status 401 (Unauthorized).
+*    - For any other failure, responds with status 500.
+* 4. Catches any exceptions that occur during the process of resending the confirmation code return error 500.
+*/
 
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.refresh_token}`,
 async (req: Request, res: Response<AuthOutputModelType>) => {
@@ -187,7 +183,15 @@ async (req: Request, res: Response<AuthOutputModelType>) => {
         return res.sendStatus(500)
     }
 })
-
+/*
+* 1. Attempts to log out the user using the refresh token provided in the request cookies.
+* 2. Calls the service with the refresh token to revoke the user's session.
+* 3. Handles the result returned from the service:
+*    - If the logout is successful (`ResultNotificationEnum.Success`), clears the `refreshToken` cookie and responds with status 204 (No Content).
+*    - If the logout fails due to invalid credentials (`ResultNotificationEnum.Unauthorized`), responds with status 401 (Unauthorized).
+*    - For any other failure, responds with status 500.
+* 4. Catches any exceptions that occur during the process of resending the confirmation code return error 500.
+*/
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.logout}`,
 async (req: Request, res: Response) => {
     try {
