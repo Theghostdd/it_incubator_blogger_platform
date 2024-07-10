@@ -23,10 +23,10 @@ export const AuthRouter = Router()
 * 4. Catches any exceptions that occur during the authentication process.
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
+requestLimiter,
 RuleValidations.validLoginOrEmail,
 RuleValidations.validPassword,
 inputValidation,
-requestLimiter,
 async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) => {
     try {
         const result: ResultNotificationType<AuthModelServiceType> = await AuthService.AuthUser(req.body)
@@ -80,6 +80,7 @@ async (req: Request, res: Response<UserMeModelViewType>) => {
 * 5. Catches any exceptions that occur during the registration process, return error 500.
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration}`, 
+requestLimiter,
 RuleValidations.validLogin,
 RuleValidations.validEmail,
 RuleValidations.validPassword,
@@ -137,6 +138,7 @@ async (req: Request<{}, {}, ConfirmCodeInputModelType>, res: Response) => {
 * 4. Catches any exceptions that occur during the process of resending the confirmation code return error 500.
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_email_resending}`, 
+requestLimiter,
 RuleValidations.validEmail,
 inputValidation,
 async (req: Request<{}, {}, ResendConfirmCodeInputType>, res: Response) => {
