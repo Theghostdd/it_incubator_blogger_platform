@@ -53,4 +53,24 @@ export type TokenInputModelType = {
     userId: string,
     exp: number
 }
+/*
+*
+*
+*       Request Limiter Mongo View Type
+*
+*
+*/ 
+export type RequestLimiterMongoViewType = {
+    _id: ObjectId,
+    ip: string,
+    url: string,
+    date: Date,
+    quantity: number
+}
 
+export type RequestLimiterInputModelViewType = {
+    ip: string,
+    url: string,
+    date: Date,
+    quantity: number
+}

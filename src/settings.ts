@@ -42,7 +42,8 @@ export const MONGO_SETTINGS = {
         blogs: 'blogs',
         users: 'users',
         comments: 'comments',
-        token_black_list: 'token_black_list'
+        request_limit: 'request_limit',
+        auth_session: 'auth_session',
     }
 }
 

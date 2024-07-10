@@ -21,7 +21,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
 
     beforeEach(async () => {
         await DeleteAllDb()
-
+        
         CreatedUserData = {
             login: 'SomeLogin',
             password: "SomePass",

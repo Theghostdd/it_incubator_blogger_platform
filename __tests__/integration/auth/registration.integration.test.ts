@@ -1,11 +1,11 @@
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
 import { AuthService } from "../../../src/Service/AuthService/AuthService"
-import { RegistrationDto } from "../modules/dto";
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
 import { dropCollections } from "../modules/modules";
 let sendEmail = require("../../../src/Applications/Nodemailer/nodemailer");
 import { db } from "../../../src/Applications/ConnectionDB/Connection";
 import { ObjectId } from "mongodb";
+import { RegistrationDto } from "../../Dto/AuthDto";
 
 
 

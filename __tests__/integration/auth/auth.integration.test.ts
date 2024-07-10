@@ -1,7 +1,7 @@
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
 import { AuthService } from "../../../src/Service/AuthService/AuthService";
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
-import { AuthDto, InsertDto, RegistrationDto } from "../modules/dto";
+import { AuthDto, InsertDto, RegistrationDto } from "../../Dto/AuthDto";
 import { InsertData, dropCollections } from "../modules/modules";
 
 

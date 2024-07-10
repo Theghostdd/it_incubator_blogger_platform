@@ -9,6 +9,7 @@ import { UserQueryRepositories } from "../../Repositories/UserRepostitories/User
 import { UserInputModelType, UserMeModelViewType } from "../../Applications/Types-Models/User/UserTypes";
 import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
 import { ResendConfirmCodeInputType } from "../../Applications/Types-Models/Registration/RegistrationTypes";
+import { requestLimiter } from "../../Applications/Middleware/request-limit/request-limit";
 
 export const AuthRouter = Router()
 /*
@@ -25,6 +26,7 @@ AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
 RuleValidations.validLoginOrEmail,
 RuleValidations.validPassword,
 inputValidation,
+requestLimiter,
 async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) => {
     try {
         const result: ResultNotificationType<AuthModelServiceType> = await AuthService.AuthUser(req.body)
@@ -107,6 +109,7 @@ async (req: Request<{}, {}, UserInputModelType>, res: Response) => {
 * 4. Catches any exceptions that occur during the confirmation process return error 500.
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_confirmation}`, 
+requestLimiter,
 RuleValidations.validConfirmCode,
 inputValidation,
 async (req: Request<{}, {}, ConfirmCodeInputModelType>, res: Response) => {

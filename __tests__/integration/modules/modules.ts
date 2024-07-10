@@ -3,8 +3,6 @@ import { MONGO_SETTINGS } from "../../../src/settings"
 
 
 
-
-
 export const dropCollections = {
     async dropAllCollections () {
         await db.dropCollection(MONGO_SETTINGS.COLLECTIONS.users)

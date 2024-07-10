@@ -1,5 +1,3 @@
-
-
 export const RegistrationDto = {
     RegistrationUserData: {
         login: "SomeLogin",
@@ -12,14 +10,6 @@ export const AuthDto = {
     AuthUserData: {
         loginOrEmail: RegistrationDto.RegistrationUserData.login,
         password: RegistrationDto.RegistrationUserData.password
-    }
-}
-
-export const BlogDto = {
-    CreateBlogData: {
-        name: "My Blog",
-        description: "This is my blog",
-        websiteUrl: "https://my-blog.ru"
     }
 }
 

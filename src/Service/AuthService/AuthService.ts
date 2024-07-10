@@ -1,7 +1,7 @@
 import { comparePass, genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
-import { AuthModelServiceType, AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType, TokenBlackListMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { AuthModelServiceType, AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType, RequestLimiterInputModelViewType, RequestLimiterMongoViewType, TokenBlackListMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
-import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
+import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType, UpdateMongoSuccessType, DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
 import { RegistrationCreateType, ResendConfirmCodeInputType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
 import { RegistrationDefaultValue } from "../../Utils/default-values/Registration/registration-default-value"
@@ -302,4 +302,68 @@ export const AuthService = {
             throw new Error(e)
         }
     },
+    /*
+    * 1. Checks if there is a request record matching the IP address and URL in the database.
+    *    a. Retrieves the request record using repositories.
+    *    b. If no matching record is found (`checkRequest` is null):
+    *       i. Adds a new request record using repositories.
+    *       ii. Returns `Success`.
+    * 2. If a matching record is found:
+    *    a. Compares the timestamp of the existing request (`checkRequest.date`) with the current timestamp.
+    *    b. If the existing request's timestamp is greater than the current timestamp and `quantity` is 5 or more:
+    *       i. Returns `BadRequest`.
+    *    c. If the existing request's timestamp is greater than the current timestamp and `quantity` is less than 5:
+    *       i. Increments the `quantity` of the request.
+    *       ii. Updates the request record using repositories.
+    *       iii. Returns `Success`.
+    *    d. If the existing request's timestamp is less than the current timestamp:
+    *       i. Updates the request's `quantity` and `date` using repositories.
+    *       ii. Returns `Success`.
+    * 6. Catches any exceptions that occur during the logout process and rethrows them as errors.
+    */
+    async RequestLimiter (data: RequestLimiterInputModelViewType): Promise<ResultNotificationType> {
+        try {
+            const checkRequest: RequestLimiterMongoViewType | null = await AuthRepositories.GetUsersRequestByIpAndUrl(data.ip, data.url)
+
+            if (!checkRequest) {
+                await AuthRepositories.AddRequest(data)
+                return {status: ResultNotificationEnum.Success}
+            }
+
+            if (compareAsc(checkRequest.date, new Date().toISOString()) === 1 && checkRequest.quantity >= 5) {
+                return {status: ResultNotificationEnum.BadRequest}
+            } 
+            if (compareAsc(checkRequest.date, new Date().toISOString()) === 1 && checkRequest.quantity >= 1) {
+                await AuthRepositories.UpdateRequestById(checkRequest._id.toString(), ++checkRequest.quantity,checkRequest.date)
+                return {status: ResultNotificationEnum.Success}
+            } 
+            
+            await AuthRepositories.UpdateRequestById(checkRequest._id.toString(), data.quantity, data.date)
+            return {status: ResultNotificationEnum.Success}
+
+        } catch(e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * 1. Attempts to clear expired requests from the request limit collection based on a provided timestamp.
+    *    a. Retrieves all expired request elements using repositories with `subSecond`.
+    *    b. If there are elements (elements is not null and has length > 0):
+    *       i. Extracts IDs of the expired requests using `map`.
+    *       ii. Clears the expired requests from the collection using repositories with `mapId`.
+    *    c. Returns success.
+    * 2. Catches any exceptions that occur during the logout process and rethrows them as errors.
+    */
+    async ClearRequestLimitCollection (subSecond: Date): Promise<ResultNotificationType> {
+        try {
+            const getElements: RequestLimiterMongoViewType[] | null = await AuthRepositories.GetAllExpRequest(subSecond)
+            if (getElements && getElements.length > 0) {
+                const mapId = getElements.map((items) => items._id)
+                const clearCollection: DeletedMongoSuccessType = await AuthRepositories.ClearExpRequest(mapId)
+            }
+            return {status: ResultNotificationEnum.Success}
+        } catch(e: any) {
+            throw new Error(e)
+        }
+    }
 }

@@ -5,7 +5,7 @@
     "__test__"
   ],
   "include": [
-    "src/**/*"
+    "src/**/*", 
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
