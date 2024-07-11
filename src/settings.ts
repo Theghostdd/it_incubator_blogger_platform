@@ -30,6 +30,10 @@ export const ROUTERS_SETTINGS = {
     TEST: {
         test: '/api/testing',
         test_all_data: '/all-data'
+    },
+    SECURITY: {
+        'security': '/api/security',
+        'devices': '/devices'
     }
 }
 

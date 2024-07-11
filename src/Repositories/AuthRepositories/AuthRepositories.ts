@@ -1,37 +1,11 @@
 import { ObjectId } from "mongodb"
 import { db } from "../../Applications/ConnectionDB/Connection"
-import { RequestLimiterInputModelViewType, RequestLimiterMongoViewType, TokenBlackListMongoViewType, TokenInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { RequestLimiterInputModelViewType, RequestLimiterMongoViewType, SessionsInputModelViewType, SessionsMongoViewType, TokenBlackListMongoViewType, TokenInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { MONGO_SETTINGS } from "../../settings"
 
 
 export const AuthRepositories = {
-    /*
-    * 1. Searches for the provided token in the black list in the database.
-    *    - If a matching token is found, returns the token data (`TokenBlackListMongoViewType`).
-    *    - If no matching token is found, returns `null`.
-    * 3. Catches any exceptions that occur during the database query and rethrows them as errors.
-    */
-    async GetTokenBlackList (token: string): Promise<TokenBlackListMongoViewType | null> {
-        try {
-            return await db.collection<TokenBlackListMongoViewType>(MONGO_SETTINGS.COLLECTIONS.token_black_list).findOne({token: token})
-        } catch (e: any) {
-            throw new Error(e)
-        }
-    },
-    /*
-    * 1. Adds a token to the black list collection in database.
-    * 2. The document includes the token and associated details, encapsulated in `TokenInputModelType`.
-    * 3. Returns the result of the insertion, typically containing the inserted document's ID (`CreatedMongoSuccessType`).
-    * 4. Catches any exceptions that occur during the database insertion and rethrows them as errors.
-    */
-    async AddTokenToBlackList (data: TokenInputModelType): Promise<CreatedMongoSuccessType> {
-        try {
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.token_black_list).insertOne({...data})
-        } catch (e: any) {
-            throw new Error(e)
-        }
-    },
     /*
     * 1. Attempts to retrieve a user's request record based on IP address and URL.
     *    a. Queries the `request_limit` collection in the database using the provided `ip` and `url`.
@@ -102,6 +76,94 @@ export const AuthRepositories = {
             throw new Error(e)
         }
     },
-
-    
+    /*
+    * Attempts to create a new session in the MongoDB database collection `auth_session` using the provided `data`.
+    * Returns a promise that resolves to a `CreatedMongoSuccessType` object representing the result of the insertion.
+    * Catches and throws any exceptions that occur during the insertion process.
+    */
+    async CreateSession (data: SessionsInputModelViewType): Promise<CreatedMongoSuccessType> {
+        try {
+            return await db.collection(MONGO_SETTINGS.COLLECTIONS.auth_session).insertOne({...data})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Retrieves a session from the MongoDB database collection `auth_session` based on the device ID (`dId`).
+    * Returns a promise that resolves to a `SessionsMongoViewType` object if found, or `null` if no session matches the `dId`.
+    * Catches and throws any exceptions that occur during the retrieval process.
+    */
+    async GetSessionByDeviceId (dId: string): Promise<SessionsMongoViewType | null> {
+        try {
+            return await db.collection<SessionsMongoViewType>(MONGO_SETTINGS.COLLECTIONS.auth_session).findOne({dId: dId})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Retrieves a session from the MongoDB database collection `auth_session` based on the device ID (`dId`) and user ID (`userId`).
+    * Converts the `userId` to an `ObjectId` type before querying to match MongoDB's `_id` type.
+    * Returns a promise that resolves to a `SessionsMongoViewType` object if found, or `null` if no session matches the `dId` and `userId`.
+    * Catches and throws any exceptions that occur during the retrieval process.
+    */
+    async GetSessionByDeviceIdAndUserId (dId: string, userId: string): Promise<SessionsMongoViewType | null> {
+        try {
+            return await db.collection<SessionsMongoViewType>(MONGO_SETTINGS.COLLECTIONS.auth_session).findOne({dId: dId, userId: new ObjectId(userId)})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Retrieves all sessions from the MongoDB database collection `auth_session` based on the user ID (`id`).
+    * Converts the `id` to an `ObjectId` type before querying to match MongoDB's `_id` type.
+    * Returns a promise that resolves to an array of `SessionsMongoViewType` objects if sessions are found,
+    * or `null` if no sessions match the `userId`.
+    * Catches and throws any exceptions that occur during the retrieval process.
+    */
+    async GetAllSessionsByUserId (id: string): Promise<SessionsMongoViewType[] | null> {
+        try {
+            return await db.collection<SessionsMongoViewType>(MONGO_SETTINGS.COLLECTIONS.auth_session).find({userId: new ObjectId(id)}).toArray()
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Updates the `issueAt` field of a session in the MongoDB database collection `auth_session` identified by `id`.
+    * Converts the `id` to an `ObjectId` type before querying to match MongoDB's `_id` type.
+    * Returns a promise that resolves to an `UpdateMongoSuccessType` object representing the result of the update operation.
+    * Catches and throws any exceptions that occur during the update process.
+    */
+    async UpdateSessionById (id: string, issueAt: string): Promise<UpdateMongoSuccessType> {
+        try {
+            return await db.collection(MONGO_SETTINGS.COLLECTIONS.auth_session).updateOne({_id: new ObjectId(id)}, {$set: {issueAt: issueAt}})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Deletes a session from the MongoDB database collection `auth_session` based on the session ID (`id`).
+    * Converts the `id` to an `ObjectId` type before querying to match MongoDB's `_id` type.
+    * Returns a promise that resolves to a `DeletedMongoSuccessType` object representing the result of the deletion operation.
+    * Catches and throws any exceptions that occur during the deletion process.
+    */
+    async DeleteSessionById (id: string): Promise<DeletedMongoSuccessType> {
+        try {
+            return await db.collection(MONGO_SETTINGS.COLLECTIONS.auth_session).deleteOne({_id: new ObjectId(id)})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Deletes multiple sessions from the MongoDB database collection `auth_session` based on an array of session IDs (`id`).
+    * Uses `$in` operator to match multiple `_id` values in the MongoDB query.
+    * Returns a promise that resolves to a `DeletedMongoSuccessType` object representing the result of the deletion operation.
+    * Catches and throws any exceptions that occur during the deletion process.
+    */
+    async DeleteSessionsById (id: ObjectId[]): Promise<DeletedMongoSuccessType> {
+        try {
+            return await db.collection(MONGO_SETTINGS.COLLECTIONS.auth_session).deleteMany({_id: {$in: id}})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    }, 
 }

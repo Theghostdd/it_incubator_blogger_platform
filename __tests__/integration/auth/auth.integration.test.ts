@@ -14,7 +14,6 @@ const RefreshToken = AuthService.RefreshToken;
 const LogoutService = AuthService.LogOut;
 
 const collectionUser = MONGO_SETTINGS.COLLECTIONS.users
-const collectionTokenBlackList = MONGO_SETTINGS.COLLECTIONS.token_black_list
 
 
 

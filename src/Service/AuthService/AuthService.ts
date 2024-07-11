@@ -1,5 +1,5 @@
 import { comparePass, genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
-import { AuthModelServiceType, AuthOutputModelType, ConfirmCodeInputModelType, LoginInputModelType, RequestLimiterInputModelViewType, RequestLimiterMongoViewType, TokenBlackListMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { AuthModelServiceType, ConfirmCodeInputModelType, LoginInputModelType, RefreshAuthOutputModelType, RequestLimiterInputModelViewType, RequestLimiterMongoViewType, SessionsMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType, UpdateMongoSuccessType, DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
@@ -7,7 +7,7 @@ import { RegistrationCreateType, ResendConfirmCodeInputType } from "../../Applic
 import { RegistrationDefaultValue } from "../../Utils/default-values/Registration/registration-default-value"
 import { sendEmail } from "../../Applications/Nodemailer/nodemailer"
 import { GenerateUuid } from "../../Utils/generate-uuid/generate-uuid"
-import { addDays, compareAsc} from "date-fns";
+import { addDays, compareAsc, format} from "date-fns";
 import { PatternsMail } from "../../Applications/Nodemailer/patterns/patterns"
 import { PatternMail } from "../../Applications/Types-Models/PatternsMail/patternsMailTypes"
 import { credentialJWT } from "../../Applications/JWT/jwt"
@@ -17,18 +17,21 @@ import { AuthRepositories } from "../../Repositories/AuthRepositories/AuthReposi
 
 export const AuthService = {
     /*
-    * 1. Creates a filter to search for a user in the database using either the provided email or login from the input data.
-    * 2. Calls repositories to retrieve the user from the database matching the filter.
-    *    - If no matching user is found, returns a result with status Unauthorized.
-    * 3. Checks if the user's email is confirmed (`getUser.userConfirm.ifConfirm`).
-    *    - If the email is not confirmed, returns a result with status badRequest and includes an error message indicating the email confirmation issue.
-    * 4. Verifies the provided password against the stored hashed password using `comparePass`.
-    *    - If the password verification fails, returns a result with status Unauthorized.
-    * 5. Generates new JWT tokens using JWT`s util with the user's ID.
-    *    - If successful, returns a result with status Success and includes the new tokens in the `data` property.
-    * 6. Catches any exceptions that occur during the authentication process and rethrows them as errors.
+    * 1. Attempts to authenticate the user with the provided login details (`data`), IP address (`ip`), and user agent (`userAgent`).
+    * 2. Constructs a filter to search for the user by email or login.
+    * 3. Retrieves the user from the database using the `UserRepositories.GetUserByLoginOrEmailWithOutMap` method:
+    *    - If the user is not found, returns a result with status `ResultNotificationEnum.Unauthorized`.
+    * 4. Checks if the user's email is confirmed:
+    *    - If not, returns a result with status `ResultNotificationEnum.BadRequest` and an appropriate error message.
+    * 5. Compares the provided password with the stored password using the `comparePass` function:
+    *    - If the password does not match, returns a result with status `ResultNotificationEnum.Unauthorized`.
+    * 6. Creates session data including a new device ID, user ID, device name, IP address, and issue time.
+    * 7. Attempts to create a session in the database using the `AuthRepositories.CreateSession` method:
+    *    - If the session creation fails, returns a result with status `ResultNotificationEnum.InternalError`.
+    * 8. If the session is successfully created, generates JWT credentials for the user using `credentialJWT.SignJWT` and returns them with status `ResultNotificationEnum.Success`.
+    * 9. Catches any exceptions that occur during the process and throws a new error.
     */
-    async AuthUser (data: LoginInputModelType): Promise<ResultNotificationType<AuthModelServiceType>> {
+    async AuthUser (data: LoginInputModelType, ip: string, userAgent: string): Promise<ResultNotificationType<AuthModelServiceType>> {
         try {
             const filter = {
                 $or: [
@@ -57,10 +60,26 @@ export const AuthService = {
             }
 
 
+            const SessionData = {
+                dId: await GenerateUuid.GenerateDeviceId(getUser._id.toString()),
+                userId: getUser._id,
+                deviceName: userAgent,
+                ip: ip,
+                issueAt: new Date().toISOString()
+            }
+
+            const CreateSession: CreatedMongoSuccessType = await AuthRepositories.CreateSession(SessionData)
+
+            if (!CreateSession.insertedId) {
+                return {
+                    status: ResultNotificationEnum.InternalError
+                }
+            }
+
             return {
                 status: ResultNotificationEnum.Success,
                 data: {
-                    ...await credentialJWT.SignJWT({userId: getUser._id}) 
+                    ...await credentialJWT.SignJWT(getUser._id.toString(), SessionData.dId, SessionData.issueAt) 
                 }
             }
         } catch (e: any) {
@@ -235,36 +254,33 @@ export const AuthService = {
         }
     },
     /*
-    * 1. Verifies the provided refresh token using JWT`s util.
-    *    - If the token verification fails, returns a result with status Unauthorized.
-    * 2. Extracts `userId` and `exp` (expiration time) from the verified token.
-    * 3. Checks if the refresh token is in the blacklist using auth repositories.
-    *    - If the token is found in the blacklist, returns a result with status Unauthorized.
-    * 4. Adds the refresh token to the blacklist using auth repositories to prevent future reuse.
-    * 5. Generates new JWT tokens using JWT`s util with the user's ID.
-    *    - If successful, returns a result with status Success and includes the new tokens in the `data` property.
-    * 6. Catches any exceptions that occur during the refresh token process and rethrows them as errors.
+    * 1. Validates the token using `this.JWTRefreshTokenAuth` to ensure it is authorized.
+    * 2. Extracts `userId`, `deviceId` from the verified token and `session id` from session data.
+    * 3. Retrieves the user session from the database using `AuthRepositories.GetSessionByDeviceIdAndUserId`:
+    *    - If the session is not found, returns a result with status `ResultNotificationEnum.Unauthorized`.
+    *    - If the session's `issueAt` time does not match the token's `iat` time, returns a result with status `ResultNotificationEnum.Unauthorized`.
+    * 4. Generates a new `issueAt` time and updates the session in the database using `AuthRepositories.UpdateSessionById`:
+    *    - If the session update fails (no matching session found), returns a result with status `ResultNotificationEnum.Unauthorized`.
+    * 5. If the session is successfully updated, generates new JWT credentials for the user using `credentialJWT.SignJWT` and returns them with status `ResultNotificationEnum.Success`.
+    * 6. Catches any exceptions that occur during the process and throws a new error.
     */
     async RefreshToken (token: string): Promise<ResultNotificationType<AuthModelServiceType>> {
         try {
-            const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
-            if (!verifyJWT) {
-                return {status: ResultNotificationEnum.Unauthorized}
-            }
+            const AuthByJWT: ResultNotificationType<RefreshAuthOutputModelType> = await this.JWTRefreshTokenAuth(token)
+            if (AuthByJWT.status !== ResultNotificationEnum.Success) return {status: ResultNotificationEnum.Unauthorized}
 
-            const {userId, exp} = verifyJWT
+            const {userId, deviceId } = AuthByJWT.data!.RefreshJWTPayload
+            const { _id: sessionId } = AuthByJWT.data!.SessionData
 
-            const checkToken: TokenBlackListMongoViewType | null = await AuthRepositories.GetTokenBlackList(token)
-            if (checkToken) {
-                return {status: ResultNotificationEnum.Unauthorized}
-            }
+            const issueAt = new Date().toISOString()
+            const UpdateSession: UpdateMongoSuccessType = await AuthRepositories.UpdateSessionById(sessionId.toString(), issueAt)
 
-            await AuthRepositories.AddTokenToBlackList({userId: userId, token: token, exp: exp})
+            if (UpdateSession.matchedCount <= 0) return {status: ResultNotificationEnum.Unauthorized}
 
             return {
                 status: ResultNotificationEnum.Success,
                 data: {
-                    ...await credentialJWT.SignJWT({userId: userId})
+                    ...await credentialJWT.SignJWT(userId, deviceId, issueAt)
                 }
             }
         } catch (e: any) {
@@ -272,30 +288,25 @@ export const AuthService = {
         }
     },
     /*
-    * 1. Verifies the provided refresh token using JWT`s util.
-    *    - If the token verification fails, returns a result with status Unauthorized.
-    * 2. Extracts `userId` and `exp` (expiration time) from the verified token.
-    * 3. Checks if the refresh token is in the blacklist using auth repositories.
-    *    - If the token is found in the blacklist, returns a result with status Unauthorized.
-    * 4. Adds the refresh token to the blacklist using auth repositories to ensure the token is invalidated.
-    * 5. Returns a result with status Success, indicating that the logout process was completed successfully.
-    * 6. Catches any exceptions that occur during the logout process and rethrows them as errors.
+    * 1. Validates the token using `this.JWTRefreshTokenAuth` to ensure it is authorized.
+    * 2. Extracts `session id` from the session data.
+    * 3. Retrieves the user session from the database using `AuthRepositories.GetSessionByDeviceIdAndUserId`:
+    *    - If the session is not found, returns a result with status `ResultNotificationEnum.Unauthorized`.
+    *    - If the session's `issueAt` time does not match the token's `iat` time, returns a result with status `ResultNotificationEnum.Unauthorized`.
+    * 4. Deletes the session from the database using `AuthRepositories.DeleteSessionById`:
+    *    - If the session deletion fails (no matching session found), returns a result with status `ResultNotificationEnum.InternalError`.
+    * 5. If the session is successfully deleted, returns a result with status `ResultNotificationEnum.Success`.
+    * 6. Catches any exceptions that occur during the process and throws a new error.
     */
     async LogOut (token: string): Promise<ResultNotificationType> {
         try {
-            const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
-            if (!verifyJWT) {
-                return {status: ResultNotificationEnum.Unauthorized}
-            }
-
-            const {userId, exp} = verifyJWT
-
-            const checkToken: TokenBlackListMongoViewType | null = await AuthRepositories.GetTokenBlackList(token)
-            if (checkToken) {
-                return {status: ResultNotificationEnum.Unauthorized}
-            }
-
-            await AuthRepositories.AddTokenToBlackList({userId: userId, token: token, exp: exp})
+            const AuthByJWT: ResultNotificationType<RefreshAuthOutputModelType> = await this.JWTRefreshTokenAuth(token)
+            if (AuthByJWT.status !== ResultNotificationEnum.Success) return {status: ResultNotificationEnum.Unauthorized}
+        
+            const { _id: sessionId } = AuthByJWT.data!.SessionData
+    
+            const DeleteSessionResult: DeletedMongoSuccessType = await AuthRepositories.DeleteSessionById(sessionId.toString())
+            if (DeleteSessionResult.deletedCount <= 0) return {status: ResultNotificationEnum.InternalError}
 
             return {status: ResultNotificationEnum.Success}
         } catch (e: any) {
@@ -362,6 +373,37 @@ export const AuthService = {
                 const clearCollection: DeletedMongoSuccessType = await AuthRepositories.ClearExpRequest(mapId)
             }
             return {status: ResultNotificationEnum.Success}
+        } catch(e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * 1. Validates and verifies a refresh token (`token`) using `credentialJWT.VerifyJWTrefresh`.
+    * 2. If the token verification fails (`!verifyJWT`), returns an unauthorized status.
+    * 3. Retrieves a session from the database (`AuthRepositories.GetSessionByDeviceIdAndUserId`) based on `verifyJWT.deviceId` and `verifyJWT.userId`.
+    * 4. If no session is found (`!result`), returns an unauthorized status.
+    * 5. Compares the session's `issueAt` timestamp with the `verifyJWT.iat` timestamp to ensure validity.
+    * 6. If timestamps do not match, returns an unauthorized status.
+    * 7. Returns a `ResultNotificationType` with `Success` status and includes `verifyJWT` and `result` data upon successful verification.
+    * 8. Catches any exceptions that occur during the process and throws a new error.
+    */
+    async JWTRefreshTokenAuth (token: string): Promise<ResultNotificationType<RefreshAuthOutputModelType>> {
+        try {
+            const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
+            if (!verifyJWT) {
+                return {status: ResultNotificationEnum.Unauthorized}
+            }
+            const result: SessionsMongoViewType | null = await AuthRepositories.GetSessionByDeviceIdAndUserId(verifyJWT.deviceId, verifyJWT.userId)
+            if (!result) return {status: ResultNotificationEnum.Unauthorized}
+            if (result.issueAt != new Date(verifyJWT.iat).toISOString()) return {status: ResultNotificationEnum.Unauthorized}
+
+            return {
+                status: ResultNotificationEnum.Success, 
+                data: {
+                    RefreshJWTPayload: verifyJWT,
+                    SessionData: result
+                }
+            }
         } catch(e: any) {
             throw new Error(e)
         }

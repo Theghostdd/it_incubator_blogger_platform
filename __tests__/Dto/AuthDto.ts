@@ -1,3 +1,5 @@
+import { addSeconds } from "date-fns"
+
 export const RegistrationDto = {
     RegistrationUserData: {
         login: "SomeLogin",
@@ -10,6 +12,12 @@ export const AuthDto = {
     AuthUserData: {
         loginOrEmail: RegistrationDto.RegistrationUserData.login,
         password: RegistrationDto.RegistrationUserData.password
+    },
+    RequestData: {
+        ip: '191.1.1.1',
+        url: '/api/auth/login',
+        date: addSeconds(new Date().toISOString(), 10),
+        quantity: 1
     }
 }
 

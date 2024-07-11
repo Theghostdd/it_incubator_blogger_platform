@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { JWTRefreshPayload } from "../BasicTypes"
 
 /*
 *
@@ -73,4 +74,46 @@ export type RequestLimiterInputModelViewType = {
     url: string,
     date: Date,
     quantity: number
+}
+/*
+*
+*
+*       Sessions type 
+*
+*
+*/
+export type SessionsMongoViewType = {
+    _id: ObjectId,
+    dId: string,
+    userId: ObjectId,
+    deviceName: string,
+    ip: string,
+    issueAt: string
+}
+
+export type SessionsInputModelViewType = {
+    dId: string,
+    userId: ObjectId,
+    deviceName: string,
+    ip: string,
+    issueAt: string
+}
+
+export type SessionOutputModelViewType = {
+    ip: string,
+    title: string,
+    lastActiveDate: string,
+    deviceId: string
+}
+
+
+
+
+
+
+
+
+export type RefreshAuthOutputModelType = {
+    RefreshJWTPayload: JWTRefreshPayload,
+    SessionData: SessionsMongoViewType
 }

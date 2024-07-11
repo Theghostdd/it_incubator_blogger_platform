@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { BlogRepositories } from "../../src/Repositories/BlogRepositories/BlogRepositories";
 import { defaultBlogValues } from "../../src/Utils/default-values/Blog/default-blog-value";
 import { BlogMapper } from "../../src/Utils/map/Blog/BlogMap";
+import { AuthRepositories } from "../../src/Repositories/AuthRepositories/AuthRepositories";
 
 
 export const BlogMock = {
@@ -30,3 +31,16 @@ export const BlogMock = {
     }
 }
 
+export const AuthMock = {
+    GetUsersRequestByIpAndUrlMockResolve () {
+        AuthRepositories.GetUsersRequestByIpAndUrl = jest.fn().mockImplementation(() => true)
+    },
+
+    GetUsersRequestByIpAndUrlMockRejected () {
+        AuthRepositories.GetUsersRequestByIpAndUrl = jest.fn().mockImplementation(() => false)
+    },
+
+    UpdateRequestByIdMock () {
+        AuthRepositories.UpdateRequestById = jest.fn().mockImplementation(() => true)
+    }
+}

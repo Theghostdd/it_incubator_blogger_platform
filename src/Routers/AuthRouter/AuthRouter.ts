@@ -13,13 +13,16 @@ import { requestLimiter } from "../../Applications/Middleware/request-limit/requ
 
 export const AuthRouter = Router()
 /*
-* 1. Validates data with use middleware.
-* 2. Attempts to authenticate the user by calling service with the login data.
-* 3. Handles the result returned from service:
-*    - If authentication is successful (`ResultNotificationEnum.Success`), responds with status 200 and returns the authentication data (`result.data`).
-*       - Destructure "result.data" and send refresh token in cookies
-*    - If authentication fails due to invalid credentials (`ResultNotificationEnum.Unauthorized`), responds with status 401 (Unauthorized).
-*    - For any other authentication failure, responds with status 500.
+* 1. Validation includes data into middleware.
+* 2. Asynchronously calls the AuthService to authenticate the user using the provided login details.
+* 3. Processes the result returned by `AuthService.AuthUser`:
+*    - If `result.status` equals `ResultNotificationEnum.Success`, it:
+*      - Extracts the refresh token and other data from `result.data`.
+*      - Sets the refresh token as an HTTP-only, secure cookie.
+*      - Returns a 200 status (OK) with the user data in JSON format.
+*    - If `result.status` equals `ResultNotificationEnum.Unauthorized`, it returns a 401 status (Unauthorized).
+*    - If `result.status` equals `ResultNotificationEnum.BadRequest`, it returns a 400 status (Bad Request) and the error details in JSON format (`result.errorField`).
+*    - For any other status values, it returns a 500 status (Internal Server Error).
 * 4. Catches any exceptions that occur during the authentication process.
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
@@ -29,7 +32,7 @@ RuleValidations.validPassword,
 inputValidation,
 async (req: Request<{}, {}, LoginInputModelType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) => {
     try {
-        const result: ResultNotificationType<AuthModelServiceType> = await AuthService.AuthUser(req.body)
+        const result: ResultNotificationType<AuthModelServiceType> = await AuthService.AuthUser(req.body, req.ip || req.socket.remoteAddress!, req.useragent!.os || "anonyms")
         switch (result.status) {
             case ResultNotificationEnum.Success:
                 const {refreshToken, ...data} = result.data!
@@ -157,16 +160,17 @@ async (req: Request<{}, {}, ResendConfirmCodeInputType>, res: Response) => {
     }
 })
 /*
-* 1. Attempts to refresh the authentication token using the refresh token provided in the request cookies.
-* 2. Calls the service with the refresh token to obtain a new set of tokens.
-* 3. Handles the result returned from the service:
-*    - If the refresh is successful (`ResultNotificationEnum.Success`), responds with status 200 and returns the new authentication data (`result.data`).
-*       - Destructures the new refresh token from "result.data" and sets it in the cookies.
-*    - If the refresh fails due to invalid credentials (`ResultNotificationEnum.Unauthorized`), responds with status 401 (Unauthorized).
-*    - For any other failure, responds with status 500.
+* 1. Calls the service to refresh the authentication token using the provided refresh token from the cookies.
+* 2. Processes the result returned by `AuthService.RefreshToken`:
+*    - If `result.status` equals `ResultNotificationEnum.Success`, it:
+*      - Extracts the new refresh token and other data from `result.data`.
+*      - Sets the new refresh token as an HTTP-only, secure cookie.
+*      - Returns a 200 status (OK) with the user data in JSON format.
+*    - If `result.status` equals `ResultNotificationEnum.Unauthorized`, it returns a 401 status (Unauthorized).
+*    - For any other status values, it returns a 500 status (Internal Server Error).
+* 3. Catches any exceptions that occur during the token refresh process and returns a 500 status (Internal Server Error).
 * 4. Catches any exceptions that occur during the process of resending the confirmation code return error 500.
 */
-
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.refresh_token}`,
 async (req: Request, res: Response<AuthOutputModelType>) => {
     try {

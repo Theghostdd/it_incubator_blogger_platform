@@ -60,7 +60,8 @@ export enum ResultNotificationEnum {
     'NotFound' = 'NotFound',
     'BadRequest' = 'BadRequest',
     'Forbidden' = 'Forbidden',
-    'Unauthorized' = 'Unauthorized'
+    'Unauthorized' = 'Unauthorized',
+    'InternalError' = 'InternalError'
 }
 
 export type ResultNotificationType<T = null> = {
@@ -69,50 +70,22 @@ export type ResultNotificationType<T = null> = {
     errorField?: APIErrorsMessageType
     data?: T
 }
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 *
-*   NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW
+*   JWT Payload
 *
 */
-
-/*
-*
-*   Query Types
-*
-*/
-type SortQueryBasicModelType = {
-    sortBy: string,
-    sortDirection: 'asc' | 'desc'
+export type JWTRefreshPayload = {
+    deviceId: string,
+    userId: string,
+    iat: number,
+    exp: number
 }
 
-type PaginationQueryBasicModelType = {
-    pageNumber: number,
-    pageSize: number
-}
-/*
-*
-*   Pagination Type
-*
-*/
-type PaginationBasicModelType = {
-    pagesCount: number,
-    page: number,
-    pageSize: number,
-    totalCount: number,
-}
 
-type CreatePaginationBasicModelType = PaginationBasicModelType & {
-    skip: number
-}
+
+
+
+
+
+
