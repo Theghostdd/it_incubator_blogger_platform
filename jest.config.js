@@ -8,5 +8,6 @@ module.exports = {
     "/__tests__/integration/modules/",
     "/__tests__/Dto",
     "/__tests__/Mock",
+    "/__tests__/Modules"
   ],
 };

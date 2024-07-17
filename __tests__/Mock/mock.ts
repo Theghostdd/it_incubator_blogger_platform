@@ -3,6 +3,7 @@ import { BlogRepositories } from "../../src/Repositories/BlogRepositories/BlogRe
 import { defaultBlogValues } from "../../src/Utils/default-values/Blog/default-blog-value";
 import { BlogMapper } from "../../src/Utils/map/Blog/BlogMap";
 import { AuthRepositories } from "../../src/Repositories/AuthRepositories/AuthRepositories";
+import { UserRepositories } from "../../src/Repositories/UserRepostitories/UserRepositories";
 
 
 export const BlogMock = {
@@ -42,5 +43,13 @@ export const AuthMock = {
 
     UpdateRequestByIdMock () {
         AuthRepositories.UpdateRequestById = jest.fn().mockImplementation(() => true)
-    }
+    },
+
+
 }
+
+
+
+
+
+

@@ -1,11 +1,11 @@
 import { comparePass, genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
-import { AuthModelServiceType, ConfirmCodeInputModelType, LoginInputModelType, RefreshAuthOutputModelType, RequestLimiterInputModelViewType, RequestLimiterMongoViewType, SessionsMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
+import { AuthModelServiceType, ConfirmCodeInputModelType, LoginInputModelType, RefreshAuthOutputModelType, RequestLimiterInputModelViewType, RequestLimiterMongoViewType, SessionsInputModelViewType, SessionsMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType, CreatedMongoSuccessType, UpdateMongoSuccessType, DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
 import { RegistrationCreateType, ResendConfirmCodeInputType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
 import { RegistrationDefaultValue } from "../../Utils/default-values/Registration/registration-default-value"
-import { sendEmail } from "../../Applications/Nodemailer/nodemailer"
+import { NodemailerService } from "../../Applications/Nodemailer/nodemailer"
 import { GenerateUuid } from "../../Utils/generate-uuid/generate-uuid"
 import { addDays, compareAsc, format} from "date-fns";
 import { PatternsMail } from "../../Applications/Nodemailer/patterns/patterns"
@@ -60,7 +60,7 @@ export const AuthService = {
             }
 
 
-            const SessionData = {
+            const SessionData: SessionsInputModelViewType = {
                 dId: await GenerateUuid.GenerateDeviceId(getUser._id.toString()),
                 userId: getUser._id,
                 deviceName: userAgent,
@@ -75,7 +75,6 @@ export const AuthService = {
                     status: ResultNotificationEnum.InternalError
                 }
             }
-
             return {
                 status: ResultNotificationEnum.Success,
                 data: {
@@ -130,7 +129,7 @@ export const AuthService = {
             }
             const createUser: CreatedMongoSuccessType = await UserRepositories.CreateUser(dataCreate)
             const getPatternMail: PatternMail = await PatternsMail.ConfirmMail(generateConfirmCode)
-            const send = await sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
+            const send =  NodemailerService.sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
 
             return {status: ResultNotificationEnum.Success}
         } catch (e: any) {
@@ -245,7 +244,7 @@ export const AuthService = {
             const generateConfirmCode = await GenerateUuid.GenerateCodeForConfirmEmail()
             const dataUpdate = {$set: {'userConfirm.confirmationCode': generateConfirmCode, 'userConfirm.dataExpire': addDays(new Date(), 1).toISOString()}}
             const getPatternMail: PatternMail = await PatternsMail.ConfirmMail(generateConfirmCode)
-            const send = await sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
+            const send = NodemailerService.sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
             const UpdateUser: UpdateMongoSuccessType = await UserRepositories.UpdateUserById(checkUserByEmail._id.toString(), dataUpdate)
         
             return UpdateUser.matchedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}

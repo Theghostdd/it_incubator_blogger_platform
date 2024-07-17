@@ -1,11 +1,10 @@
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
 import { AuthService } from "../../../src/Service/AuthService/AuthService"
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
-import { dropCollections } from "../modules/modules";
-let sendEmail = require("../../../src/Applications/Nodemailer/nodemailer");
-import { db } from "../../../src/Applications/ConnectionDB/Connection";
 import { ObjectId } from "mongodb";
-import { RegistrationDto } from "../../Dto/AuthDto";
+import { InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
+import { NodemailerService } from "../../../src/Applications/Nodemailer/nodemailer";
+import { DropCollections, FindAllModule, FindAndUpdateModule, FindOneModule, InsertOneDataModule } from "../../Modules/Body.Modules";
 
 
 
@@ -14,21 +13,21 @@ const RegistrationConfirm = AuthService.RegistrationUserConfirmUserByEmail;
 const RegistrationResendConfirmCode = AuthService.RegistrationResendConfirmCodeToEmail;
 const collectionUser = MONGO_SETTINGS.COLLECTIONS.users
 
-describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => {
+describe(RegistrationService, () => {
     let RegistrationUserData: any;
     beforeEach( async () => {
-        await dropCollections.dropUserCollection()
-        RegistrationUserData = RegistrationDto.RegistrationUserData
         jest.clearAllMocks()
-        sendEmail = jest.fn().mockResolvedValue(() => true)
+        await DropCollections.DropUserCollection()      
+        RegistrationUserData = RegistrationDto.RegistrationUserData
+        NodemailerService.sendEmail = jest.fn().mockImplementation(() => true)
     })
 
     it('should registration user, status: Success', async () => {
         const result = await RegistrationService(RegistrationUserData)
         expect(result.status).toBe(ResultNotificationEnum.Success)
 
-        const getCreatedUser = await db.collection(collectionUser)
-            .findOne({login: RegistrationUserData.login});
+        const filter = {login: RegistrationUserData.login}
+        const getCreatedUser = await FindOneModule(filter, collectionUser)
         expect(getCreatedUser).not.toBeNull()
         expect(getCreatedUser).toEqual({
             _id: expect.any(ObjectId),
@@ -62,31 +61,28 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
                 },
             ]
         })
-
-        const getUser = await db.collection(collectionUser)
-            .find({login: RegistrationUserData.login}).toArray();
+        const filter = {login: RegistrationUserData.login}
+        const getUser = await FindAllModule(filter, collectionUser)
         expect(getUser.length).toBe(1)
     })
 })
 
-describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirmation, () => {
+describe(RegistrationConfirm, () => {
     let RegistrationUserData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await dropCollections.dropUserCollection()
+        await DropCollections.DropUserCollection()     
         RegistrationUserData = RegistrationDto.RegistrationUserData
     })
 
     it('should confirm user by email, status: Success', async () => {
-        const CreateUser = await RegistrationService(RegistrationUserData)
-        const GetUser = await db.collection(collectionUser)
-            .findOne({login: RegistrationUserData.login})
+        await RegistrationService(RegistrationUserData)
+        const GetUser = await FindOneModule({login: RegistrationUserData.login}, collectionUser)
         const confirmCode = GetUser!.userConfirm.confirmationCode
         
         const result = await RegistrationConfirm({code: confirmCode})
         expect(result.status).toBe(ResultNotificationEnum.Success)
-        const getUserAfterConfirm = await db.collection(collectionUser)
-            .findOne({_id: GetUser!._id})
+        const getUserAfterConfirm = await FindOneModule({_id: GetUser!._id}, collectionUser)
         expect(getUserAfterConfirm).toEqual({
             _id: GetUser!._id,
             login: RegistrationUserData.login,
@@ -102,6 +98,9 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirm
     })
 
     it('should not confirm user by email, code not found, status: Bad Request', async () => { 
+        await RegistrationService(RegistrationUserData)
+        const GetUser = await FindOneModule({login: RegistrationUserData.login}, collectionUser)
+        
         const result = await RegistrationConfirm({code: 'some-code'})
         expect(result.status).toBe(ResultNotificationEnum.BadRequest)
         expect(result.errorField).toEqual({
@@ -112,18 +111,17 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirm
                 }
             ]
         })
+
+        const CheckCode = await FindOneModule({_id: new ObjectId(GetUser!._id)}, collectionUser)
+        expect(CheckCode!.userConfirm.confirmationCode).toBe(GetUser!.userConfirm.confirmationCode)
+        expect(CheckCode!.userConfirm.ifConfirm).toBe(false)
     })
 
     it('should not confirm user by email, code has been confirmed, status: Bad Request', async () => { 
-        const CreateUser = await RegistrationService(RegistrationUserData)
-        const findAndUpdateUser = await db.collection(collectionUser)
-            .findOneAndUpdate(
-                {login: RegistrationUserData.login}, 
-                {$set: {'userConfirm.ifConfirm': true}}, 
-                {returnDocument: 'after'}
-            )
+        await RegistrationService(RegistrationUserData)
+        const findAndUpdateUser = await FindAndUpdateModule({login: RegistrationUserData.login}, {$set: {'userConfirm.ifConfirm': true}}, collectionUser)
 
-        const result = await RegistrationConfirm({code: findAndUpdateUser!.userConfirm.confirmationCode})
+        const result = await RegistrationConfirm(findAndUpdateUser!.userConfirm.confirmationCode)
         expect(result.status).toBe(ResultNotificationEnum.BadRequest)
         expect(result.errorField).toEqual({
             errorsMessages: [
@@ -136,14 +134,12 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirm
     })
 
     it('should not confirm user by email, code has expired, status: Bad Request', async () => { 
-        const CreateUser = await RegistrationService(RegistrationUserData)
-        const findAndUpdateUser = await db.collection(collectionUser)
-            .findOneAndUpdate(
+        await RegistrationService(RegistrationUserData)
+        const findAndUpdateUser = await FindAndUpdateModule(
                 {login: RegistrationUserData.login},
                 {$set: {'userConfirm.dataExpire': '2000-01-01T00:00:00+02:00'}},
-                {returnDocument: 'after'}
+                collectionUser
             )
-
 
         const result = await RegistrationConfirm({code: findAndUpdateUser!.userConfirm.confirmationCode})
         expect(result.status).toBe(ResultNotificationEnum.BadRequest)
@@ -158,29 +154,31 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_confirm
     })
 }) 
 
-describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_email_resending, () => {
+describe(RegistrationResendConfirmCode, () => {
     let RegistrationUserData: any;
     beforeEach( async () => {
-        await dropCollections.dropUserCollection()
-        RegistrationUserData = RegistrationDto.RegistrationUserData
         jest.clearAllMocks()
-        sendEmail = jest.fn().mockResolvedValue(() => true)
+        await DropCollections.DropUserCollection()
+        NodemailerService.sendEmail = jest.fn().mockImplementation(() => true)
+        RegistrationUserData = RegistrationDto.RegistrationUserData
     })
 
     it('should resend confirm code to user by email, status: Success', async () => {
-        const CreateUser = await RegistrationService(RegistrationUserData)
-        const GetUser = await db.collection(collectionUser)
-            .findOne({login: RegistrationUserData.login})
-        
+        await RegistrationService(RegistrationUserData)
+        const GetUser = await FindOneModule({login: RegistrationUserData.login}, collectionUser)
+
         const result = await RegistrationResendConfirmCode({email: RegistrationUserData.email})
         expect(result.status).toBe(ResultNotificationEnum.Success)
-        const getUserAfterResend = await db.collection(collectionUser)
-            .findOne({_id: GetUser!._id})
-        expect(getUserAfterResend).toEqual({
+
+        const CheckUserField = await FindOneModule({login: RegistrationUserData.login}, collectionUser)
+        expect(CheckUserField!.userConfirm.confirmationCode).not.toBe(GetUser!.userConfirm.confirmationCode)
+        expect(CheckUserField!.userConfirm.dataExpire).not.toBe(GetUser!.userConfirm.dataExpire)
+
+        expect(CheckUserField).toEqual({
             _id: GetUser!._id,
-            login: RegistrationUserData.login,
-            email: RegistrationUserData.email,
+            login: GetUser!.login,
             password: GetUser!.password,
+            email: GetUser!.email,
             userConfirm: {
                 ifConfirm: false,
                 confirmationCode: expect.any(String),
@@ -188,7 +186,46 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration_email_r
             },
             createdAt: GetUser!.createdAt
         })
-        expect(getUserAfterResend!.userConfirm.confirmationCode).not.toBe(GetUser!.userConfirm.confirmationCode)
-        expect(getUserAfterResend!.userConfirm.dataExpire).not.toBe(GetUser!.userConfirm.dataExpire)
+    })
+
+    it('should not resend confirm code to user by email, email not found, status: BadRequest', async () => {
+        const result = await RegistrationResendConfirmCode({email: RegistrationUserData.email})
+        expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+        expect(result.errorField).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'email'
+                }
+            ]
+        })
+
+        
+    })
+
+    it('should not resend confirm code to user by email, email has been confirmed status: BadRequest', async () => {
+        await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
+        
+        const result = await RegistrationResendConfirmCode({email: RegistrationUserData.email})
+        expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+        expect(result.errorField).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'email'
+                }
+            ]
+        })
+
+        
     })
 }) 
+
+
+
+
+
+
+
+
+

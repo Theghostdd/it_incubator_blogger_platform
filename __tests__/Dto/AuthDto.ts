@@ -21,7 +21,8 @@ export const AuthDto = {
     }
 }
 
-export const InsertDto = {
+
+export const InsertAuthDto = {
     UserInsertData: {
         login: RegistrationDto.RegistrationUserData.login,
         email: RegistrationDto.RegistrationUserData.email,
@@ -32,5 +33,5 @@ export const InsertDto = {
             dataExpire : "2024-07-06T13:41:33.211Z"
         },
         createdAt : "2024-07-05T13:41:33.220Z"
-    },
+    }
 }
