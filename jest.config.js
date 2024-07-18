@@ -5,9 +5,7 @@ module.exports = {
   testPathIgnorePatterns: [
     "/node_modules/",
     "/__tests__/e2e/modules/",
-    "/__tests__/integration/modules/",
     "/__tests__/Dto",
-    "/__tests__/Mock",
     "/__tests__/Modules"
   ],
 };

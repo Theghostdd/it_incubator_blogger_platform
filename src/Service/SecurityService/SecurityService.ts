@@ -78,6 +78,7 @@ export const SecurityService = {
             if (AuthByJWT.status !== ResultNotificationEnum.Success) return {status: ResultNotificationEnum.Unauthorized}
             const { userId, deviceId} = AuthByJWT.data!.RefreshJWTPayload
 
+
             const GetSessions: SessionsMongoViewType[] | null = await AuthRepositories.GetAllSessionsByUserId(userId)
 
             if (!GetSessions) return {status: ResultNotificationEnum.NotFound}

@@ -26,6 +26,10 @@ export const FindAndUpdateModule = async (filter: any, data: any, collection: st
     return await db.collection(collection).findOneAndUpdate(filter, {...data}, {returnDocument: 'after'})
 }
 
+export const DeleteOneModule = async (filter: any, collection: string) => {
+    return await db.collection(collection).deleteOne(filter)
+}
+
 
 
 

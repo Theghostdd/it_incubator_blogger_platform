@@ -392,10 +392,10 @@ export const AuthService = {
             if (!verifyJWT) {
                 return {status: ResultNotificationEnum.Unauthorized}
             }
+
             const result: SessionsMongoViewType | null = await AuthRepositories.GetSessionByDeviceIdAndUserId(verifyJWT.deviceId, verifyJWT.userId)
             if (!result) return {status: ResultNotificationEnum.Unauthorized}
             if (result.issueAt != new Date(verifyJWT.iat).toISOString()) return {status: ResultNotificationEnum.Unauthorized}
-
             return {
                 status: ResultNotificationEnum.Success, 
                 data: {
