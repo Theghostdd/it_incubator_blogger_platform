@@ -26,9 +26,9 @@ describe(LoginService, () => {
         await DropCollections.DropAuthSessionsCollection()
 
 
-        InsertOneUserData = InsertAuthDto.UserInsertData
-        AuthData = AuthDto.AuthUserData
-        RegistrationData = RegistrationDto.RegistrationUserData
+        InsertOneUserData = {...InsertAuthDto.UserInsertData}
+        AuthData = {...AuthDto.AuthUserData}
+        RegistrationData = {...RegistrationDto.RegistrationUserData}
     })
 
     it('should auth user, and create session for user, status: Success', async () => {
@@ -114,8 +114,8 @@ describe(AuthService.RefreshToken, () => {
         await DropCollections.DropUserCollection(),
         await DropCollections.DropAuthSessionsCollection()
 
-        InsertOneUserData = InsertAuthDto.UserInsertData
-        AuthData = AuthDto.AuthUserData
+        InsertOneUserData = {...InsertAuthDto.UserInsertData}
+        AuthData = {...AuthDto.AuthUserData}
     })
 
     it('should send to client new tokens pair, issueAt must be updated, status: Success', async () => {
@@ -211,8 +211,8 @@ describe(AuthService.LogOut, () => {
         await DropCollections.DropUserCollection(),
         await DropCollections.DropAuthSessionsCollection()
 
-        InsertOneUserData = InsertAuthDto.UserInsertData
-        AuthData = AuthDto.AuthUserData
+        InsertOneUserData = {...InsertAuthDto.UserInsertData}
+        AuthData = {...AuthDto.AuthUserData}
     })
 
     it('should success logout client, session must be deleted status: Success', async () => {
@@ -273,8 +273,8 @@ describe(JWTRefreshTokenAuthService, () => {
         await DropCollections.DropUserCollection(),
         await DropCollections.DropAuthSessionsCollection()
 
-        InsertOneUserData = InsertAuthDto.UserInsertData
-        AuthData = AuthDto.AuthUserData
+        InsertOneUserData = {...InsertAuthDto.UserInsertData}
+        AuthData = {...AuthDto.AuthUserData}
     })
 
     it('should success send data, status: Success', async () => {

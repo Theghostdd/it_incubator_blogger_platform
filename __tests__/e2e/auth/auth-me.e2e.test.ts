@@ -1,4 +1,6 @@
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
+import { AuthDto, RegistrationDto } from '../../Dto/AuthDto';
+import { DropCollections } from '../../Modules/Body.Modules';
 import { CreateBlog, DeleteAllDb, GetRequest, AdminAuth, CreatedPost, CreateManyDataUniversal, CreateUser, LoginUser } from '../modules/modules';
 
 
@@ -12,29 +14,19 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.me, () => {
     let userId: string
 
     beforeEach(async () => {
-        await DeleteAllDb()
+        jest.clearAllMocks()
+        await DropCollections.DropAllCollections()
 
-        CreatedUserData = {
-            login: 'TestLogin',
-            password: "somePass",
-            email: "example@mail.ru"
-        }
+        CreatedUserData = {...RegistrationDto.RegistrationUserData}
+
         const CreatedUserResult = await CreateUser(CreatedUserData)
         userId = CreatedUserResult.id
 
-        const LoginData = {
-            loginOrEmail: CreatedUserData.login,
-            password: CreatedUserData.password,
-        }
+        const LoginData = {...AuthDto.AuthUserData}
         const LoginUserResult = await LoginUser(LoginData)
-        
         AuthData = {
             Authorization: 'Bearer ' + LoginUserResult.accessToken
         }
-    })
-
-    afterAll(async () => {
-        await DeleteAllDb()
     })
 
     it('GET | should get info about current user by access token, status: 200', async () => {

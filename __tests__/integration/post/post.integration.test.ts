@@ -21,8 +21,8 @@ describe(PostCreateService, () => {
     beforeEach( async () => {
         jest.clearAllMocks()
         await DropCollections.DropAllCollections()
-        const CreateBlog = await InsertOneDataModule(BlogInsert.BlogInsertData, collectionBlog)
-        CreatePostData = PostDto.CreatePostData
+        const CreateBlog = await InsertOneDataModule({...BlogInsert.BlogInsertData}, collectionBlog)
+        CreatePostData = {...PostDto.CreatePostData}
         CreatePostData.blogId = CreateBlog.insertedId.toString()
     })
 
@@ -54,8 +54,8 @@ describe(PostUpdateService, () => {
     beforeEach( async () => {
         jest.clearAllMocks()
         await DropCollections.DropAllCollections()
-        const CreateBlog = await InsertOneDataModule(BlogInsert.BlogInsertData, collectionBlog)
-        UpdatePostData = BlogDto.UpdateBlogData
+        const CreateBlog = await InsertOneDataModule({...BlogInsert.BlogInsertData}, collectionBlog)
+        UpdatePostData = {...BlogDto.UpdateBlogData}
         UpdatePostData.blogId = CreateBlog.insertedId.toString()
     })
 

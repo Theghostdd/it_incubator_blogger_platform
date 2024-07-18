@@ -1,11 +1,11 @@
 import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
 import { AdminAuth, CreateUser, DeleteAllDb, GetRequest, InsertOneUniversal } from "../modules/modules"
-import { GenerateUuid } from "../../../src/Utils/generate-uuid/generate-uuid"
 import { addMinutes } from "date-fns"
+import { InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
+import { DropCollections } from "../../Modules/Body.Modules";
+import { NodemailerService } from "../../../src/Applications/Nodemailer/nodemailer";
 
-jest.mock('../../../src/Applications/Nodemailer/nodemailer', () => ({
-    sendEmail: jest.fn().mockResolvedValue(()=> true),  
-}));
+
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => {
 
@@ -20,26 +20,13 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     let ResendConfirmCodeData: any = {}
 
     beforeEach(async () => {
-        await DeleteAllDb()
+        NodemailerService.sendEmail = jest.fn().mockImplementation(() => true)
+        await DropCollections.DropAllCollections()
         
-        CreatedUserData = {
-            login: 'SomeLogin',
-            password: "SomePass",
-            email: "example@mail.ru"
-        }
+        CreatedUserData = {...RegistrationDto.RegistrationUserData}
 
-        InsertOneData = {
-            login : "somLogin",
-            email : "mixailmar4uk@yandex.ru",
-            password : "$2b$10$s9orQWLPiwBb/Unr3tujKuoiDH5pCMlZ/yEYnzLujGfEdvcMEt2R2",
-            userConfirm : {
-                ifConfirm : false,
-                confirmationCode : await GenerateUuid.GenerateCodeForConfirmEmail(),
-                dataExpire : addMinutes(new Date(), 1).toISOString()
-            },
-            createdAt : "2024-06-25T13:17:37.078Z"
-        }
-
+        InsertOneData = {...InsertAuthDto.UserInsertData}
+        InsertOneData.userConfirm.ifConfirm = false
         ConfirmUserData = {
             code: InsertOneData.userConfirm.confirmationCode
         }
@@ -49,10 +36,6 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
         }
 
 
-    })
-
-    afterAll(async () => {
-        await DeleteAllDb()
     })
 
     it('POST => GET | should create new user, and send email, status: 204, get all user list, status: 200', async () => {
@@ -145,11 +128,11 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
                 }, 
             ]
         })
-      
     })
 
     it('POST | should confirm new user, status: 204', async () => {
         // Crate user
+        InsertOneData.userConfirm.dataExpire = addMinutes(new Date(), 1)
         const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
         // This simulates a scenario where user confirmed email
         const RegistrationUserConfirm = await GetRequest()
@@ -222,6 +205,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
 
     it('POST | should resend confirmation code, status: 204', async () => {
         // Create user
+        InsertOneData.userConfirm.ifConfirm = false
         const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
         // This simulates a scenario where user want to get the new confirmation code
         const RegistrationUser = await GetRequest()

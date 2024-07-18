@@ -23,9 +23,9 @@ describe(CommentUpdateService, () => {
         jest.clearAllMocks()
         await DropCollections.DropAllCollections()
 
-        const InsertUser = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
+        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
         UserId = InsertUser.insertedId.toString()
-        const InsertPost = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionPost)
+        const InsertPost = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionPost)
         const PostId = InsertPost.insertedId.toString()
 
         InsertComment.InsertCommentData.postInfo.postId = PostId
@@ -67,9 +67,9 @@ describe(CommentDeleteService, () => {
         jest.clearAllMocks()
         await DropCollections.DropAllCollections()
 
-        const InsertUser = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
+        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
         UserId = InsertUser.insertedId.toString()
-        const InsertPost = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionPost)
+        const InsertPost = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionPost)
         const PostId = InsertPost.insertedId.toString()
 
         InsertComment.InsertCommentData.postInfo.postId = PostId

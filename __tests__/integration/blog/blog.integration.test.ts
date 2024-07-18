@@ -16,7 +16,7 @@ describe(BlogCreateService, () => {
     beforeEach( async () => {
         jest.clearAllMocks()
         await DropCollections.DropBlogCollection()
-        CreateBlogData = BlogDto.CreateBlogData
+        CreateBlogData = {...BlogDto.CreateBlogData}
     })
 
     it('should create new Blog, and return blog item, status: Success', async () => {
@@ -40,7 +40,7 @@ describe(BlogUpdateService, () => {
     beforeEach( async () => {
         jest.clearAllMocks()
         await DropCollections.DropBlogCollection()
-        UpdateBlogData = BlogDto.UpdateBlogData
+        UpdateBlogData = {...BlogDto.UpdateBlogData}
     })
 
     it('should update blog by id, status: Success', async () => {

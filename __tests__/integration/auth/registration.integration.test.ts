@@ -18,7 +18,7 @@ describe(RegistrationService, () => {
     beforeEach( async () => {
         jest.clearAllMocks()
         await DropCollections.DropUserCollection()      
-        RegistrationUserData = RegistrationDto.RegistrationUserData
+        RegistrationUserData = {...RegistrationDto.RegistrationUserData}
         NodemailerService.sendEmail = jest.fn().mockImplementation(() => true)
     })
 
@@ -72,7 +72,7 @@ describe(RegistrationConfirm, () => {
     beforeEach( async () => {
         jest.clearAllMocks()
         await DropCollections.DropUserCollection()     
-        RegistrationUserData = RegistrationDto.RegistrationUserData
+        RegistrationUserData = {...RegistrationDto.RegistrationUserData}
     })
 
     it('should confirm user by email, status: Success', async () => {
@@ -160,7 +160,7 @@ describe(RegistrationResendConfirmCode, () => {
         jest.clearAllMocks()
         await DropCollections.DropUserCollection()
         NodemailerService.sendEmail = jest.fn().mockImplementation(() => true)
-        RegistrationUserData = RegistrationDto.RegistrationUserData
+        RegistrationUserData = {...RegistrationDto.RegistrationUserData}
     })
 
     it('should resend confirm code to user by email, status: Success', async () => {

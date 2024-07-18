@@ -23,9 +23,9 @@ describe(GetAllSessionsService, () => {
         jest.clearAllMocks()
         await DropCollections.DropAllCollections()
 
-        const InsertUser = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
+        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
         UserId = InsertUser.insertedId.toString()
-        const AuthUser = await LoginService(AuthDto.AuthUserData, '192.13.12', 'MacOS')
+        const AuthUser = await LoginService({...AuthDto.AuthUserData}, '192.13.12', 'MacOS')
         token = AuthUser.data!.refreshToken
     })
 
@@ -79,9 +79,9 @@ describe(DeleteSessionByIdService, () => {
         jest.clearAllMocks()
         await DropCollections.DropAllCollections()
 
-        const InsertUser = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
+        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
         UserId = InsertUser.insertedId.toString()
-        const AuthUser = await LoginService(AuthDto.AuthUserData, '192.13.12', 'MacOS')
+        const AuthUser = await LoginService({...AuthDto.AuthUserData}, '192.13.12', 'MacOS')
         token = AuthUser.data!.refreshToken
         const FindSession = await FindOneModule({userId: new ObjectId(UserId)}, collectionSession)
         deviceId = FindSession!.dId
@@ -134,16 +134,16 @@ describe(DeleteAllSessionService, () => {
         jest.clearAllMocks();
         await DropCollections.DropAllCollections()
 
-        const InsertUser = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
+        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
         UserId = InsertUser.insertedId.toString()
-        const AuthUser = await LoginService(AuthDto.AuthUserData, '192.13.12', 'MacOS')
+        const AuthUser = await LoginService({...AuthDto.AuthUserData}, '192.13.12', 'MacOS')
         token = AuthUser.data!.refreshToken
         const FindSession = await FindOneModule({userId: new ObjectId(UserId)}, collectionSession)
         SessionId = FindSession!._id
 
-        let AuthUserSession = await LoginService(AuthDto.AuthUserData, '195.13.12', 'Chrome')
-        AuthUserSession = await LoginService(AuthDto.AuthUserData, '191.13.12', 'MacOS System')
-        AuthUserSession = await LoginService(AuthDto.AuthUserData, '190.13.12', 'Windows')
+        let AuthUserSession = await LoginService({...AuthDto.AuthUserData}, '195.13.12', 'Chrome')
+        AuthUserSession = await LoginService({...AuthDto.AuthUserData}, '191.13.12', 'MacOS System')
+        AuthUserSession = await LoginService({...AuthDto.AuthUserData}, '190.13.12', 'Windows')
     })
 
     it('should delete all sessions, exclude current session, status: Success', async () => {

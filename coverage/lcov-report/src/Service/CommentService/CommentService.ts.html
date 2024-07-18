@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">14.28% </span>
+                <span class="strong">90.47% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/21</span>
+                <span class='fraction'>19/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>6/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">14.28% </span>
+                <span class="strong">90.47% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/21</span>
+                <span class='fraction'>19/21</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -145,18 +145,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -170,17 +170,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -205,17 +205,17 @@ export const CommentService = {
     *    - If no document is matched for the update, returns a result with status `ResultNotificationEnum.NotFound`.
     * 4. Catches any exceptions that occur during the process.
     */
-    async <span class="fstat-no" title="function not covered" >UpdateCommentById </span>(id: string, userId: string, data: CommentInputModelType): Promise&lt;ResultNotificationType&gt; {
-<span class="cstat-no" title="statement not covered" >        try {</span>
-            const getComment: CommentMongoViewType | null = <span class="cstat-no" title="statement not covered" >await CommentRepositories.GetCommentByIdWithoutMap(id)</span>
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (!getComment) {</span>
-<span class="cstat-no" title="statement not covered" >                return {status: ResultNotificationEnum.NotFound}</span>
+    async UpdateCommentById (id: string, userId: string, data: CommentInputModelType): Promise&lt;ResultNotificationType&gt; {
+        try {
+            const getComment: CommentMongoViewType | null = await CommentRepositories.GetCommentByIdWithoutMap(id)
+            if (!getComment) {
+                return {status: ResultNotificationEnum.NotFound}
             }
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (getComment.commentatorInfo.userId !== userId) {</span>
-<span class="cstat-no" title="statement not covered" >                return {status: ResultNotificationEnum.Forbidden}</span>
+            if (getComment.commentatorInfo.userId !== userId) {
+                return {status: ResultNotificationEnum.Forbidden}
             }
-            const result: UpdateMongoSuccessType = <span class="cstat-no" title="statement not covered" >await CommentRepositories.UpdateCommentById(id, data)</span>
-<span class="cstat-no" title="statement not covered" >            return result.matchedCount &gt; 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}</span>
+            const result: UpdateMongoSuccessType = await CommentRepositories.UpdateCommentById(id, data)
+            return result.matchedCount &gt; 0 ? {status: ResultNotificationEnum.Success} : <span class="branch-1 cbranch-no" title="branch not covered" >{status: ResultNotificationEnum.NotFound}</span>
         } catch (e: any) {
 <span class="cstat-no" title="statement not covered" >            throw new Error(e)</span>
         }
@@ -230,18 +230,18 @@ export const CommentService = {
     *    - If no document is matched and deleted, returns a result with status `ResultNotificationEnum.NotFound`.
     * 4. Catches any exceptions that occur during the process.
     */
-    async <span class="fstat-no" title="function not covered" >DeleteCommentById </span>(id: string, userId: string): Promise&lt;ResultNotificationType&gt; {
-<span class="cstat-no" title="statement not covered" >        try {</span>
-            const getComment: CommentMongoViewType | null = <span class="cstat-no" title="statement not covered" >await CommentRepositories.GetCommentByIdWithoutMap(id)</span>
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (!getComment) {</span>
-<span class="cstat-no" title="statement not covered" >                return {status: ResultNotificationEnum.NotFound}</span>
+    async DeleteCommentById (id: string, userId: string): Promise&lt;ResultNotificationType&gt; {
+        try {
+            const getComment: CommentMongoViewType | null = await CommentRepositories.GetCommentByIdWithoutMap(id)
+            if (!getComment) {
+                return {status: ResultNotificationEnum.NotFound}
             }
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (getComment.commentatorInfo.userId !== userId) {</span>
-<span class="cstat-no" title="statement not covered" >                return {status: ResultNotificationEnum.Forbidden}</span>
+            if (getComment.commentatorInfo.userId !== userId) {
+                return {status: ResultNotificationEnum.Forbidden}
             }
 &nbsp;
-            const result: DeletedMongoSuccessType = <span class="cstat-no" title="statement not covered" >await CommentRepositories.DeleteCommentById(id)</span>
-<span class="cstat-no" title="statement not covered" >            return result.deletedCount &gt; 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}</span>
+            const result: DeletedMongoSuccessType = await CommentRepositories.DeleteCommentById(id)
+            return result.deletedCount &gt; 0 ? {status: ResultNotificationEnum.Success} : <span class="branch-1 cbranch-no" title="branch not covered" >{status: ResultNotificationEnum.NotFound}</span>
         } catch (e: any) {
 <span class="cstat-no" title="statement not covered" >            throw new Error(e)</span>
         }
@@ -253,7 +253,7 @@ export const CommentService = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-06-26T09:22:17.758Z
+                at 2024-07-18T13:39:32.696Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
