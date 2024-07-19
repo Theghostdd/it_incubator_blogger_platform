@@ -18,7 +18,7 @@ let InsertOneUserData: any;
 let RegistrationData: any;
 beforeEach( async () => {
 jest.clearAllMocks()
-await DropCollections.DropUserCollection(),
+await DropCollections.DropUserCollection()
 await DropCollections.DropAuthSessionsCollection()
 
 
@@ -107,7 +107,7 @@ describe(AuthService.RefreshToken, () => {
     let InsertOneUserData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropUserCollection(),
+        await DropCollections.DropUserCollection()
         await DropCollections.DropAuthSessionsCollection()
 
         InsertOneUserData = {...InsertAuthDto.UserInsertData}
@@ -134,7 +134,7 @@ describe(AuthService.RefreshToken, () => {
 
     it('should not send to client new tokens pair, bad token, issueAt must not be updated status: Unauthorized', async () => {
         const InsertData = await InsertOneDataModule(InsertOneUserData, collectionUser)
-        const LoginUser = await LoginService(AuthData, '191.22.33', 'Chrome')
+        await LoginService(AuthData, '191.22.33', 'Chrome')
         const filterSession = {userId: new ObjectId(InsertData.insertedId)}
         const FindFirstSession = await FindOneModule(filterSession, collectionAuthSession)
 
@@ -178,7 +178,7 @@ describe(AuthService.RefreshToken, () => {
     })
 
     it('should send to client new tokens pair to many devices, issueAt must be updated, status: Success', async () => {
-        const InsertData = await InsertOneDataModule(InsertOneUserData, collectionUser)
+        await InsertOneDataModule(InsertOneUserData, collectionUser)
         const LoginUser = await LoginService(AuthData, '191.22.33', 'Chrome')
         const { refreshToken } = LoginUser.data!
         const LoginUser2 = await LoginService(AuthData, '191.22.33', 'MacOs')
@@ -204,7 +204,7 @@ describe(AuthService.LogOut, () => {
     let InsertOneUserData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropUserCollection(),
+        await DropCollections.DropUserCollection()
         await DropCollections.DropAuthSessionsCollection()
 
         InsertOneUserData = {...InsertAuthDto.UserInsertData}
@@ -225,7 +225,7 @@ describe(AuthService.LogOut, () => {
 
     it('should not logout client, bad token, session must be, status: Unauthorized', async () => {
         await InsertOneDataModule(InsertOneUserData, collectionUser)
-        const LoginUser = await LoginService(AuthData, '191.11.23', 'Chrome')
+        await LoginService(AuthData, '191.11.23', 'Chrome')
 
         const result = await AuthService.LogOut('refreshToken')
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
@@ -266,7 +266,7 @@ describe(JWTRefreshTokenAuthService, () => {
     let InsertOneUserData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropUserCollection(),
+        await DropCollections.DropUserCollection()
         await DropCollections.DropAuthSessionsCollection()
 
         InsertOneUserData = {...InsertAuthDto.UserInsertData}

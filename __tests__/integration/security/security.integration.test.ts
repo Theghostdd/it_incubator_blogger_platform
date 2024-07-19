@@ -31,9 +31,9 @@ describe(DeleteAllSessionService, () => {
         const FindSession = await FindOneModule({userId: new ObjectId(UserId)}, collectionSession)
         SessionId = FindSession!._id
 
-        let AuthUserSession = await LoginService({...AuthDto.AuthUserData}, '195.13.12', 'Chrome')
-        AuthUserSession = await LoginService({...AuthDto.AuthUserData}, '191.13.12', 'MacOS System')
-        AuthUserSession = await LoginService({...AuthDto.AuthUserData}, '190.13.12', 'Windows')
+        await LoginService({...AuthDto.AuthUserData}, '195.13.12', 'Chrome')
+        await LoginService({...AuthDto.AuthUserData}, '191.13.12', 'MacOS System')
+        await LoginService({...AuthDto.AuthUserData}, '190.13.12', 'Windows')
     })
 
     it('should delete all sessions, exclude current session, status: Success', async () => {

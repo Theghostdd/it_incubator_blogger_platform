@@ -1,4 +1,4 @@
-import { BlogDto, BlogInsert } from "./BlogDto"
+import { BlogDto } from "./BlogDto"
 
 
 export const PostDto = {

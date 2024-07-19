@@ -44,7 +44,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.me, () => {
 
     it('GET | should`t get info about current user by access token, status: 401', async () => {
         // This simulates a scenario where we should`t get info about current user by access token because not auth data
-        const CreateElementResult = await GetRequest()
+        await GetRequest()
             .get(endpoint)
             .set({})
             .expect(401)
