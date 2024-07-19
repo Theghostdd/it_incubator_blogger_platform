@@ -1,7 +1,5 @@
-import { ObjectId } from "mongodb"
 import { BlogDto, BlogInsert } from "./BlogDto"
-import { InsertOneDataModule } from "../Modules/Body.Modules"
-import { MONGO_SETTINGS } from "../../src/settings"
+
 
 export const PostDto = {
     CreatePostData: {

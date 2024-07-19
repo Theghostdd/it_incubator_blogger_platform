@@ -67,6 +67,7 @@ AuthUser.AuthUserByAccessToken,
 async (req: Request, res: Response<UserMeModelViewType>) => {
     try {
         const result: UserMeModelViewType | null = await UserQueryRepositories.GetUserByIdAuthMe(req.user.userId)
+        UserQueryRepositories
         return result ? res.status(200).json(result) : res.sendStatus(404)
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.me}`, 'GET', 'Get information about current user by accessToken.', e)

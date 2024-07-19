@@ -6,7 +6,6 @@ import { AuthService } from "../../../src/Service/AuthService/AuthService";
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
 import { ObjectId } from "mongodb";
 
-const GetAllSessionsService = SecurityService.GetAllSessions;
 const DeleteSessionByIdService = SecurityService.DeleteSessionByDeviceId;
 const DeleteAllSessionService = SecurityService.DeleteAllSessionExcludeCurrent;
 const LoginService = AuthService.AuthUser;
@@ -15,61 +14,6 @@ const LoginService = AuthService.AuthUser;
 const collectionSession = MONGO_SETTINGS.COLLECTIONS.auth_session;
 const collectionUser = MONGO_SETTINGS.COLLECTIONS.users;
 
-
-describe(GetAllSessionsService, () => {
-    let token: any;
-    let UserId: string;
-    beforeEach( async () => {
-        jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
-
-        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
-        UserId = InsertUser.insertedId.toString()
-        const AuthUser = await LoginService({...AuthDto.AuthUserData}, '192.13.12', 'MacOS')
-        token = AuthUser.data!.refreshToken
-    })
-
-    it('should get all sessions, status: Success', async () => {
-        let result = await GetAllSessionsService(token)
-        expect(result.status).toBe(ResultNotificationEnum.Success)
-        expect(result.data?.length).toBe(1)
-        expect(result.data).toEqual([
-            {                    
-                ip: expect.any(String),
-                title: expect.any(String),
-                lastActiveDate: expect.any(String),
-                deviceId: expect.any(String),
-            }
-        ])
-
-        let AuthUser = await LoginService(AuthDto.AuthUserData, '192.13.12', 'MacOS')
-        AuthUser = await LoginService(AuthDto.AuthUserData, '192.13.12', 'MacOS')
-
-        result = await GetAllSessionsService(token)
-        expect(result.status).toBe(ResultNotificationEnum.Success)
-        expect(result.data!.length).toBe(3)
-    })
-
-    it('should not get all sessions, bad token, status: Unauthorized', async () => {
-        const result = await GetAllSessionsService("token")
-        expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
-    })
-
-    it('should not get all sessions, session not found, status: Unauthorized', async () => {
-        await DeleteOneModule({userId: new ObjectId(UserId)}, collectionSession)
-
-        const result = await GetAllSessionsService(token)
-        expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
-    })
-
-    it('should not get all sessions, session iat not token iat, status: Unauthorized', async () => {
-        await FindAndUpdateModule({userId: new ObjectId(UserId)}, {$set: {issueAt: '2023-07-06T13:41:33.211Z'}}, collectionSession)
-
-        const result = await GetAllSessionsService(token)
-        expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
-    })
-
-})
 
 describe(DeleteAllSessionService, () => {
     let token: any;
@@ -96,16 +40,16 @@ describe(DeleteAllSessionService, () => {
         const result = await DeleteAllSessionService(token)
         expect(result.status).toBe(ResultNotificationEnum.Success)
 
-        const FindAllSession = await GetAllSessionsService(token)
-        expect(FindAllSession.data?.length).toBe(1)
+        const FindAllSession = await FindAllModule({}, collectionSession)
+        expect(FindAllSession.length).toBe(1)
     })
 
     it('should not delete all sessions, bad token, status: Unauthorized', async () => {
         const result = await DeleteAllSessionService("token")
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
-        const FindAllSession = await GetAllSessionsService(token)
-        expect(FindAllSession.data?.length).toBe(4)
+        const FindAllSession = await FindAllModule({}, collectionSession)
+        expect(FindAllSession.length).toBe(4)
     })
 
     it('should not delete all sessions, session not found, status: Unauthorized', async () => {

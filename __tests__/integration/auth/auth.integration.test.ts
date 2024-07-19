@@ -5,105 +5,101 @@ import { MONGO_SETTINGS } from "../../../src/settings";
 import { AuthDto, InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
 import { DropCollections, FindAllModule, FindOneModule, InsertOneDataModule } from "../../Modules/Body.Modules";
 
-
-
-
-
 const RegistrationService = AuthService.RegistrationUser;
-const LoginService =  AuthService.AuthUser;
+const LoginService = AuthService.AuthUser;
 const JWTRefreshTokenAuthService = AuthService.JWTRefreshTokenAuth;
 const collectionUser = MONGO_SETTINGS.COLLECTIONS.users
 const collectionAuthSession = MONGO_SETTINGS.COLLECTIONS.auth_session
 
 
 describe(LoginService, () => {
-    let AuthData: any;
-    let InsertOneUserData: any;
-    let RegistrationData: any;
-    beforeEach( async () => {
-        jest.clearAllMocks()
-        await DropCollections.DropUserCollection(),
-        await DropCollections.DropAuthSessionsCollection()
+let AuthData: any;
+let InsertOneUserData: any;
+let RegistrationData: any;
+beforeEach( async () => {
+jest.clearAllMocks()
+await DropCollections.DropUserCollection(),
+await DropCollections.DropAuthSessionsCollection()
 
 
-        InsertOneUserData = {...InsertAuthDto.UserInsertData}
-        AuthData = {...AuthDto.AuthUserData}
-        RegistrationData = {...RegistrationDto.RegistrationUserData}
-    })
+InsertOneUserData = {...InsertAuthDto.UserInsertData}
+AuthData = {...AuthDto.AuthUserData}
+RegistrationData = {...RegistrationDto.RegistrationUserData}
+})
 
-    it('should auth user, and create session for user, status: Success', async () => {
-        const InsertData = await InsertOneDataModule(InsertOneUserData, collectionUser)
+it('should auth user, and create session for user, status: Success', async () => {
+const InsertData = await InsertOneDataModule(InsertOneUserData, collectionUser)
 
-        const result = await LoginService(AuthData, '192.11.11', 'Chrome')
-        expect(result.status).toBe(ResultNotificationEnum.Success)
-        expect(result.data).toEqual({
-            accessToken: expect.any(String),
-            refreshToken: expect.any(String)
-        })
+const result = await LoginService(AuthData, '192.11.11', 'Chrome')
+expect(result.status).toBe(ResultNotificationEnum.Success)
+expect(result.data).toEqual({
+accessToken: expect.any(String),
+refreshToken: expect.any(String)
+})
 
-        const filterSessions = {userId: new ObjectId(InsertData.insertedId)}
-        const CheckSession = await FindOneModule(filterSessions, collectionAuthSession)
-        expect(CheckSession).toEqual({
-            _id: expect.any(ObjectId),
-            dId: expect.any(String),
-            userId: InsertData.insertedId,
-            deviceName: expect.any(String),
-            ip: expect.any(String),
-            issueAt: expect.any(String),
-        })
-    })
+const filterSessions = {userId: new ObjectId(InsertData.insertedId)}
+const CheckSession = await FindOneModule(filterSessions, collectionAuthSession)
+expect(CheckSession).toEqual({
+_id: expect.any(ObjectId),
+dId: expect.any(String),
+userId: InsertData.insertedId,
+deviceName: expect.any(String),
+ip: expect.any(String),
+issueAt: expect.any(String),
+})
+})
 
-    it('should not auth user, login or email not found, session not be created, status: Unauthorized', async () => {
-        const result = await LoginService(AuthData, '192.11.11', 'Chrome')
-        expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
+it('should not auth user, login or email not found, session not be created, status: Unauthorized', async () => {
+const result = await LoginService(AuthData, '192.11.11', 'Chrome')
+expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
-        const CheckSession = await FindAllModule({}, collectionAuthSession)
-        expect(CheckSession.length).toBe(0)
-    })
+const CheckSession = await FindAllModule({}, collectionAuthSession)
+expect(CheckSession.length).toBe(0)
+})
 
-    it('should not auth user, email not confirmed, session not be created, status: Bad Request', async () => {
-        await RegistrationService(RegistrationData)
+it('should not auth user, email not confirmed, session not be created, status: Bad Request', async () => {
+await RegistrationService(RegistrationData)
 
-        const result = await LoginService(AuthData, '192.11.11', 'Chrome')
-        expect(result.status).toBe(ResultNotificationEnum.BadRequest)
-        expect(result.errorField).toEqual({
-            errorsMessages: [
-                {
-                    message: expect.any(String),
-                    field: 'code'
-                }
-            ]
-        })
+const result = await LoginService(AuthData, '192.11.11', 'Chrome')
+expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+expect(result.errorField).toEqual({
+errorsMessages: [
+{
+message: expect.any(String),
+field: 'code'
+}
+]
+})
 
-        const CheckSession = await FindAllModule({}, collectionAuthSession)
-        expect(CheckSession.length).toBe(0)
-    })
+const CheckSession = await FindAllModule({}, collectionAuthSession)
+expect(CheckSession.length).toBe(0)
+})
 
-    it('should not auth user, password isn`t correct, session not be created, status: Unauthorized', async () => {
-        await InsertOneDataModule(InsertOneUserData, collectionUser)
+it('should not auth user, password isn`t correct, session not be created, status: Unauthorized', async () => {
+await InsertOneDataModule(InsertOneUserData, collectionUser)
 
-        AuthData = {...AuthData, password:'otherPassword'}
-        const result = await LoginService(AuthData, '192.11.11', 'Chrome')
-        expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
+AuthData = {...AuthData, password:'otherPassword'}
+const result = await LoginService(AuthData, '192.11.11', 'Chrome')
+expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
-        const CheckSession = await FindAllModule({}, collectionAuthSession)
-        expect(CheckSession.length).toBe(0)
-    })
+const CheckSession = await FindAllModule({}, collectionAuthSession)
+expect(CheckSession.length).toBe(0)
+})
 
-    it('should auth user, from two devices, must be two sessions, status: Success', async () => {
-        await InsertOneDataModule(InsertOneUserData, collectionUser)
-        await LoginService(AuthData, '191.22.33', 'Chrome')
-        await LoginService(AuthData, '191.01.23', 'MacOs')
+it('should auth user, from two devices, must be two sessions, status: Success', async () => {
+await InsertOneDataModule(InsertOneUserData, collectionUser)
+await LoginService(AuthData, '191.22.33', 'Chrome')
+await LoginService(AuthData, '191.01.23', 'MacOs')
 
-        const CheckSession = await FindAllModule({}, collectionAuthSession)
-        expect(CheckSession.length).toBe(2)
-        expect(CheckSession[0]._id).not.toBe(CheckSession[1]._id)
-        expect(CheckSession[0].dId).not.toBe(CheckSession[1].dId)
-        expect(CheckSession[0].deviceName).not.toBe(CheckSession[1].deviceName)
-        expect(CheckSession[0].ip).not.toBe(CheckSession[1].ip)
-        expect(CheckSession[0].issueAt).not.toBe(CheckSession[1].issueAt)
-        expect(CheckSession[0].userId).toStrictEqual(CheckSession[1].userId)
-    })
+const CheckSession = await FindAllModule({}, collectionAuthSession)
+expect(CheckSession.length).toBe(2)
+expect(CheckSession[0]._id).not.toBe(CheckSession[1]._id)
+expect(CheckSession[0].dId).not.toBe(CheckSession[1].dId)
+expect(CheckSession[0].deviceName).not.toBe(CheckSession[1].deviceName)
+expect(CheckSession[0].ip).not.toBe(CheckSession[1].ip)
+expect(CheckSession[0].issueAt).not.toBe(CheckSession[1].issueAt)
+expect(CheckSession[0].userId).toStrictEqual(CheckSession[1].userId)
+})
 })
 
 describe(AuthService.RefreshToken, () => {
