@@ -2,32 +2,30 @@ import { Router, Request, Response } from "express";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes";
-import { SessionOutputModelViewType } from "../../Applications/Types-Models/Auth/AuthTypes";
+import { RefreshAuthOutputModelType, SessionOutputModelViewType } from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SecurityService } from "../../Service/SecurityService/SecurityService";
+import { AuthQueryRepositories } from "../../Repositories/AuthRepositories/AuthQueryRepositories";
+import { AuthService } from "../../Service/AuthService/AuthService";
 
 
 
 export const SecurityRouter = Router()
 /*
-* 1. Calls the service to get all user sessions using the provided refresh token from the cookies.
-* 2. Processes the result returned by `SecurityService.GetAllSessions`:
-*    - If `result.status` equals `ResultNotificationEnum.Success`, it returns a 200 status (OK) with the session data in JSON format.
-*    - If `result.status` equals `ResultNotificationEnum.Unauthorized`, it returns a 401 status (Unauthorized).
-*    - For any other status values, it returns a 500 status (Internal Server Error).
+* 1. Calls the auth service to verify refresh token from the cookies.
+* 2. Processes the result returned:
+*    - If `verifyJwt.status` equals `ResultNotificationEnum.Success`, next process to getting all sessions.
+*    - If `verifyJwt.status` not equals `ResultNotificationEnum.Success`, it returns a 401 status (Unauthorized).
 * 3. Catches any exceptions that occur during the process of retrieving the sessions and returns a 500 status (Internal Server Error).
 */
 
 SecurityRouter.get(ROUTERS_SETTINGS.SECURITY.devices,
 async (req: Request, res: Response<SessionOutputModelViewType[]>) => {
     try {
-        const result: ResultNotificationType<SessionOutputModelViewType[]> = await SecurityService.GetAllSessions(req.cookies.refreshToken)
-        switch(result.status) {
-            case ResultNotificationEnum.Success:
-                return res.status(200).json(result.data);
-            case ResultNotificationEnum.Unauthorized:
-                return res.sendStatus(401);
-            default: return res.sendStatus(500);
-        }
+        const verifyJwt: ResultNotificationType<RefreshAuthOutputModelType> = await AuthService.JWTRefreshTokenAuth(req.cookies.refreshToken)
+        if (verifyJwt.status != ResultNotificationEnum.Success) return res.sendStatus(401)
+
+        const result: SessionOutputModelViewType[] | [] = await AuthQueryRepositories.GetAllSessionsByUserId(verifyJwt.data!.RefreshJWTPayload.userId)
+        return res.status(200).json(result);
     } catch (e) {
         SaveError(`${ROUTERS_SETTINGS.SECURITY.security}${ROUTERS_SETTINGS.SECURITY.devices}`, 'GET', 'Get all sessions', e)
         return res.sendStatus(500)

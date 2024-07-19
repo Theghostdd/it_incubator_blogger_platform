@@ -13,28 +13,6 @@ export const SecurityService = {
     /*
     * 1. Validates the token using `AuthService.JWTRefreshTokenAuth` to ensure it is authorized.
     * 2. Extracts `userId` from the verified token.
-    * 3. Retrieves all sessions from the database associated with the `userId` using `AuthRepositories.GetAllSessionsByUserId`.
-    *    - If no sessions are found (`GetSessions` is `null`), returns a result with status `ResultNotificationEnum.Success` and an empty array (`[]`) as data.
-    * 4. Maps the retrieved sessions to a standardized format using `SecurityMapper.MapsDevices`.
-    * 5. Returns a result with status `ResultNotificationEnum.Success` and the mapped session data.
-    * 6. Catches any exceptions that occur during the process and throws a new error.
-    */
-    async GetAllSessions (token: string): Promise<ResultNotificationType<SessionOutputModelViewType[]>> {
-        try {
-            const AuthByJWT: ResultNotificationType<RefreshAuthOutputModelType> = await AuthService.JWTRefreshTokenAuth(token)
-            if (AuthByJWT.status !== ResultNotificationEnum.Success) return {status: ResultNotificationEnum.Unauthorized}
-            const { userId } = AuthByJWT.data!.RefreshJWTPayload
-            
-            const GetSessions: SessionsMongoViewType[] | null = await AuthRepositories.GetAllSessionsByUserId(userId)
-            
-            return {status: ResultNotificationEnum.Success, data: await SecurityMapper.MapsDevices(GetSessions!)}
-        } catch(e: any) {
-            throw new Error(e)
-        }
-    },
-    /*
-    * 1. Validates the token using `AuthService.JWTRefreshTokenAuth` to ensure it is authorized.
-    * 2. Extracts `userId` from the verified token.
     * 3. Retrieves the session from the database associated with the `dId` using `AuthRepositories.GetSessionByDeviceId`.
     *    - If no session is found (`GetSession` is `null`), returns a result with status `ResultNotificationEnum.NotFound`.
     *    - If the session's `userId` does not match the `userId` extracted from the token, returns a result with status `ResultNotificationEnum.Forbidden`.
@@ -78,8 +56,7 @@ export const SecurityService = {
             if (AuthByJWT.status !== ResultNotificationEnum.Success) return {status: ResultNotificationEnum.Unauthorized}
             const { userId, deviceId} = AuthByJWT.data!.RefreshJWTPayload
 
-
-            const GetSessions: SessionsMongoViewType[] | null = await AuthRepositories.GetAllSessionsByUserId(userId)
+            const GetSessions: SessionsMongoViewType[] | null = await AuthRepositories.GetAllSessionsByUserIdWithOutMap(userId)
 
             if (!GetSessions) return {status: ResultNotificationEnum.NotFound}
             const mapId = GetSessions.filter(dId => dId.dId != deviceId).map(items => items._id)

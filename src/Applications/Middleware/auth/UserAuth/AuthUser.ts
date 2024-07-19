@@ -4,7 +4,6 @@ import { UserRepositories } from "../../../../Repositories/UserRepostitories/Use
 import { UserViewMongoModelType } from "../../../Types-Models/User/UserTypes"
 import { UserMap } from "../../../../Utils/map/User/UserMap"
 
-
 export const AuthUser = {
     async AuthUserByAccessToken (req: Request, res: Response, next: NextFunction) {
         try {

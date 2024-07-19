@@ -120,7 +120,7 @@ export const AuthRepositories = {
     * or `null` if no sessions match the `userId`.
     * Catches and throws any exceptions that occur during the retrieval process.
     */
-    async GetAllSessionsByUserId (id: string): Promise<SessionsMongoViewType[] | null> {
+    async GetAllSessionsByUserIdWithOutMap (id: string): Promise<SessionsMongoViewType[] | null> {
         try {
             return await db.collection<SessionsMongoViewType>(MONGO_SETTINGS.COLLECTIONS.auth_session).find({userId: new ObjectId(id)}).toArray()
         } catch (e: any) {
