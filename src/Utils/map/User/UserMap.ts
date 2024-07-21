@@ -1,6 +1,5 @@
 import {
     CreatePaginationType,
-    PayloadJwtTokenType,
     ResultDataWithPaginationType
 } from "../../../Applications/Types-Models/BasicTypes"
 import {
@@ -10,19 +9,7 @@ import {
 } from "../../../Applications/Types-Models/User/UserTypes"
 
 
-
-
 export const UserMap = {
-    /* 
-    * 1. Takes user data.
-    * 2. Maps the user`s model view type to JWT Access Token.
-    * 3. Returns a structured JWT payload object.
-    */
-    async UserMapperAuthByAccessToken (data: UserViewMongoModelType): Promise<PayloadJwtTokenType> {
-        return {
-            userId: data._id.toString()
-        }
-    },
     /* 
     * Maps the user`s model view for about current user.
     */

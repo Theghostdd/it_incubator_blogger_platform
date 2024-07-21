@@ -1,9 +1,9 @@
-import { Request } from "express"
+import {UserRequestType} from "../Applications/Types-Models/BasicTypes";
 
 declare global {
     namespace Express {
         export interface Request {
-            user: any
+            user: UserRequestType
         }
     }
 }

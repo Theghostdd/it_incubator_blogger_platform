@@ -1,4 +1,4 @@
-import {comparePass, genSaltAndHash} from "../../Applications/Middleware/bcrypt/bcrypt"
+import { bcryptService} from "../../Applications/Middleware/bcrypt/bcrypt"
 import {
     AuthModelServiceType,
     RefreshAuthOutputModelType,
@@ -14,7 +14,7 @@ import {
     ResultNotificationType,
     ResultNotificationEnum,
     APIErrorsMessageType,
-    JWTRefreshPayloadType
+    JWTRefreshPayloadType, JWTAccessTokenType
 } from "../../Applications/Types-Models/BasicTypes"
 import {UserRepositories} from "../../Repositories/UserRepostitories/UserRepositories"
 import {
@@ -50,7 +50,7 @@ export const AuthService = {
         try {
             const getUser: UserViewMongoType | null = await UserRepositories.GetUserByEmailOrLogin('', '', data.loginOrEmail)
             if (!getUser) return {status: ResultNotificationEnum.Unauthorized}
-            if (!await comparePass(data.password, getUser.password)) return {status: ResultNotificationEnum.Unauthorized}
+            if (!await bcryptService.comparePass(data.password, getUser.password)) return {status: ResultNotificationEnum.Unauthorized}
             if (!getUser.userConfirm.ifConfirm) return {
                 status: ResultNotificationEnum.BadRequest, errorField: {
                     errorsMessages: [
@@ -110,7 +110,7 @@ export const AuthService = {
             const dataCreate: RegistrationCreatType = {
                 login: data.login,
                 email: data.email,
-                password: await genSaltAndHash(data.password),
+                password: await bcryptService.genSaltAndHash(data.password),
                 userConfirm: {
                     ifConfirm: false,
                     confirmationCode: generateConfirmCode,
@@ -342,9 +342,7 @@ export const AuthService = {
     async JWTRefreshTokenAuth(token: string): Promise<ResultNotificationType<RefreshAuthOutputModelType>> {
         try {
             const verifyJWT: any = await credentialJWT.VerifyJWTrefresh(token)
-            if (!verifyJWT) {
-                return {status: ResultNotificationEnum.Unauthorized}
-            }
+            if (!verifyJWT) return {status: ResultNotificationEnum.Unauthorized}
             const { iat, deviceId } = verifyJWT
 
             const result: SessionsMongoViewType | null = await AuthRepositories.GetSessionByDeviceId(deviceId)
@@ -352,6 +350,27 @@ export const AuthService = {
             if (result.issueAt != new Date(iat * 1000).toISOString()) return {status: ResultNotificationEnum.Unauthorized}
 
             return {status: ResultNotificationEnum.Success, data: {RefreshJWTPayload: verifyJWT, SessionData: result}}
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Intermediate layer for access token verification.
+    * Access token verification, if the token is not a valid authorization error return.
+    * Getting a user by its ID.
+    *   - If the user is not found, an authorization error is returned.
+    * Catches any exceptions that occur during the process and throws a new error.
+    */
+    async JWTAccessTokenAuth(token: string): Promise<ResultNotificationType<JWTAccessTokenType>> {
+        try {
+            const verifyJWT = await credentialJWT.VerifyJWT(token) as JWTAccessTokenType
+            if (!verifyJWT) return {status: ResultNotificationEnum.Unauthorized}
+            const { userId } = verifyJWT
+
+            const getUser: UserViewMongoType | null = await UserRepositories.GetUserById(userId)
+            if (!getUser) return {status: ResultNotificationEnum.Unauthorized}
+
+            return {status: ResultNotificationEnum.Success, data: verifyJWT}
         } catch (e: any) {
             throw new Error(e)
         }

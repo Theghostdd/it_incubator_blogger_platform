@@ -19,7 +19,7 @@ export const credentialJWT = {
         try {
             return jwt.verify(token, SETTINGS.JWT_ACCESS_SECRET_KEY)
         } catch (e: any) {
-            throw new Error(e)
+            return null
         }
     },
 

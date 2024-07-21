@@ -1,4 +1,4 @@
-import { genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
+import { bcryptService } from "../../Applications/Middleware/bcrypt/bcrypt"
 import { APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
 import {UserViewModelType, UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
@@ -35,7 +35,7 @@ export const UserService = {
             const CreateData: RegistrationCreatType = {
                 login: data.login,
                 email: data.email,
-                password: await genSaltAndHash(data.password),
+                password: await bcryptService.genSaltAndHash(data.password),
                 userConfirm: {
                     ifConfirm: true,
                     confirmationCode: 'not code',

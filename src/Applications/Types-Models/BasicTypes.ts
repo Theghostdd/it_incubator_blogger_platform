@@ -1,54 +1,52 @@
-import { ObjectId } from "mongodb"
+import {ObjectId} from "mongodb";
+/*
+*
+*   JWT Payload
+*
+*/
+export type JWTAccessTokenType = {
+    userId: string,
+    iat: number,
+    exp: number
+}
+
+export type JWTRefreshPayloadType = {
+    deviceId: string,
+    userId: string,
+    iat: number,
+    exp: number
+}
+/*
+*
+*   Query Types
+*
+*/
+export type QueryParamsType<T = null> = PaginationQueryType & SortQueryType & T
 
 /*
 *
-*   Pagination Types 
+*   Pagination and sort Types
 *
 */
-// export type PaginationType = {
-//     pagesCount: number,
-//     page: number,
-//     pageSize: number,
-//     totalCount: number,
-// }
-// export type CreatePaginationType = PaginationType & {
-//     skip: number
-// }
-/*
-*
-*   Mongo Types 
-*
-*/
-export type UpdateMongoSuccessType = {
-    acknowledged: boolean,
-    modifiedCount: number,
-    upsertedId: ObjectId | null,
-    upsertedCount: number,
-    matchedCount: number
-}
-export type CreatedMongoSuccessType = {
-    acknowledged: boolean,
-    insertedId: ObjectId
-}
-export type DeletedMongoSuccessType = {
-    acknowledged: boolean,
-    deletedCount: number
-}
-/*
-*
-*   API Error Types 
-*
-*/
-export type APIErrorsMessageType = {
-    errorsMessages: APIErrorMessageType[]
+type PaginationQueryType = {
+    pageNumber?: number,
+    pageSize?: number,
 }
 
-type APIErrorMessageType = {
-    message: string,
-    field: string
+type SortQueryType = {
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
 }
-export type PayloadJwtTokenType = {
-    userId: string
+
+type PaginationType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+}
+
+export type CreatePaginationType = PaginationType & {
+    skip: number
 }
 /*
 *
@@ -71,57 +69,43 @@ export type ResultNotificationType<T = null> = {
     data?: T
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW
-/*
-*
-*   JWT Payload
-*
-*/
-export type JWTRefreshPayloadType = {
-    deviceId: string,
-    userId: string,
-    iat: number,
-    exp: number
-}
-
-export type QueryParamsType<T = null> = PaginationQueryType & SortQueryType & T
-
-type PaginationQueryType = {
-    pageNumber?: number,
-    pageSize?: number,
-}
-
-type SortQueryType = {
-    sortBy?: string,
-    sortDirection?: 'asc' | 'desc',
-}
-
-type PaginationType = {
-    pagesCount: number,
-    page: number,
-    pageSize: number,
-    totalCount: number,
-}
-
-export type CreatePaginationType = PaginationType & {
-    skip: number
-}
-
 export type ResultDataWithPaginationType<T = []> = PaginationType & {
     items: T
 }
 
+export type APIErrorsMessageType = {
+    errorsMessages: APIErrorMessageType[]
+}
+
+type APIErrorMessageType = {
+    message: string,
+    field: string
+}
+/*
+*
+*   User request types
+*
+*/
+export type UserRequestType = {
+    userId: string,
+}
+/*
+*
+*   Mongo Types
+*
+*/
+export type UpdateMongoSuccessType = {
+    acknowledged: boolean,
+    modifiedCount: number,
+    upsertedId: ObjectId | null,
+    upsertedCount: number,
+    matchedCount: number
+}
+export type CreatedMongoSuccessType = {
+    acknowledged: boolean,
+    insertedId: ObjectId
+}
+export type DeletedMongoSuccessType = {
+    acknowledged: boolean,
+    deletedCount: number
+}

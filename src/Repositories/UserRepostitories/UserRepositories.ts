@@ -2,11 +2,6 @@ import {UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes"
 import {RegistrationCreatType} from "../../Applications/Types-Models/Registration/RegistrationTypes"
 import {UserModel} from "../../Domain/User/User";
 
-
-
-
-
-
 export const UserRepositories = {
     /*
     * Create the user data into the DB.
