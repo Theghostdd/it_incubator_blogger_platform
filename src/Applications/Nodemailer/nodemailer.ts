@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 export const NodemailerService = {
     sendEmail (mailTo: string[], subject: string, mailHtml: string) {
-        transporter.sendMail({
+        return transporter.sendMail({
             from: `${MAIL_SETTINGS.MAIL_FROM.name} <${MAIL_SETTINGS.MAIL_FROM.address}>`,
             to: mailTo,
             subject: subject, 

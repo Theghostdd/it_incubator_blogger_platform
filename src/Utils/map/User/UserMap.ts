@@ -1,5 +1,13 @@
-import { CreatePaginationType, PayloadJwtTokenType } from "../../../Applications/Types-Models/BasicTypes"
-import { UserMeModelViewType, UserViewModelType, UserViewMongoModelType, UsersViewModelType } from "../../../Applications/Types-Models/User/UserTypes"
+import {
+    CreatePaginationType,
+    PayloadJwtTokenType,
+    ResultDataWithPaginationType
+} from "../../../Applications/Types-Models/BasicTypes"
+import {
+    UserMeModelViewType,
+    UserViewModelType,
+    UserViewMongoType
+} from "../../../Applications/Types-Models/User/UserTypes"
 
 
 
@@ -16,11 +24,9 @@ export const UserMap = {
         }
     },
     /* 
-    * 1. Takes user data.
-    * 2. Maps the user`s model view for endpoint '/auth/me'.
-    * 3. Returns a structured object.
+    * Maps the user`s model view for about current user.
     */
-    async UserMapperAuthMeView (data: UserViewMongoModelType): Promise<UserMeModelViewType> {
+    async UserMapperAuthMeView (data: UserViewMongoType): Promise<UserMeModelViewType> {
         return {
             login: data.login,
             email: data.email,
@@ -28,11 +34,9 @@ export const UserMap = {
         }
     },
     /* 
-    * 1. Takes user data.
-    * 2. Maps the user`s model view for service when creating new user.
-    * 3. Returns a structured object.
+    * Maps the user`s model view for service when creating new user.
     */
-    async UserMapperCreateView (data: UserViewMongoModelType): Promise<UserViewModelType> {
+    async UserMapperCreateView (data: UserViewMongoType): Promise<UserViewModelType> {
         return {
             id: data._id.toString(),
             login: data.login,
@@ -41,12 +45,9 @@ export const UserMap = {
         }
     },
     /* 
-    * 1. Takes users and pagination data.
-    * 2. Maps the user`s models view for query repositories to return all users data with pagination.
-    * 3. If users data have empty array then 'items' must be empty array.
-    * 4. Returns a structured object.
+    * Data mapping and user model return.
     */
-    async UsersMapperView (data: UserViewMongoModelType[], pagination: CreatePaginationType): Promise<UsersViewModelType> {
+    async UsersMapperView (data: UserViewMongoType[], pagination: CreatePaginationType): Promise<ResultDataWithPaginationType<UserViewModelType[]>> {
         return {
             pagesCount: pagination.pagesCount,
             page: pagination.page,

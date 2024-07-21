@@ -55,7 +55,9 @@ export const SETTINGS = {
     PORT: process.env.PORT || "3000",
     SALTRounds: 10,
     JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY || "SecretKey",
-    JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY || "SecretKey2"
+    JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY || "SecretKey2",
+    JWTAccessToken_Expires: '10s',
+    JWTRefreshToken_Expires: '20s',
 }
 
 export const AuthData = [

@@ -1,10 +1,6 @@
-import { ObjectId } from "mongodb"
-import { db } from "../../Applications/ConnectionDB/Connection"
-import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
-import { UserCreateInputModelType, UserInputModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
-import { MONGO_SETTINGS } from "../../settings"
-import { LoginInputModelType } from "../../Applications/Types-Models/Auth/AuthTypes"
-import { RegistrationCreateType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
+import {UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes"
+import {RegistrationCreatType} from "../../Applications/Types-Models/Registration/RegistrationTypes"
+import {UserModel} from "../../Domain/User/User";
 
 
 
@@ -13,87 +9,109 @@ import { RegistrationCreateType } from "../../Applications/Types-Models/Registra
 
 export const UserRepositories = {
     /*
-    * 1. Inserts the user data into the collection in MongoDB.
-    *    - Uses the `insertOne` method to add the user record.
-    * 2. Returns the result of the insertion operation, which includes the ID of the newly created user.
+    * Create the user data into the DB.
+    * Returns the result of the insertion operation.
     * If an error occurs during the insertion, the method throws an error to be handled by the calling code.
     */ 
-    async CreateUser (data: UserCreateInputModelType | RegistrationCreateType): Promise<CreatedMongoSuccessType> {
+    async CreateUser (data: RegistrationCreatType): Promise<UserViewMongoType> {
         try {
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.users).insertOne({...data})
-        } catch (e: any) {
-            throw new Error(e)
-        }
-    },
-    /* 
-    * 1. Attempts to delete the user with the specified ID from the collection in MongoDB.
-    *    - Uses the `deleteOne` method to remove the user record.
-    *    - The ID is converted to a MongoDB ObjectId to match the database format.
-    * 2. Returns the result of the deletion operation, which indicates how many documents were deleted.
-    * If an error occurs during the deletion process, the method throws an error to be handled by the calling code.
-    */ 
-    async DeleteUserById (id: string): Promise<DeletedMongoSuccessType> {
-        try {
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.users).deleteOne({_id: new ObjectId(id)})
+            return await new UserModel(data).save()
         } catch (e: any) {
             throw new Error(e)
         }
     },
     /*
-    * 1. Attempts to find a user in the collection whose `_id` matches the specified ID.
-    *    - The ID is converted to a MongoDB ObjectId to match the database format.
-    *    - Uses the `findOne` method to search for the user document.
-    * 2. Returns the found user document directly from the database, without any transformation or mapping.
-    * If no user is found, the method returns `null`.
-    * If an error occurs during the retrieval process, the method throws an error to be handled by the calling code.
-    */ 
-    async GetUserByIdWithoutMap (id: string): Promise<UserViewMongoModelType | null> {
+    * Get user from the DB by id.
+    * Returns the found document, or null if no document matches the filter.
+    * Catch some error and return new error if process has some error.
+    */
+    async GetUserById (id: string): Promise<UserViewMongoType | null> {
         try {
-            return await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({_id: new ObjectId(id)})
+            return await UserModel.findById(id)
         } catch (e: any) {
             throw new Error(e)
         }
     },
-    /* 
-    * 1. Queries the MongoDB collection.
-    * 2. Uses the `findOne` method to find a single document that matches the given filter.
-    * 3. Returns the found document if it exists, or null if no document matches the filter.
-    * 4. We get filter from service.
-    * 5. Catch some error and return new error if process has some error.
+    /*
+    * Get user from the DB by email or login.
+    * Returns the found document, or null if no document matches the filter.
+    * Catch some error and return new error if process has some error.
     */
-    async GetUserByLoginOrEmailWithOutMap (filter: Object): Promise<UserViewMongoModelType | null> {
+    async GetUserByEmailOrLogin (email: string, login: string, emailOrLogin?: string): Promise<UserViewMongoType | null> {
         try {
-            const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne(filter)
-            return result ? result : null
+            const filter = {
+                $or: [
+                    {email: emailOrLogin ? emailOrLogin : email},
+                    {login: emailOrLogin ? emailOrLogin : login},
+                ]
+            }
+
+            return await UserModel.findOne(filter)
         } catch (e: any) {
             throw new Error(e)
         }
     },
-    /* 
-    * 1. Queries the MongoDB collection.
-    * 2. Uses the `findOne` method to find a single document that matches the given filter by confirmation code.
-    * 3. Returns the found document if it exists, or null if no document matches the filter.
-    * 4. We get filter from service.
-    * 5. Catch some error and return new error if process has some error.
+    /*
+    * Get user from the DB by email.
+    * Returns the found document, or null if no document matches the filter.
+    * Catch some error and return new error if process has some error.
     */
-    async GetUserByConfirmationCode (code: string): Promise<UserViewMongoModelType | null> {
+    async GetUserByEmail (email: string): Promise<UserViewMongoType | null> {
         try {
-            const result = await db.collection<UserViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.users).findOne({'userConfirm.confirmationCode': code})
-            return result ? result : null
+            return await UserModel.findOne({email: email})
         } catch (e: any) {
             throw new Error(e)
         }
     },
-    /* 
-    * 1. Update field in collection by user`s id.
-    * 2. Returns the mongo db success type.
-    * 4. We get data to update from service.
-    * 5. Catch some error and return new error if process has some error.
+    /*
+    * Get user from the DB by confirmation code.
+    * Returns the found document, or null if no document matches the filter.
+    * Catch some error and return new error if process has some error.
     */
-    async UpdateUserById(id: string, data: Object): Promise<UpdateMongoSuccessType> {
+    async GetUserByConfirmationCode (code: string): Promise<UserViewMongoType | null> {
         try {
-            const result = await db.collection<UpdateMongoSuccessType>(MONGO_SETTINGS.COLLECTIONS.users).updateOne({_id: new ObjectId(id)}, data)
-            return result
+            return await UserModel.findOne({'userConfirm.confirmationCode': code})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Update confirmation user`s code and date expire code by userId in the DB.
+    * Returns the result of operation.
+    * Catch some error and return new error if process has some error.
+    */
+    async UpdateUserConfirmationCodeAndDateById(id: string, code: string, expAt: string): Promise<UserViewMongoType | null> {
+        try {
+            const User = new UserModel(await this.GetUserById(id))
+            User.userConfirm.confirmationCode = code
+            User.userConfirm.dataExpire = expAt
+            return await User.save()
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Update confirmation user`s status by userId in the DB.
+    * Returns the result of operation.
+    * Catch some error and return new error if process has some error.
+    */
+    async UpdateUserConfirmationStatusById(id: string, status: boolean): Promise<UserViewMongoType | null> {
+        try {
+            const User = new UserModel(await this.GetUserById(id))
+            User.userConfirm.ifConfirm = status
+            return await User.save()
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Search and delete a user by ID.
+    * Returns the result of operation.
+    * Catch some error and return new error if process has some error.
+    */
+    async DeleteUserById(id: string): Promise<UserViewMongoType | null> {
+        try {
+            return await UserModel.findByIdAndDelete(id)
         } catch (e: any) {
             throw new Error(e)
         }

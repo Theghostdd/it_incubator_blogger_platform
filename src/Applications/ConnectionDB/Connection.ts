@@ -1,23 +1,15 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
-import { MONGO_SETTINGS } from "../../settings"; 
+import { MONGO_SETTINGS } from "../../settings";
 import { SaveError } from "../../Utils/error-utils/save-error";
+import * as mongoose from "mongoose";
 
-// Connect MongoDb 
-export const client = new MongoClient(MONGO_SETTINGS.URL, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-export const db = client.db(MONGO_SETTINGS.DB_NAME)
+
 export async function startDB() {
     try {
-        await client.connect()
+        await mongoose.connect(MONGO_SETTINGS.URL, {dbName: MONGO_SETTINGS.DB_NAME})
         console.log("Connect to DB")
     } catch (e: any) {
-        SaveError('/connect-to-db', 'CONNECT DB', 'Connecting to the database', e)
+        await SaveError('/connect-to-db', 'CONNECT DB', 'Connecting to the database', e)
         console.log("DB connection error")
-        await client.close()
+        await mongoose.disconnect()
     }
 }

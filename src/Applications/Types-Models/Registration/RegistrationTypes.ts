@@ -1,29 +1,20 @@
-import { UserCreateInputModelType } from "../User/UserTypes"
+import {UserConfirmationViewType } from "../User/UserTypes"
 
-
-
-
-
-
-
-
-
-
-
-
-
-export type RegistrationCreateType = UserCreateInputModelType & {
-    userConfirm: RegistrationConfirm
-} 
-
-
-
-export type RegistrationConfirm = {
-    ifConfirm: boolean,
-    confirmationCode: string,
-    dataExpire: string
+export type RegistrationInputType = {
+    login: string,
+    password: string
+    email: string
 }
 
-export type ResendConfirmCodeInputType = {
+export type RegistrationCreatType = RegistrationInputType & {
+    userConfirm: UserConfirmationViewType,
+    createdAt: string
+}
+
+export type RegistrationConfirmCodeType = {
+    code: string
+}
+
+export type RegistrationResendConfirmCodeInputType = {
     email: string
 }

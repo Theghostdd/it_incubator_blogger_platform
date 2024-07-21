@@ -20,12 +20,11 @@ export const requestLimiter = async (req: Request, res: Response, next: NextFunc
         const data: RequestLimiterInputModelViewType = {
             ip: req.ip || req.socket.remoteAddress!,
             url: req.originalUrl,
-            date: addSeconds(new Date().toISOString(), 10),
+            date: addSeconds(new Date(), 10).toISOString(),
             quantity: 1
         }
     
         const result: ResultNotificationType = await AuthService.RequestLimiter(data)
-    
         switch(result.status) {
             case ResultNotificationEnum.Success:
                 return next()
@@ -34,7 +33,7 @@ export const requestLimiter = async (req: Request, res: Response, next: NextFunc
             default: return res.sendStatus(500)
         }      
     } catch(e) {
-        SaveError(`${MONGO_SETTINGS.COLLECTIONS.request_limit}`, 'MIDDLEWARE Request Limiter', 'Limiting requests', e)
+        await SaveError(`${MONGO_SETTINGS.COLLECTIONS.request_limit}`, 'MIDDLEWARE Request Limiter', 'Limiting requests', e)
         return res.sendStatus(500)
     }
 }
@@ -46,9 +45,9 @@ export const requestLimiter = async (req: Request, res: Response, next: NextFunc
 */
 export const clearRequestCollection = async () => {
     try {
-        await AuthService.ClearRequestLimitCollection(subSeconds(new Date().toISOString(), 30))
+        await AuthService.ClearRequestLimitCollection(subSeconds(new Date(), 30).toISOString())
     } catch(e) {
-        SaveError(`${MONGO_SETTINGS.COLLECTIONS.request_limit}`, 'DELETE', 'Delete expire request', e)
+        await SaveError(`${MONGO_SETTINGS.COLLECTIONS.request_limit}`, 'DELETE', 'Delete expire request', e)
     }
 }
 

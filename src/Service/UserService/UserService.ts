@@ -1,38 +1,30 @@
 import { genSaltAndHash } from "../../Applications/Middleware/bcrypt/bcrypt"
-import { APIErrorsMessageType, CreatedMongoSuccessType, DeletedMongoSuccessType, ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
-import { RegistrationCreateType } from "../../Applications/Types-Models/Registration/RegistrationTypes"
-import { UserCreateInputModelType, UserInputModelType, UserViewModelType, UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
+import { APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
+import {UserViewModelType, UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
 import { defaultUserValues } from "../../Utils/default-values/User/default-user-value"
 import { UserMap } from "../../Utils/map/User/UserMap"
+import {
+    RegistrationCreatType,
+    RegistrationInputType
+} from "../../Applications/Types-Models/Registration/RegistrationTypes";
 
 
 
 
 export const UserService = {
     /* 
-    * 1. Checks if the provided login or email is already in use.
-    *    - If either the login or email is found to be non-unique, it returns a `BadRequest` status with detailed error messages.
-    * 2. Prepares the user data for creation:
-    *    - Hashes the provided password using `genSaltAndHash`.
-    *    - Merges the user data with default creation values.
-    * 3. Attempts to create the user in the database.
-    *    - Calls repositories to insert the user data into the database.
-    *    - Retrieves the newly created user data using the `insertedId` from the create operation.
-    * 4. Returns the result:
-    *    - If the user is successfully created and found, it returns a `Success` status with the user data.
-    *    - If the user is not found after creation, it returns a `NotFound` status.
+    * Check that the user with this username and password does not exist.
+    * If the user exists, an error message is returned stating that the user is not unique.
+    * Creating a user object.
+    * Creating a user using the created object.
+    * Mapping of the created user, and return.
     * If an error occurs during the process, the method throws an error which should be handled by the calling code.
     */ 
-    async CreateUserItem (data: UserInputModelType): Promise<ResultNotificationType<UserViewModelType>> {
+    async CreateUserItem (data: RegistrationInputType): Promise<ResultNotificationType<UserViewModelType>> {
         try {
-            const filter = {
-                $or: [
-                    {login: data.login},
-                    {email: data.email}
-                ]
-            }
-            const checkLoginAndEmail: UserViewMongoModelType | null = await UserRepositories.GetUserByLoginOrEmailWithOutMap(filter)
+
+            const checkLoginAndEmail: UserViewMongoType | null = await UserRepositories.GetUserByEmailOrLogin(data.email, data.login)
             if (checkLoginAndEmail) {
                 const errors: APIErrorsMessageType = {errorsMessages: []};  
                 data.login === checkLoginAndEmail.login ? errors.errorsMessages.push({message: 'Not unique login', field: 'login'}) : false
@@ -40,39 +32,32 @@ export const UserService = {
                 return {status: ResultNotificationEnum.BadRequest, errorField: errors}
             }
 
-            const CreateData: RegistrationCreateType = {
-                ...data, 
+            const CreateData: RegistrationCreatType = {
+                login: data.login,
+                email: data.email,
                 password: await genSaltAndHash(data.password),
                 userConfirm: {
                     ifConfirm: true,
-                    confirmationCode: 'nullcode',
-                    dataExpire: "2000-06-28T09:49:06.729Z"
+                    confirmationCode: 'not code',
+                    dataExpire: "not date"
                 },
                 ...await defaultUserValues.defaultCreateValue()
             }
-            const result: CreatedMongoSuccessType = await UserRepositories.CreateUser(CreateData)
-            const GetCreatedUser: UserViewMongoModelType | null = await UserRepositories.GetUserByIdWithoutMap(result.insertedId.toString())
-            if (!GetCreatedUser) {
-                return {status: ResultNotificationEnum.NotFound}
-            }
-
-            return {status: ResultNotificationEnum.Success, data: await UserMap.UserMapperCreateView(GetCreatedUser)}
+            const result: UserViewMongoType = await UserRepositories.CreateUser(CreateData)
+            return {status: ResultNotificationEnum.Success, data: await UserMap.UserMapperCreateView(result)}
         } catch (e: any) {
             throw new Error(e)
         }
     },
     /* 
-    * 1. Attempts to delete the user from the database using their unique ID.
-    *    - Calls the repositories method to perform the deletion.
-    * 2. Returns the result of the deletion operation:
-    *    - If the user was successfully deleted (i.e., `deletedCount` is greater than 0), it returns a `Success` status.
-    *    - If no user was found with the given ID (i.e., `deletedCount` is 0), it returns a `NotFound` status.
+    * Deleting a user by ID.
+    * If the user has not found an error return.
     * If an error occurs during the process, the method throws an error which should be handled by the calling code.
     */ 
     async DeleteUserById (id: string): Promise<ResultNotificationType> {
         try {
-            const result: DeletedMongoSuccessType = await UserRepositories.DeleteUserById(id)
-            return result.deletedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
+            const result: UserViewMongoType | null = await UserRepositories.DeleteUserById(id)
+            return result ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
         } catch (e: any) {
             throw new Error(e)
         }

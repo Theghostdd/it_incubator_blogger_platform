@@ -1,10 +1,11 @@
 import { UserQueryParamsType } from "../../../Applications/Types-Models/User/UserTypes"
+import {QueryParamsType} from "../../../Applications/Types-Models/BasicTypes";
 
 export const defaultUserValues = {
     /*
     * Sets default values for user query parameters if they are not provided or invalid.
     */
-    async defaultQueryValue (query: UserQueryParamsType): Promise<UserQueryParamsType> {
+    async defaultQueryValue (query: QueryParamsType<UserQueryParamsType>): Promise<QueryParamsType<UserQueryParamsType>> {
         return {
             sortBy: query.sortBy ? query.sortBy : 'createdAt',
             sortDirection: (query.sortDirection === 'asc' || query.sortDirection === 'desc') ? query.sortDirection : 'desc',

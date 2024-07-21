@@ -5,15 +5,15 @@ import { ObjectId } from "mongodb"
 *   Pagination Types 
 *
 */
-export type PaginationType = {
-    pagesCount: number,
-    page: number,
-    pageSize: number,
-    totalCount: number,
-}
-export type CreatePaginationType = PaginationType & {
-    skip: number
-}
+// export type PaginationType = {
+//     pagesCount: number,
+//     page: number,
+//     pageSize: number,
+//     totalCount: number,
+// }
+// export type CreatePaginationType = PaginationType & {
+//     skip: number
+// }
 /*
 *
 *   Mongo Types 
@@ -70,22 +70,58 @@ export type ResultNotificationType<T = null> = {
     errorField?: APIErrorsMessageType
     data?: T
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW
 /*
 *
 *   JWT Payload
 *
 */
-export type JWTRefreshPayload = {
+export type JWTRefreshPayloadType = {
     deviceId: string,
     userId: string,
     iat: number,
     exp: number
 }
 
+export type QueryParamsType<T = null> = PaginationQueryType & SortQueryType & T
 
+type PaginationQueryType = {
+    pageNumber?: number,
+    pageSize?: number,
+}
 
+type SortQueryType = {
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
+}
 
+type PaginationType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+}
 
+export type CreatePaginationType = PaginationType & {
+    skip: number
+}
 
-
+export type ResultDataWithPaginationType<T = []> = PaginationType & {
+    items: T
+}
 

@@ -1,17 +1,14 @@
-import jwt, { JwtPayload }  from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { SETTINGS } from '../../settings'
-import { format, getTime, parseISO } from 'date-fns';
-import { JWTRefreshPayload } from '../Types-Models/BasicTypes';
 
 
 
 export const credentialJWT = {
-    async SignJWT (userId: string, dId: string, issueAt: string) {
+    async SignJWT (userId: string, dId: string) {
         try {
-            const milliseconds = getTime(issueAt)    
             return {
-                accessToken: await jwt.sign({userId: userId, iat: milliseconds}, SETTINGS.JWT_ACCESS_SECRET_KEY ,{expiresIn: '10s'}),
-                refreshToken: await jwt.sign({userId: userId, deviceId: dId, iat: milliseconds}, SETTINGS.JWT_REFRESH_SECRET_KEY ,{expiresIn: '20s'}),
+                accessToken: jwt.sign({userId: userId}, SETTINGS.JWT_ACCESS_SECRET_KEY ,{expiresIn: SETTINGS.JWTAccessToken_Expires}),
+                refreshToken: jwt.sign({userId: userId, deviceId: dId}, SETTINGS.JWT_REFRESH_SECRET_KEY ,{expiresIn: SETTINGS.JWTRefreshToken_Expires}),
             }
         } catch (e: any) {
             throw new Error(e)
@@ -20,7 +17,7 @@ export const credentialJWT = {
 
     async VerifyJWT (token: string) {
         try {
-            return await jwt.verify(token, SETTINGS.JWT_ACCESS_SECRET_KEY)
+            return jwt.verify(token, SETTINGS.JWT_ACCESS_SECRET_KEY)
         } catch (e: any) {
             throw new Error(e)
         }
@@ -28,7 +25,7 @@ export const credentialJWT = {
 
     async VerifyJWTrefresh (token: string) {
         try {
-            return await jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET_KEY)
+            return jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET_KEY)
         } catch (e: any) {
             return null
         }

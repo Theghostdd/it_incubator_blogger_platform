@@ -1,8 +1,7 @@
-import { ROUTERS_SETTINGS } from '../../../src/settings'
-import { AuthDto, RegistrationDto } from '../../Dto/AuthDto';
-import { DropCollections } from '../../Modules/Body.Modules';
-import { GetRequest, CreateUser, LoginUser } from '../modules/modules';
-
+import {ROUTERS_SETTINGS} from '../../../src/settings'
+import {AuthDto, RegistrationDto} from '../../Dto/AuthDto';
+import {DropCollections} from '../../Modules/Body.Modules';
+import {GetRequest, CreateUser, LoginUser} from '../modules/modules';
 
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.me, () => {
