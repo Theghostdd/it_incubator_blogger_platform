@@ -13,12 +13,12 @@ const transporter = nodemailer.createTransport({
 
 
 export const NodemailerService = {
-    sendEmail (mailTo: string[], subject: string, mailHtml: string) {
-        return transporter.sendMail({
+    async sendEmail (mailTo: string[], subject: string, mailHtml: string) {
+        return await transporter.sendMail({
             from: `${MAIL_SETTINGS.MAIL_FROM.name} <${MAIL_SETTINGS.MAIL_FROM.address}>`,
             to: mailTo,
-            subject: subject, 
-            html: mailHtml, 
+            subject: subject,
+            html: mailHtml,
         });
     }
 }

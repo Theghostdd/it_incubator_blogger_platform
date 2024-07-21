@@ -21,7 +21,7 @@ export type JWTRefreshPayloadType = {
 *   Query Types
 *
 */
-export type QueryParamsType<T = null> = PaginationQueryType & SortQueryType & T
+export type QueryParamsType<T = {}> = PaginationQueryType & SortQueryType & T
 
 /*
 *

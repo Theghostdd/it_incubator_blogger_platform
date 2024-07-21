@@ -1,10 +1,8 @@
-import { ObjectId } from "mongodb"
-import { PaginationType } from "../BasicTypes"
-
+import {WithId} from "mongodb"
 /*
 *
 *
-*       Blog Input type
+*       Blog View type
 *
 *
 */
@@ -18,13 +16,7 @@ export type BlogCreateInputModelType = BlogInputModelType & {
     createdAt: string,
     isMembership: boolean
 }
-/*
-*
-*
-*       Blog View type
-*
-*
-*/
+
 export type BlogViewModelType = {
     id: string,
     name: string,
@@ -34,9 +26,7 @@ export type BlogViewModelType = {
     isMembership: boolean
 }
 
-export type BlogsViewModelType = PaginationType & {
-    items: BlogViewModelType[] | null
-}
+export type BlogViewMongoType = WithId<BlogCreateInputModelType>
 /*
 *
 *
@@ -45,24 +35,5 @@ export type BlogsViewModelType = PaginationType & {
 *
 */
 export type BlogQueryParamsType = {
-    sortBy?: string,
-    sortDirection?: 'asc' | 'desc',
-    pageNumber?: number,
-    pageSize?: number,
     searchNameTerm?: string
-}
-/*
-*
-*
-*       Mongo blog`s model
-*
-*
-*/
-export type BlogViewMongoModelType = {
-    _id: ObjectId,
-    name: string,
-    description: string,
-    websiteUrl: string,
-    createdAt: string,
-    isMembership: boolean
 }

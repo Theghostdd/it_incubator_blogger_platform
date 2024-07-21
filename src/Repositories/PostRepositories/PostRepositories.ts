@@ -1,20 +1,19 @@
 import { ObjectId } from "mongodb"
-import { db } from "../../Applications/ConnectionDB/Connection"
-import { CreatedMongoSuccessType, DeletedMongoSuccessType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import { PostCreateInputModelType, PostInputModelType, PostViewMongoModelType } from "../../Applications/Types-Models/Post/PostTypes"
 import { MONGO_SETTINGS } from "../../settings"
+import {PostModel} from "../../Domain/Post/Post";
 
 
 
 export const PostRepositories = {
     /* 
-    * 1. Attempt to insert the provided `data` into the `posts` collection in the MongoDB database.
-    * 2. If successful, return the result of the insertion which includes the ID of the newly created post.
-    * 3. If an error occurs during the insertion, catch the error and throw it as a generic Error.
+    * Create a new post.
+    * Return of the insertion result.
+    * If an error occurs during the insertion, catch the error and throw it as a generic Error.
     */
-    async CreatePost (data: PostCreateInputModelType): Promise<CreatedMongoSuccessType> {
+    async CreatePost (data: PostCreateInputModelType): Promise<PostViewMongoModelType> {
         try {
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).insertOne({...data})
+            return await new PostModel(data).save()
         } catch (e: any) {
             throw new Error(e)
         }

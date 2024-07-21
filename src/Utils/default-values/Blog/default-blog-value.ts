@@ -1,11 +1,12 @@
 import { BlogQueryParamsType } from "../../../Applications/Types-Models/Blog/BlogTypes"
+import {QueryParamsType} from "../../../Applications/Types-Models/BasicTypes";
 
 
 export const defaultBlogValues = {
     /*
     * Sets default values for blog query parameters if they are not provided or invalid.
     */
-    async defaultQueryValue (query: BlogQueryParamsType): Promise<BlogQueryParamsType> {
+    async defaultQueryValue (query: QueryParamsType<BlogQueryParamsType>): Promise<QueryParamsType<BlogQueryParamsType>> {
         return {
             sortBy: query.sortBy ? query.sortBy : 'createdAt',
             sortDirection: (query.sortDirection === 'asc' || query.sortDirection === 'desc') ? query.sortDirection : 'desc',

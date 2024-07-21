@@ -77,10 +77,10 @@ export const UserRepositories = {
     */
     async UpdateUserConfirmationCodeAndDateById(id: string, code: string, expAt: string): Promise<UserViewMongoType | null> {
         try {
-            const User = new UserModel(await this.GetUserById(id))
-            User.userConfirm.confirmationCode = code
-            User.userConfirm.dataExpire = expAt
-            return await User.save()
+            return await UserModel.findByIdAndUpdate(id, {
+                'userConfirm.confirmationCode': code,
+                'userConfirm.dataExpire': expAt
+            })
         } catch (e: any) {
             throw new Error(e)
         }
@@ -92,9 +92,9 @@ export const UserRepositories = {
     */
     async UpdateUserConfirmationStatusById(id: string, status: boolean): Promise<UserViewMongoType | null> {
         try {
-            const User = new UserModel(await this.GetUserById(id))
-            User.userConfirm.ifConfirm = status
-            return await User.save()
+            return await UserModel.findByIdAndUpdate(id, {
+                'userConfirm.ifConfirm': status
+            })
         } catch (e: any) {
             throw new Error(e)
         }

@@ -1,10 +1,10 @@
-import { PostQueryValues } from "../../../Applications/Types-Models/Post/PostTypes"
+import {QueryParamsType} from "../../../Applications/Types-Models/BasicTypes";
 
 export const defaultPostValues = {
     /*
     * Sets default values for post query parameters if they are not provided or invalid.
     */
-    async defaultQueryValues (query: PostQueryValues): Promise<PostQueryValues> {
+    async defaultQueryValues (query: QueryParamsType): Promise<QueryParamsType> {
         return {
             sortBy: query.sortBy ? query.sortBy : 'createdAt',
             sortDirection: (query.sortDirection === 'asc' || query.sortDirection === 'desc') ? query.sortDirection : 'desc',

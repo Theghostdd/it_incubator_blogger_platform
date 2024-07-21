@@ -63,12 +63,12 @@ export const AuthRepositories = {
     * Returns a result the operation.
     * Catches and throws any exceptions that occur during the update process.
     */
-    async UpdateSessionTimeById (id: string, issueAt: string, expAt: string): Promise<SessionsMongoViewType> {
+    async UpdateSessionTimeById (id: string, issueAt: string, expAt: string): Promise<SessionsMongoViewType | null> {
         try {
-            const Session = new AuthSessionModel(await this.GetSessionById(id))
-            Session.issueAt = issueAt
-            Session.expAt = expAt
-            return await Session.save()
+            return await AuthSessionModel.findByIdAndUpdate(id, {
+                issueAt: issueAt,
+                expAt: expAt
+            })
         } catch (e: any) {
             throw new Error(e)
         }
@@ -139,12 +139,12 @@ export const AuthRepositories = {
     * 2. Returns the result of the update operation.
     * 3. Catches any exceptions that occur during the database insertion and rethrows them as errors.
     */
-    async UpdateUserRequestQuantityAndDateById (id: string, quantity: number, date: string): Promise<RequestLimiterMongoViewType> {
+    async UpdateUserRequestQuantityAndDateById (id: string, quantity: number, date: string): Promise<RequestLimiterMongoViewType | null> {
         try {
-            const Request = new RequestLimiterModel(await this.GetUsersRequestById(id))
-            Request.quantity = quantity
-            Request.date = date
-            return await Request.save()
+            return await RequestLimiterModel.findByIdAndUpdate(id, {
+                quantity: quantity,
+                date: date
+            })
         } catch (e: any) {
             throw new Error(e)
         }

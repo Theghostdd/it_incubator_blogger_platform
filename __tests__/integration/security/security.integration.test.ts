@@ -1,19 +1,22 @@
 import { MONGO_SETTINGS } from "../../../src/settings";
 import { SecurityService } from '../../../src/Service/SecurityService/SecurityService'
-import { DeleteOneModule, DropCollections, FindAllModule, FindAndUpdateModule, FindOneModule, InsertOneDataModule } from "../../Modules/Body.Modules";
 import { AuthDto, InsertAuthDto } from "../../Dto/AuthDto";
 import { AuthService } from "../../../src/Service/AuthService/AuthService";
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
 import { ObjectId } from "mongodb";
+import { Drop, UserModule} from "../modules/modules";
+import mongoose from "mongoose";
 
 const DeleteSessionByIdService = SecurityService.DeleteSessionByDeviceId;
 const DeleteAllSessionService = SecurityService.DeleteAllSessionExcludeCurrent;
 const LoginService = AuthService.AuthUser;
 
-
-const collectionSession = MONGO_SETTINGS.COLLECTIONS.auth_session;
-const collectionUser = MONGO_SETTINGS.COLLECTIONS.users;
-
+beforeAll(async () => {
+    await mongoose.connect(MONGO_SETTINGS.URL, {dbName: MONGO_SETTINGS.DB_NAME})
+})
+afterAll(async () => {
+    await mongoose.disconnect();
+})
 
 describe(DeleteAllSessionService, () => {
     let token: any;
@@ -22,14 +25,14 @@ describe(DeleteAllSessionService, () => {
 
     beforeEach( async () => {
         jest.resetAllMocks();
-        await DropCollections.DropAllCollections()
+        await Drop.DropAll()
 
-        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
-        UserId = InsertUser.insertedId.toString()
-        const AuthUser = await LoginService({...AuthDto.AuthUserData}, '192.13.12', 'MacOS')
+        const InsertUser = await UserModule.CreateUserModule(structuredClone(InsertAuthDto.UserInsertData))
+        UserId = InsertUser!._id.toString()
+        const AuthUser = await LoginService(structuredClone(AuthDto.AuthUserData), '192.13.12', 'MacOS')
         token = AuthUser.data!.refreshToken
-        const FindSession = await FindOneModule({userId: new ObjectId(UserId)}, collectionSession)
-        SessionId = FindSession!._id
+        const FindSession = await UserModule.GetAllSessionModule()
+        SessionId = FindSession![0]._id
 
         await LoginService({...AuthDto.AuthUserData}, '195.13.12', 'Chrome')
         await LoginService({...AuthDto.AuthUserData}, '191.13.12', 'MacOS System')
@@ -40,36 +43,36 @@ describe(DeleteAllSessionService, () => {
         const result = await DeleteAllSessionService(token)
         expect(result.status).toBe(ResultNotificationEnum.Success)
 
-        const FindAllSession = await FindAllModule({}, collectionSession)
-        expect(FindAllSession.length).toBe(1)
+        const FindAllSession = await UserModule.GetAllSessionModule()
+        expect(FindAllSession!.length).toBe(1)
     })
 
     it('should not delete all sessions, bad token, status: Unauthorized', async () => {
         const result = await DeleteAllSessionService("token")
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
-        const FindAllSession = await FindAllModule({}, collectionSession)
-        expect(FindAllSession.length).toBe(4)
+        const FindAllSession = await UserModule.GetAllSessionModule()
+        expect(FindAllSession!.length).toBe(4)
     })
 
     it('should not delete all sessions, session not found, status: Unauthorized', async () => {
-        await DeleteOneModule({_id: SessionId}, collectionSession)
+        await UserModule.DeleteSessionByIdModule(SessionId.toString())
 
         const result = await DeleteAllSessionService(token)
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
-        const FindAllSession = await FindAllModule({}, collectionSession)
-        expect(FindAllSession.length).toBe(3)
+        const FindAllSession = await UserModule.GetAllSessionModule()
+        expect(FindAllSession!.length).toBe(3)
     })
 
     it('should not delete all sessions, session iat not token iat, status: Unauthorized', async () => {
-        await FindAndUpdateModule({_id: SessionId}, {$set: {issueAt: '2023-07-06T13:41:33.211Z'}}, collectionSession)
-        
+        await UserModule.UpdateSessionIssueAtByIdModule(SessionId, '2023-07-06T13:41:33.211Z')
+
         const result = await DeleteAllSessionService(token)
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
-        const FindAllSession = await FindAllModule({}, collectionSession)
-        expect(FindAllSession.length).toBe(4)
+        const FindAllSession = await UserModule.GetAllSessionModule()
+        expect(FindAllSession!.length).toBe(4)
     })
 })
 
@@ -77,16 +80,18 @@ describe(DeleteSessionByIdService, () => {
     let token: any;
     let UserId: string;
     let deviceId: string;
+    let sessionId: ObjectId;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
+        await Drop.DropAll()
 
-        const InsertUser = await InsertOneDataModule({...InsertAuthDto.UserInsertData}, collectionUser)
-        UserId = InsertUser.insertedId.toString()
-        const AuthUser = await LoginService({...AuthDto.AuthUserData}, '192.13.12', 'MacOS')
+        const InsertUser = await UserModule.CreateUserModule(structuredClone(InsertAuthDto.UserInsertData))
+        UserId = InsertUser!._id.toString()
+        const AuthUser = await LoginService(structuredClone(AuthDto.AuthUserData), '192.13.12', 'MacOS')
         token = AuthUser.data!.refreshToken
-        const FindSession = await FindOneModule({userId: new ObjectId(UserId)}, collectionSession)
-        deviceId = FindSession!.dId
+        const FindSession = await UserModule.GetAllSessionModule()
+        deviceId = FindSession![0].dId
+        sessionId = FindSession![0]._id
     })
 
     it('should delete session by ID, status: Success', async () => {
@@ -100,14 +105,14 @@ describe(DeleteSessionByIdService, () => {
     })
 
     it('should not delete session by ID, session not found, status: Unauthorized', async () => {
-        await DeleteOneModule({userId: new ObjectId(UserId)}, collectionSession)
+        await UserModule.DeleteSessionByIdModule(sessionId.toString())
 
         const result = await DeleteSessionByIdService(deviceId, token)
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
     })
 
     it('should not delete session by ID, session iat not token iat, status: Unauthorized', async () => {
-        await FindAndUpdateModule({userId: new ObjectId(UserId)}, {$set: {issueAt: '2023-07-06T13:41:33.211Z'}}, collectionSession)
+        await UserModule.UpdateSessionIssueAtByIdModule(sessionId, '2023-07-06T13:41:33.211Z')
         
         const result = await DeleteSessionByIdService(deviceId, token)
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
@@ -120,7 +125,7 @@ describe(DeleteSessionByIdService, () => {
                 data: {RefreshJWTPayload: {userId: new ObjectId(UserId)}}
             }
         })
-        await FindAndUpdateModule({dId: deviceId}, {$set: {userId: new ObjectId('5598e4097b81760274dadb6e')}}, collectionSession)
+        await UserModule.UpdateSessionUserIdByIdModule(sessionId, '5598e4097b81760274dadb6e')
         
         const result = await DeleteSessionByIdService(deviceId, token)
         expect(result.status).toBe(ResultNotificationEnum.Forbidden)

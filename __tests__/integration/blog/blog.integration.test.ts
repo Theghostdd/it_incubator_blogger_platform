@@ -1,22 +1,27 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
+import { MONGO_SETTINGS, } from "../../../src/settings"
 import { BlogService } from "../../../src/Service/BlogService/BlogService"
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
 import { BlogDto, BlogInsert } from "../../Dto/BlogDto";
-import { DropCollections, InsertOneDataModule } from "../../Modules/Body.Modules";
+import {BlogModule, Drop} from "../modules/modules";
+import mongoose from "mongoose";
 
+beforeAll(async () => {
+    await mongoose.connect(MONGO_SETTINGS.URL, {dbName: MONGO_SETTINGS.DB_NAME})
+})
+afterAll(async () => {
+    await mongoose.disconnect();
+})
 
 const BlogCreateService = BlogService.CreateBlogItem;
 const BlogUpdateService = BlogService.UpdateBlogById;
 const BlogDeleteService = BlogService.DeleteBlogById;
 
-const collectionBlog = MONGO_SETTINGS.COLLECTIONS.blogs
-
 describe(BlogCreateService, () => {
     let CreateBlogData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropBlogCollection()
-        CreateBlogData = {...BlogDto.CreateBlogData}
+        await Drop.DropAll()
+        CreateBlogData = structuredClone(BlogDto.CreateBlogData)
     })
 
     it('should create new Blog, and return blog item, status: Success', async () => {
@@ -37,33 +42,37 @@ describe(BlogCreateService, () => {
 
 describe(BlogUpdateService, () => {
     let UpdateBlogData: any;
+    let BlogInsertData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropBlogCollection()
-        UpdateBlogData = {...BlogDto.UpdateBlogData}
+        await Drop.DropAll()
+        UpdateBlogData = structuredClone(BlogDto.UpdateBlogData)
+        BlogInsertData = structuredClone(BlogInsert.BlogInsertData)
     })
 
     it('should update blog by id, status: Success', async () => {
-        const InsertBlog = await InsertOneDataModule(BlogInsert.BlogInsertData, collectionBlog)
-        const result = await BlogUpdateService(InsertBlog.insertedId.toString(), UpdateBlogData)
+        const InsertBlog = await BlogModule.CreateBlogModule(BlogInsertData)
+        const result = await BlogUpdateService(InsertBlog!._id.toString(), UpdateBlogData)
         expect(result.status).toBe(ResultNotificationEnum.Success)
     })
 
     it('should not update blog by id, status: NotFound', async () => {
-        const result = await BlogUpdateService('6697b3bb206b31770075051b', UpdateBlogData)
+        const result = await BlogUpdateService('6697b3bb206b31770075052b', UpdateBlogData)
         expect(result.status).toBe(ResultNotificationEnum.NotFound)
     })
 })
 
 describe(BlogDeleteService, () => {
+    let BlogInsertData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropBlogCollection()
+        await Drop.DropAll()
+        BlogInsertData = structuredClone(BlogInsert.BlogInsertData)
     })
 
     it('should delete blog by id, status: Success', async () => {
-        const InsertBlog = await InsertOneDataModule(BlogInsert.BlogInsertData, collectionBlog)
-        const result = await BlogDeleteService(InsertBlog.insertedId.toString())
+        const InsertBlog = await BlogModule.CreateBlogModule(BlogInsertData)
+        const result = await BlogDeleteService(InsertBlog!._id.toString())
         expect(result.status).toBe(ResultNotificationEnum.Success)
     })
 

@@ -1,14 +1,13 @@
-import { CreatePaginationType } from "../../../Applications/Types-Models/BasicTypes"
-import { PostViewModelType, PostViewMongoModelType, PostsViewModelType } from "../../../Applications/Types-Models/Post/PostTypes"
+import {CreatePaginationType, ResultDataWithPaginationType} from "../../../Applications/Types-Models/BasicTypes"
+import { PostViewModelType, PostViewMongoModelType } from "../../../Applications/Types-Models/Post/PostTypes"
 
 
 
 export const PostMapper = {
     /* 
-    * - Mapping posts data for returning array posts to client
-    * Note: This function returning all post`s item with pagination`.
+    * Mapping posts data for returning post model.
     */
-    async mapPosts (data: PostViewMongoModelType[], pagination: CreatePaginationType): Promise<PostsViewModelType> {
+    async mapPosts (data: PostViewMongoModelType[], pagination: CreatePaginationType): Promise<ResultDataWithPaginationType<PostViewModelType[]>> {
         return {
             pagesCount: pagination.pagesCount,
             page: pagination.page,
@@ -29,8 +28,7 @@ export const PostMapper = {
         }
     },
     /* 
-    * - Mapping post`s data for returning to client
-    * Note: This function returning one post`.
+    * Mapping post data for returning post model.
     */
     async MapPost (data: PostViewMongoModelType): Promise<PostViewModelType> {
         return {
@@ -43,19 +41,4 @@ export const PostMapper = {
             createdAt: data.createdAt
         }
     },
-    /* 
-    * - Mapping post`s data for returning to client
-    * Note: This function returning created post`.
-    */
-    async MapCreatePost (data: PostViewMongoModelType): Promise<PostViewModelType> {
-        return {
-            id: data._id.toString(),
-            title: data.title,
-            shortDescription: data.shortDescription,
-            content: data.content,
-            blogId: data.blogId,
-            blogName: data.blogName,
-            createdAt: data.createdAt
-        }
-    }
 }

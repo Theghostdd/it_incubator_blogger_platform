@@ -1,8 +1,6 @@
 import { CreatedMongoSuccessType, DeletedMongoSuccessType, ResultNotificationEnum, ResultNotificationType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
-import { BlogViewMongoModelType } from "../../Applications/Types-Models/Blog/BlogTypes"
 import { CommentCreateType, CommentInputModelType, CommentMongoViewType, CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes"
 import { PostCreateInputModelType, PostInputModelType, PostViewModelType, PostViewMongoModelType } from "../../Applications/Types-Models/Post/PostTypes"
-import { UserViewMongoModelType } from "../../Applications/Types-Models/User/UserTypes"
 import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogRepositories"
 import { CommentRepositories } from "../../Repositories/CommentRepositories/CommentRepositories"
 import { PostRepositories } from "../../Repositories/PostRepositories/PostRepositories"
@@ -11,6 +9,7 @@ import { defaultCommentValues } from "../../Utils/default-values/Comment/default
 import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value"
 import { CommentsMap } from "../../Utils/map/Comments/CommentsMap"
 import { PostMapper } from "../../Utils/map/Post/PostMap"
+import {BlogViewMongoType} from "../../Applications/Types-Models/Blog/BlogTypes";
 
 
 
@@ -18,31 +17,22 @@ import { PostMapper } from "../../Utils/map/Post/PostMap"
 
 export const PostService = {
     /*
-    * 1. Fetch the blog associated with `data.blogId` 
-    *    - If the blog is not found, return a `NotFound` status.
-    * 2. If the blog exists, merge the input  with default post values based on the blog's name
-    * 3. Create a new post in the database with the merged data
-    * 4. Retrieve the newly created post from the database using its ID obtained from the creation result.
-    *    - If the post cannot be retrieved, return a `NotFound` status.
-    * 5. Map the created post to the appropriate view model
-    * 6. Return a success status along with the mapped post data.
+    * Checking the existence of the blog.
+    * If the blog does not exist, throw out the error.
+    * * If a blog exists, create a post object to insert data into the database.
+    * Creation of a long-term contract.
+    * Returning success and mapping the returned object to return the post model.
+    * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
     */
     async CreatePostItemByBlogId (data: PostInputModelType): Promise<ResultNotificationType<PostViewModelType>> {
         try {
-            const getBlogById: BlogViewMongoModelType | null = await BlogRepositories.GetBlogByIdWithoutMap(data.blogId)
-            if (!getBlogById) {
-                return {status: ResultNotificationEnum.NotFound}
-            }
+            const getBlogById: BlogViewMongoType | null = await BlogRepositories.GetBlogById(data.blogId)
+            if (!getBlogById) return {status: ResultNotificationEnum.NotFound}
 
             const CreateData: PostCreateInputModelType  = {...data, ...await defaultPostValues.defaultCreateValues(getBlogById.name)}
-            const result: CreatedMongoSuccessType= await PostRepositories.CreatePost(CreateData)
+            const result: PostViewMongoModelType= await PostRepositories.CreatePost(CreateData)
 
-            const getCreatedPost: PostViewMongoModelType | null = await PostRepositories.GetPostByIdWithoutMap(result.insertedId.toString())
-
-            if (!getCreatedPost) {
-                return {status: ResultNotificationEnum.NotFound}
-            }
-            return {status: ResultNotificationEnum.Success, data: await PostMapper.MapCreatePost(getCreatedPost)}
+            return {status: ResultNotificationEnum.Success, data: await PostMapper.MapPost(result)}
         } catch (e: any) {
             throw new Error(e)
         }

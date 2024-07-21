@@ -1,11 +1,9 @@
 import { CreatePaginationType } from "../../Applications/Types-Models/BasicTypes";
 import { BlogQueryRepositories } from "../../Repositories/BlogRepositories/BlogQueryRepositories";
 
-/* 1. Creates pagination metadata for querying blogs.
-*       - page - Page number (1-based index).
-*       - pageSize - Number of items per page.
-*       - filter - Filter criteria for querying blogs.
-* 2. Throws an error if there's an issue retrieving total count or calculating pagination.
+/*
+* Creating pagination according to filtering
+* Throws an error if there's an issue retrieving total count or calculating pagination.
 */
 export const createBlogsPagination = async (page: number, pageSize: number, filter: Object): Promise<CreatePaginationType> => {
     try {
