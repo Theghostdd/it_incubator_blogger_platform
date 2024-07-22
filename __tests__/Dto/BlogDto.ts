@@ -1,3 +1,4 @@
+import {RegistrationDto} from "./AuthDto";
 
 export const BlogDto = {
     CreateBlogData: {
@@ -20,5 +21,172 @@ export const BlogInsert = {
         websiteUrl: BlogDto.CreateBlogData.websiteUrl,
         createdAt: "2024-07-06T13:41:33.211Z",
         isMembership: false
-    }
+    },
+
+    CreateManyData: [
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+    ]
 }

@@ -7,9 +7,5 @@ module.exports = {
     "/__tests__/e2e/modules/",
     "/__tests__/Dto",
     "/__tests__/integration/modules/",
-    "/__tests__/integration/comment/",
-    "/__tests__/integration/post/",
-
-
   ],
 };

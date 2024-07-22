@@ -15,6 +15,9 @@ export const InsertComment = {
             userId: '',
             userLogin: RegistrationDto.RegistrationUserData.login
         },
+        blogInfo: {
+            blogId: ''
+        },
         postInfo: {
             postId: ''
         },

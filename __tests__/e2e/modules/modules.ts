@@ -1,6 +1,12 @@
 import request from "supertest"
 import { app } from "../../../src/app"
-import { ROUTERS_SETTINGS } from "../../../src/settings"
+import {MONGO_SETTINGS, ROUTERS_SETTINGS} from "../../../src/settings"
+import {AuthSessionModel, RequestLimiterModel} from "../../../src/Domain/Auth/Auth";
+import {UserModel} from "../../../src/Domain/User/User";
+import {CommentModel} from "../../../src/Domain/Comment/Comment";
+import {BlogModel} from "../../../src/Domain/Blog/Blog";
+import {PostModel} from "../../../src/Domain/Post/Post";
+import mongoose from "mongoose";
 
 
 
@@ -8,14 +14,26 @@ export const AdminAuth: any = {
     Authorization: 'Basic YWRtaW46cXdlcnR5'
 }
 
+beforeAll(async () => {
+    await mongoose.connect(MONGO_SETTINGS.URL, {dbName: MONGO_SETTINGS.DB_NAME})
+})
+afterAll(async () => {
+    await mongoose.disconnect();
+})
+
 export const GetRequest = () => {
     return request(app)
 }
 
-export const DeleteAllDb = async () => {
-    const result = await GetRequest()
-        .delete(ROUTERS_SETTINGS.TEST.test + ROUTERS_SETTINGS.TEST.test_all_data)
-    return result.body    
+export const DropAll = async () => {
+    await Promise.all([
+        BlogModel.deleteMany({}),
+        PostModel.deleteMany({}),
+        UserModel.deleteMany({}),
+        CommentModel.deleteMany({}),
+        AuthSessionModel.deleteMany({}),
+        RequestLimiterModel.deleteMany({}),
+    ])
 }
 
 export const CreateUser = async (data: any) => {
@@ -70,10 +88,10 @@ export const RegistrationResendConfirmCode = async (data: any) => {
     return result.body
 }
 
-export const CreateManyDataUniversal = async (data: any, collectionName: string) => {
-    return await db.collection(collectionName).insertMany(data)
+export const CreateManyDataUniversal = async (data: any, model: any) => {
+    return await model.insertMany(data)
 }
 
-export const InsertOneUniversal =async (data: any, collectionName: string) => {
-    return await db.collection(collectionName).insertOne(data)
+export const InsertOneUniversal =async (data: any, model: any) => {
+    return await new model(data).save()
 }

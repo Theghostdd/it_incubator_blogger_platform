@@ -1,5 +1,16 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
-import { CreateBlog, DeleteAllDb, GetRequest, AdminAuth, CreatedPost, CreateManyDataUniversal, CreateUser, LoginUser } from '../modules/modules';
+import { ROUTERS_SETTINGS } from '../../../src/settings'
+import {
+    CreateBlog,
+    GetRequest,
+    AdminAuth,
+    CreatedPost,
+    CreateUser,
+    LoginUser,
+    DropAll,
+    CreateManyDataUniversal
+} from '../modules/modules';
+import {CommentModel} from "../../../src/Domain/Comment/Comment";
+import {BlogInsert} from "../../Dto/BlogDto";
 
 
 
@@ -16,8 +27,9 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
 
     let CreatedUserData: any = {}
     let userId: string
+    let InsertPostData: any;
     beforeEach(async () => {
-        await DeleteAllDb()
+        await DropAll()
 
         CreateDataBlog = {
             name: "IT-Incubator",
@@ -58,10 +70,14 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
         CreateDataComment = {
             content: "some content some content some content some content"
         }
-    })
 
-    afterAll(async () => {
-        await DeleteAllDb()
+        InsertPostData = structuredClone(BlogInsert.CreateManyData)
+        for (let i in InsertPostData) {
+            InsertPostData[i].blogInfo.blogId = idBlog
+            InsertPostData[i].commentatorInfo.userId = userId
+            InsertPostData[i].postInfo.postId = idPost
+        }
+
     })
 
     it('POST => GET | should create the comment item, status: 201, return the item and get all items by post id, status: 200, and status: 404 if element not found', async () => {
@@ -86,13 +102,13 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
             .expect(200)
         expect(GetElementResult.body.items).toEqual([CreateElementResult.body])
         // This simulates a scenario we don`t get created item, because this id not found
-        GetElementResult = await GetRequest()
+        await GetRequest()
             .get(`${endpointPost}/66632889ba80092799c0ed81${endpointComments}`)
             .expect(404)
     })
 
     it('POST | should`t create the comment item, status: 400, bad data', async () => {
-        // This simulates a scenario where the user should`t creating the comment because bad content data
+        // This simulates a scenario where the user should not do creating the comment because bad content data
         CreateDataComment.content = 'some'
         const CreateElementResult = await GetRequest()
             .post(endpointPostComments)
@@ -110,18 +126,18 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
     })
 
     it('POST | should`t create the comment item, status: 401, Unauthorized', async () => {
-        // This simulates a scenario where the user should`t creating the comment because the user Unauthorized
+        // This simulates a scenario where the user should not do creating the comment because the user Unauthorized
         CreateDataComment.content = 'some'
-        const CreateElementResult = await GetRequest()
+        await GetRequest()
             .post(endpointPostComments)
             .set({Authorization: ""})
             .expect(401)
     })
 
     it('POST | should`t create the comment item, status: 404, post id not found', async () => {
-        // This simulates a scenario where the user should`t creating the comment because post id not found 
+        // This simulates a scenario where the user should not do creating the comment because post id not found
         CreateDataComment.content = 'some'
-        const CreateElementResult = await GetRequest()
+        await GetRequest()
             .post(`${endpointPost}/66632889ba80092799c0ed81/${endpointComments}`)
             .set(AuthData)
             .send(CreateDataComment)
@@ -130,139 +146,8 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
         // Create many data
-        const CreateManyData = [
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
 
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-            {
-                content: "string",
-                commentatorInfo: {
-                    userId: userId,
-                    userLogin: CreatedUserData.login
-                },
-                postInfo: {
-                    postId: idPost
-                },
-                createdAt: '2024-06-20T15:00:01.817Z'
-            },
-        ]
-        const CreateManyResult = await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.comments)
+        await CreateManyDataUniversal(InsertPostData, CommentModel)
         // This simulates a scenario where user want to get all comments without query params
         let GetAllElements = await GetRequest()
             .get(endpointPostComments)

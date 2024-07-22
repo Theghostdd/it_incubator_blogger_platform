@@ -1,7 +1,6 @@
 import {ROUTERS_SETTINGS} from '../../../src/settings'
 import {AuthDto, RegistrationDto} from '../../Dto/AuthDto';
-import {DropCollections} from '../../Modules/Body.Modules';
-import {GetRequest, CreateUser, LoginUser} from '../modules/modules';
+import {GetRequest, CreateUser, LoginUser, DropAll} from '../modules/modules';
 
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.me, () => {
@@ -14,7 +13,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.me, () => {
 
     beforeEach(async () => {
         jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
+        await DropAll()
 
         CreatedUserData = {...RegistrationDto.RegistrationUserData}
 

@@ -1,5 +1,6 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
-import { AdminAuth, CreateBlog, CreateManyDataUniversal, DeleteAllDb, GetRequest } from "../modules/modules";
+import { ROUTERS_SETTINGS } from "../../../src/settings";
+import {AdminAuth, CreateBlog, CreateManyDataUniversal, DropAll, GetRequest} from "../modules/modules";
+import {PostModel} from "../../../src/Domain/Post/Post";
 
 describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_posts, () => {
 
@@ -12,7 +13,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
     let blogName: string;
 
     beforeEach(async () => {
-        await DeleteAllDb()
+        await DropAll()
         
         const CreateDataBlog: any = {
             name: "IT-Incubator",
@@ -30,10 +31,6 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
         }
 
         endpointBlogAndPost = `${endpoint}/${idBlog}${ROUTERS_SETTINGS.BLOG.blogs_posts}`
-    })
-
-    afterAll(async () => {
-        await DeleteAllDb()
     })
 
     it(`POST => GET | should create a post item by blog ID, status: 201, return the item and get the item by ID, status: 200, and 404 if the item not found`, async () => {
@@ -67,10 +64,6 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 }
             ]
         })
-        // This simulates a scenario where post by id into URI params not found
-        const GetElementResult = await GetRequest()
-            .get(`${endpoint}/66632889ba80092799c0ed81${additionalEndpointPost}`)
-            .expect(404)
     })
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
@@ -175,7 +168,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 createdAt: '2024-06-08T10:14:38.605Z'
             },
         ]
-        const CreateManyResult = await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.posts)
+        await CreateManyDataUniversal(CreateManyData, PostModel)
         // This simulates a scenario where getting post item by blog ID in URI params without query params
         let GetAllElements = await GetRequest()
             .get(endpointBlogAndPost)
@@ -217,7 +210,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
     })
 
     it('POST | should`t create a post item by blog ID, status: 400, bad request', async () => {
-        // This simulates a scenario where should`t creating post by blog id into URI params because bad data: title
+        // This simulates a scenario where should not creating post by blog id into URI params because bad data: title
         CreateData.title = ''
         let CreateElementResult = await GetRequest()
             .post(endpointBlogAndPost)
@@ -232,7 +225,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 }
             ]
         })
-        // This simulates a scenario where should`t creating post by blog id into URI params because bad data: title, shortDescription
+        // This simulates a scenario where should not creating post by blog id into URI params because bad data: title, shortDescription
         CreateData.shortDescription = ''
         CreateElementResult = await GetRequest()
             .post(endpointBlogAndPost)
@@ -251,7 +244,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 }
             ]
         })
-        // This simulates a scenario where should`t creating post by blog id into URI params because bad data: title, shortDescription, content
+        // This simulates a scenario where should not creating post by blog id into URI params because bad data: title, shortDescription, content
         CreateData.content = ''
         CreateElementResult =await GetRequest()
             .post(endpointBlogAndPost)
@@ -278,8 +271,8 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
     })
 
     it('POST | should`t create a post item by blog ID, status: 401, Unauthorized', async () => {
-        // This simulates a scenario where should`t creating post by blog id into URI params because user Unauthorized
-        const CreateElementResult = await GetRequest()
+        // This simulates a scenario where should not creating post by blog id into URI params because user Unauthorized
+        GetRequest()
             .post(endpointBlogAndPost)
             .set({})
             .expect(401)

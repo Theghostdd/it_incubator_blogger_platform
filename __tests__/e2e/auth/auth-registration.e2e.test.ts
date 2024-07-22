@@ -1,9 +1,9 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings"
-import { AdminAuth, CreateUser, DeleteAllDb, GetRequest, InsertOneUniversal } from "../modules/modules"
+import { ROUTERS_SETTINGS } from "../../../src/settings"
+import {AdminAuth, CreateUser, DropAll, GetRequest, InsertOneUniversal} from "../modules/modules"
 import { addMinutes } from "date-fns"
 import { InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
-import { DropCollections } from "../../Modules/Body.Modules";
 import { NodemailerService } from "../../../src/Applications/Nodemailer/nodemailer";
+import {UserModel} from "../../../src/Domain/User/User";
 
 
 
@@ -20,8 +20,8 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     let ResendConfirmCodeData: any = {}
 
     beforeEach(async () => {
-        NodemailerService.sendEmail = jest.fn().mockImplementation(() => true)
-        await DropCollections.DropAllCollections()
+        NodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
+        await DropAll()
         
         CreatedUserData = {...RegistrationDto.RegistrationUserData}
 
@@ -133,7 +133,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     it('POST | should confirm new user, status: 204', async () => {
         // Crate user
         InsertOneData.userConfirm.dataExpire = addMinutes(new Date(), 1)
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
+        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user confirmed email
         const RegistrationUserConfirm = await GetRequest()
             .post(endpointRegistrationConfirm)
@@ -145,7 +145,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
         // Create user
         InsertOneData.userConfirm.dataExpire = '2022-06-25T13:17:37.078Z'
         InsertOneData.userConfirm.ifConfirm = true
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
+        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user doesn`t confirm email, the date has expired
         let RegistrationUser = await GetRequest()
             .post(endpointRegistrationConfirm)
@@ -206,7 +206,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     it('POST | should resend confirmation code, status: 204', async () => {
         // Create user
         InsertOneData.userConfirm.ifConfirm = false
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
+        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user want to get the new confirmation code
         const RegistrationUser = await GetRequest()
             .post(endpointRegistrationResendConfirmationCode)
@@ -217,7 +217,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     it('POST | shouldn`t resend confirmation code, status: 400 and 404', async () => {
         // Create user
         InsertOneData.userConfirm.ifConfirm = true
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, MONGO_SETTINGS.COLLECTIONS.users)
+        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user want to get the new confirmation code but email not found
         ResendConfirmCodeData.email = 'someemail@mail.ru'
         let RegistrationUser = await GetRequest()

@@ -2,7 +2,7 @@ import {BlogModel} from "../../Domain/Blog/Blog";
 import {PostModel} from "../../Domain/Post/Post";
 import {UserModel} from "../../Domain/User/User";
 import {CommentModel} from "../../Domain/Comment/Comment";
-import {AuthSessionModel} from "../../Domain/Auth/Auth";
+import {AuthSessionModel, RequestLimiterModel} from "../../Domain/Auth/Auth";
 
 
 export const TestRepositories = {
@@ -14,6 +14,7 @@ export const TestRepositories = {
                 UserModel.deleteMany({}),
                 CommentModel.deleteMany({}),
                 AuthSessionModel.deleteMany({}),
+                RequestLimiterModel.deleteMany({}),
             ])
             return 
         } catch (e: any) {

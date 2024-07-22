@@ -14,7 +14,7 @@ const CommentSchema = new mongoose.Schema<CommentMongoViewType>({
     blogInfo: {
         blogId: {type: String, required: true},
     },
-    createdAt: {type: String, required: true},
+    createdAt: {type: String, required: true, default: new Date().toISOString()},
 })
 
 export const CommentModel = mongoose.model(MONGO_SETTINGS.COLLECTIONS.comments, CommentSchema)

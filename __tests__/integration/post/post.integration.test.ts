@@ -1,29 +1,32 @@
 import { MONGO_SETTINGS } from "../../../src/settings";
 import { PostService } from '../../../src/Service/PostService/PostService'
-import { DropCollections, InsertOneDataModule } from "../../Modules/Body.Modules";
 import { InsertPost, PostDto } from "../../Dto/PostDto";
 import { BlogDto, BlogInsert } from "../../Dto/BlogDto";
 import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
 import { InsertAuthDto } from "../../Dto/AuthDto";
+import {BlogModule, Drop, PostModule, UserModule} from "../modules/modules";
+import mongoose from "mongoose";
+
+beforeAll(async () => {
+    await mongoose.connect(MONGO_SETTINGS.URL, {dbName: MONGO_SETTINGS.DB_NAME})
+})
+afterAll(async () => {
+    await mongoose.disconnect();
+})
 
 const PostCreateService = PostService.CreatePostItemByBlogId;
 const PostUpdateService = PostService.UpdatePostById;
 const PostDeleteService = PostService.DeletePostById;
 const CreateCommentByPostIdService = PostService.CreateCommentByPostId;
 
-const collectionPost = MONGO_SETTINGS.COLLECTIONS.posts;
-const collectionBlog = MONGO_SETTINGS.COLLECTIONS.blogs;
-const collectionComment = MONGO_SETTINGS.COLLECTIONS.comments;
-const collectionUser = MONGO_SETTINGS.COLLECTIONS.users
-
 describe(PostCreateService, () => {
     let CreatePostData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
-        const CreateBlog = await InsertOneDataModule({...BlogInsert.BlogInsertData}, collectionBlog)
-        CreatePostData = {...PostDto.CreatePostData}
-        CreatePostData.blogId = CreateBlog.insertedId.toString()
+        await Drop.DropAll()
+        const CreateBlog = await BlogModule.CreateBlogModule(structuredClone(BlogInsert.BlogInsertData))
+        CreatePostData = structuredClone(PostDto.CreatePostData)
+        CreatePostData.blogId = CreateBlog!._id.toString()
     })
 
     it('should create new Post, and return post item, status: Success', async () => {
@@ -51,18 +54,21 @@ describe(PostCreateService, () => {
 
 describe(PostUpdateService, () => {
     let UpdatePostData: any;
+    let InsertPostData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
-        const CreateBlog = await InsertOneDataModule({...BlogInsert.BlogInsertData}, collectionBlog)
-        UpdatePostData = {...BlogDto.UpdateBlogData}
-        UpdatePostData.blogId = CreateBlog.insertedId.toString()
+        await Drop.DropAll()
+        const CreateBlog = await BlogModule.CreateBlogModule(structuredClone(BlogInsert.BlogInsertData))
+        UpdatePostData = structuredClone(BlogDto.UpdateBlogData)
+        UpdatePostData.blogId = CreateBlog!._id.toString()
+        InsertPostData = structuredClone(InsertPost.InsertPostData)
+        InsertPostData.blogId = CreateBlog!._id.toString()
     })
 
     it('should update post by id, status: Success', async () => {
-        const InsertData = await InsertOneDataModule(InsertPost.InsertPostData, collectionPost)
+        const InsertData = await PostModule.CreatePostModule(InsertPostData)
 
-        const result = await PostUpdateService(InsertData.insertedId.toString(), UpdatePostData)
+        const result = await PostUpdateService(InsertData!._id.toString(), UpdatePostData)
         expect(result.status).toBe(ResultNotificationEnum.Success)
     })
 
@@ -73,15 +79,19 @@ describe(PostUpdateService, () => {
 })
 
 describe(PostDeleteService, () => {
+    let InsertPostData: any;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
+        await Drop.DropAll()
+        const CreateBlog = await BlogModule.CreateBlogModule(structuredClone(BlogInsert.BlogInsertData))
+        InsertPostData = structuredClone(InsertPost.InsertPostData)
+        InsertPostData.blogId = CreateBlog!._id.toString()
     })
 
     it('should delete post by id, status: Success', async () => {
-        const InsertData = await InsertOneDataModule(InsertPost.InsertPostData, collectionPost)
+        const InsertData = await PostModule.CreatePostModule(InsertPostData)
 
-        const result = await PostDeleteService(InsertData.insertedId.toString())
+        const result = await PostDeleteService(InsertData!._id.toString())
         expect(result.status).toBe(ResultNotificationEnum.Success)
     })
 
@@ -97,13 +107,16 @@ describe(CreateCommentByPostIdService, () => {
     let UserId: string;
     beforeEach( async () => {
         jest.clearAllMocks()
-        await DropCollections.DropAllCollections()
+        await Drop.DropAll()
 
-        let InsertData = await InsertOneDataModule(InsertPost.InsertPostData, collectionPost)
-        PostId = InsertData.insertedId.toString()
-        InsertData = await InsertOneDataModule(InsertAuthDto.UserInsertData, collectionUser)
-        UserId = InsertData.insertedId.toString()
-        CommentData = PostDto.CommentData
+        const CreateBlog = await BlogModule.CreateBlogModule(structuredClone(BlogInsert.BlogInsertData))
+        const InsertPostData = structuredClone(InsertPost.InsertPostData)
+        InsertPostData.blogId = CreateBlog!._id.toString()
+        const CreatePost = await PostModule.CreatePostModule(InsertPostData)
+        PostId = CreatePost!._id.toString()
+        const CreateUser = await UserModule.CreateUserModule(structuredClone(InsertAuthDto.UserInsertData))
+        UserId = CreateUser!._id.toString()
+        CommentData = structuredClone(PostDto.CommentData)
     })
 
     it('should create comment by Post ID, status: Success', async () => {

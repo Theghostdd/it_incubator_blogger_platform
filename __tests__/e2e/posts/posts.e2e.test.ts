@@ -1,5 +1,6 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
-import { CreateBlog, DeleteAllDb, GetRequest, AdminAuth, CreatedPost, CreateManyDataUniversal } from '../modules/modules';
+import { ROUTERS_SETTINGS } from '../../../src/settings'
+import {CreateBlog, GetRequest, AdminAuth, CreatedPost, DropAll, CreateManyDataUniversal} from '../modules/modules';
+import {PostModel} from "../../../src/Domain/Post/Post";
 
 
 
@@ -13,7 +14,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
     let blogName: string
     let CreateDataBlog: any = {} 
     beforeEach(async () => {
-        await DeleteAllDb()
+        await DropAll()
 
         CreateDataBlog = {
             name: "IT-Incubator",
@@ -39,11 +40,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
         }
     })
 
-    afterAll(async () => {
-        await DeleteAllDb()
-    })
-
-    it('POST => GET | should create a post item, status: 201, return the item and get created item, status: 200, and status: 404 if element doesn`t found', async () => {
+    it('POST => GET | should create a post item, status: 201, return the item and get created item, status: 200, and status: 404 if element does not found', async () => {
         // This simulates a scenario where creating post item
         const CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -65,7 +62,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             .expect(200)
         expect(GetElementResult.body).toEqual(CreateElementResult.body)
         // This simulates a scenario we don`t get created item, because this id not found
-        GetElementResult = await GetRequest()
+        await GetRequest()
             .get(`${endpoint}/66632889ba80092799c0ed81`)
             .expect(404)
     })
@@ -74,16 +71,16 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
         // Create the post item
         const CreateElementResult =  await CreatedPost(CreateDataPost)
         // This simulates a scenario where the post item success deleted
-        let DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/${CreateElementResult.id}`)
             .set(AdminAuth)
             .expect(204)
         // This simulates a scenario where the post item not found because was deleted
-        const GetElementResult = await GetRequest()
+        await GetRequest()
             .get(`${endpoint}/${CreateElementResult.id}`)
             .expect(404)
-        // This simulates a scenario where user want to delete the post item but it was deleted
-        DeleteElementResult = await GetRequest()
+        // This simulates a scenario where user want to delete the post item it was deleted
+        await GetRequest()
             .delete(`${endpoint}/${CreateElementResult.id}`)
             .set(AdminAuth)
             .expect(404)
@@ -93,12 +90,12 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
         // Create the post item
         const CreateElementResult =  await CreatedPost(CreateDataPost)
         // This simulates a scenario where user want to update the post item
-        const UpdateElementResult = await GetRequest()
+        await GetRequest()
             .put(`${endpoint}/${CreateElementResult.id}`)
             .set(AdminAuth)
             .send(DataUpdate)
             .expect(204)
-        // This simulates a scenario where user want to look to updated the post item
+        // This simulates a scenario where user want to look updated the post item
         const GetElementResult = await GetRequest()
             .get(`${endpoint}/${CreateElementResult.id}`)
             .expect(200)
@@ -311,7 +308,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
         ]
         // Insert many data to Mongo
-        await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.posts)
+        await CreateManyDataUniversal(CreateManyData, PostModel)
         // This simulates a scenario where user want to get all items without query params
         let GetAllElements = await GetRequest()
             .get(endpoint)
@@ -440,18 +437,18 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
     })
 
     it('POST => PUT => DELETE | should`t create, update, delete a blog item, status: 401, Unauthorized', async () => {
-        // This simulates a scenario where user want to create a post item but he doesn`t have login or password
-        const CreateElementResult = await GetRequest()
+        // This simulates a scenario where user want to create a post item he does not have login or password
+        await GetRequest()
             .post(endpoint)
             .set({})
             .expect(401)
-        // This simulates a scenario where user want to update the post item but he doesn`t have login or password
-        const UpdateCreatedElementResult = await GetRequest()
+        // This simulates a scenario where user want to update the post item he does not have login or password
+        await GetRequest()
             .put(`${endpoint}/66632889ba80092799c0ed81`)
             .set({Authorization: "Basic YWRtaW46cXdl"})
             .expect(401)
-        // This simulates a scenario where user want to delete the post item but he doesn`t have login or password
-        const DeleteElementResult = await GetRequest()
+        // This simulates a scenario where user want to delete the post item he does not have login or password
+        await GetRequest()
             .delete(`${endpoint}/66632889ba80092799c0ed81`)
             .set({Authorization: "Basic YWRtaW46cXdl"})
             .expect(401)
@@ -459,18 +456,18 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
 
     it('POST => PUT => DELETE => GET | should`t update, delete, get a blog item by ID, status: 500, bad mongo object ID', async () => {
         // This simulates a scenario where user want to update the post but post`s id not object ID
-        const UpdateCreatedElementResult = await GetRequest()
+        await GetRequest()
             .put(`${endpoint}/66632889ba80092`)
             .set(AdminAuth)
             .send(DataUpdate)
             .expect(500)
         // This simulates a scenario where user want to delete the post but post`s id not object ID
-        const DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/66632889ba80092`)
             .set(AdminAuth)
             .expect(500)
         // This simulates a scenario where user want to get the post but post`s id not object ID
-        const GetElementResult = await GetRequest()
+        await GetRequest()
             .get(`${endpoint}/66632889ba80092`)
             .expect(500)
     })

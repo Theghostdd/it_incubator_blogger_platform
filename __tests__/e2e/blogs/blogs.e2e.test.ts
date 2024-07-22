@@ -1,5 +1,6 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from '../../../src/settings'
-import { AdminAuth, CreateBlog, CreateManyDataUniversal, DeleteAllDb, GetRequest } from '../modules/modules';
+import { ROUTERS_SETTINGS } from '../../../src/settings'
+import {AdminAuth, CreateBlog, CreateManyDataUniversal, DropAll, GetRequest} from '../modules/modules';
+import {BlogModel} from "../../../src/Domain/Blog/Blog";
 
 describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
 
@@ -10,7 +11,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
     let DataUpdate: any;
     
     beforeEach(async () => {
-        await DeleteAllDb()
+        await DropAll()
 
         CreateData = {
             name: "IT-Incubator",
@@ -25,12 +26,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
         }
     })
 
-    afterAll(async () => {
-        await DeleteAllDb()
-    })
-
-
-    it('POST => GET | should create a blog item, status: 201, return the item and get the item by ID, status: 200, if element doesn`t found, status: 404', async () => {
+    it('POST => GET | should create a blog item, status: 201, return the item and get the item by ID, status: 200, if element does not found, status: 404', async () => {
         // This simulates a scenario where the blog item success create
         const CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -51,7 +47,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
             .expect(200)
         expect(GetCreatedElementResult.body).toEqual(CreateElementResult.body)
         // This simulates a scenario where the blog not found
-        const GetElementResult = await GetRequest()
+        await GetRequest()
             .get(`${endpoint}/66632889ba80092799c0ed81`)
             .expect(404)
     })
@@ -60,7 +56,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
         // Create element
         const CreateElement = await CreateBlog(CreateData)
         // This simulates a scenario where the blog item success updated
-        const UpdateElementResult = await GetRequest() 
+        await GetRequest()
             .put(`${endpoint}/${CreateElement.id}`)
             .set(AdminAuth)
             .send(DataUpdate)
@@ -76,12 +72,12 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
         // Create element
         const CreateElement = await CreateBlog(CreateData)
         // This simulates a scenario where the blog item success delete by ID
-        let DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/${CreateElement.id}`)
             .set(AdminAuth)
             .expect(204)
         // This simulates a scenario where the blog item not found because was deleted
-        DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/${CreateElement.id}`)
             .set(AdminAuth)
             .expect(404)
@@ -94,7 +90,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
             .set(AdminAuth)
             .send(DataUpdate)
             .expect(404)
-        // This simulates a scenario where the blog item doesn`t update because bad description
+        // This simulates a scenario where the blog item does not update because bad description
         DataUpdate.description = ''
         UpdateElementResult = await GetRequest()
             .put(`${endpoint}/id`)
@@ -109,7 +105,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
                         }
                     ]
                 })
-        // This simulates a scenario where the blog item doesn`t update because bad description, name
+        // This simulates a scenario where the blog item does not update because bad description, name
         DataUpdate.name = ''
         UpdateElementResult = await GetRequest()
             .put(`${endpoint}/id`)
@@ -128,7 +124,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
                 }
             ]
         })
-        // This simulates a scenario where the blog item doesn`t update because bad description, name, websiteUrl
+        // This simulates a scenario where the blog item does not update because bad description, name, websiteUrl
         DataUpdate.websiteUrl = 'https:.by.io/'
         UpdateElementResult = await GetRequest()
             .put(`${endpoint}/id`)
@@ -245,7 +241,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
                 isMembership: false
             },
         ]
-        const CreateManyResult = await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.blogs)
+        await CreateManyDataUniversal(CreateManyData, BlogModel)
         // This simulates a scenario where get all item without query params
         let GetAllElements = await GetRequest()
             .get(endpoint)
@@ -300,7 +296,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
     })
 
     it('POST | should`t create a blog item, status: 400, bad request', async () => {
-        // This simulates a scenario where the blog item doesn`t created because bad name
+        // This simulates a scenario where the blog item does not do created because bad name
         CreateData.name = ''
         let CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -315,7 +311,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
                 }
             ]
         })
-        // This simulates a scenario where the blog item doesn`t created because bad name, description
+        // This simulates a scenario where the blog item does not do created because bad name, description
         CreateData.description = ''
         CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -334,7 +330,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
                 }
             ]
         })
-        // This simulates a scenario where the blog item doesn`t created because bad name, description, websiteUrl
+        // This simulates a scenario where the blog item does not do created because bad name, description, websiteUrl
         CreateData.websiteUrl = 'it-incubator.io/'
         CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -362,35 +358,35 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
 
     it('POST => PUT => DELETE | should`t create, update, delete a blog item, status: 401, Unauthorized', async () => {
         // This simulates a scenario where the user Unauthorized
-        const CreateElementResult = await GetRequest()
+        await GetRequest()
             .post(endpoint)
             .set({Authorization: ""})
             .expect(401)
 
-        const UpdateElementResult = await GetRequest()
+        await GetRequest()
             .put(`${endpoint}/66632889ba80092799c0ed81`)
             .expect(401)
 
-        const DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/66632889ba80092799c0ed81`)
             .set({Authorization: "Basic fkrjjfhryfjc"})
             .expect(401)
     })
 
     it('PUT => DELETE => GET | should`t update, delete, get a blog item by ID, status: 500, bad mongo object ID', async () => {
-        // This simulates a scenario where was send bad id (Not Mongo ID)
-        const UpdateElementResult = await GetRequest()
+        // This simulates a scenario where was sent bad id (Not Mongo ID)
+        await GetRequest()
             .put(`${endpoint}/66632889ba80092799`)
             .set(AdminAuth)
             .send(DataUpdate)
             .expect(500)
 
-        const DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/66632889ba80092799`)
             .set(AdminAuth)
             .expect(500)
 
-        const GetElementResult = await GetRequest()
+        await GetRequest()
             .get(`${endpoint}/66632889ba80092799`)
             .expect(500)
     })

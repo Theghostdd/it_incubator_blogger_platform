@@ -1,5 +1,7 @@
-import { MONGO_SETTINGS, ROUTERS_SETTINGS } from "../../../src/settings";
-import { AdminAuth, CreateManyDataUniversal, CreateUser, DeleteAllDb, GetRequest } from "../modules/modules";
+import { ROUTERS_SETTINGS } from "../../../src/settings";
+import {AdminAuth, CreateManyDataUniversal, CreateUser, DropAll, GetRequest} from "../modules/modules";
+import {UserModel} from "../../../src/Domain/User/User";
+import {InsertAuthDto} from "../../Dto/AuthDto";
 
 describe(ROUTERS_SETTINGS.USER.user, () => {
 
@@ -7,19 +9,16 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
     const endpoint: string = ROUTERS_SETTINGS.USER.user
 
     let CreateData: any = {}
+    let InsertManyDataUser: any;
 
     beforeEach(async () => {
-        await DeleteAllDb()
-
+        await DropAll()
+        InsertManyDataUser = structuredClone(InsertAuthDto.CreateManyData)
         CreateData = {
             login: 'TestLogin',
             password: "somePass",
             email: "example@mail.ru"
         }
-    })
-
-    afterAll(async () => {
-        await DeleteAllDb()
     })
 
     it(`POST => GET | Super admin should create a user item, status: 201, return the map item and get all item, status: 200`, async () => {
@@ -54,7 +53,7 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
     })
 
     it(`POST | Super admin should\`t create a user item, status: 400, bad login, email, password`, async () => {
-        // This simulates a scenario where super admin should`t creating new user because bad login
+        // This simulates a scenario where super admin should not do creating new user because bad login
         CreateData.login = '';
         let CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -69,7 +68,7 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 }
             ]
         })
-        // This simulates a scenario where super admin should`t creating new user because bad login, password
+        // This simulates a scenario where super admin should not do creating new user because bad login, password
         CreateData.password = 'sw'
         CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -88,7 +87,7 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 }
             ]
         })
-        // This simulates a scenario where super admin should`t creating new user because bad login, password, email
+        // This simulates a scenario where super admin should not do creating new user because bad login, password, email
         CreateData = {
             login: 'TestLoginTTestLoginTTestLoginTTestLoginTTestLoginTTestLoginT',
             password: "s",
@@ -120,7 +119,7 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
     it(`POST | Super admin should\`t create a user item, status: 400, not uniq email and login`, async () => {
         // Create the user
         let CreateElementResult = await CreateUser(CreateData)
-        // This simulates a scenario where super admin should`t creating new user because not uniq login
+        // This simulates a scenario where super admin should not do creating new user because not uniq login
         CreateData.email = 'example2@mail.ru'
         CreateElementResult = await GetRequest()
             .post(endpoint)
@@ -135,7 +134,7 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
                 }
             ]
         })
-        // This simulates a scenario where super admin should`t creating new user because not uniq email
+        // This simulates a scenario where super admin should not do creating new user because not uniq email
         CreateData = {
             login: 'Login',
             password: "somePass",
@@ -159,16 +158,16 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
     })
 
     it(`POST => GET => DELETE | Super admin should\`t create, get and delete the user item, status: 401, Unauthorized`, async () => {
-        // This simulates a scenario where super admin should`t creating, delete new user because Unauthorized
-        const CreateElementResult = await GetRequest()
+        // This simulates a scenario where super admin should not do creating, delete new user because Unauthorized
+        await GetRequest()
             .post(endpoint)
             .set({})
             .expect(401)
-        const GetElementResult = await GetRequest()
+        await GetRequest()
             .post(endpoint)
             .set({Authorization: ''})
             .expect(401)
-        const DeleteElementResult = await GetRequest()
+        await GetRequest()
             .post(endpoint)
             .set({Authorization: 'frfrfrfrfr'})
             .expect(401)
@@ -178,12 +177,12 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
         // Create user
         const CreateElementResult = await CreateUser(CreateData)
         // This simulates a scenario where super admin should delete the user by id
-        let DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/${CreateElementResult.id}`)
             .set(AdminAuth)
             .expect(204)
         // This simulates a scenario where super admin want to delete the user by id but user deleted
-        DeleteElementResult = await GetRequest()
+        await GetRequest()
             .delete(`${endpoint}/${CreateElementResult.id}`)
             .set(AdminAuth)
             .expect(404)
@@ -191,74 +190,7 @@ describe(ROUTERS_SETTINGS.USER.user, () => {
 
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
         // Create many data
-        const CreateManyData = [
-            {
-                login: 'Some Login',
-                email: 'example@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some Login2',
-                email: 'example@yandex.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some Login3',
-                email: 'example@gmail.com',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'QueryLogin',
-                email: 'neemail@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'NotLogin',
-                email: 'exam22ple@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Ffjr',
-                email: 'examp45le@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some2Login',
-                email: 'exa32mple@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some3Login',
-                email: 'exa2224mple@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some4Login',
-                email: 'examfdseple@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some5Login',
-                email: 'exampfffffffle@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-
-            {
-                login: 'Some6Login',
-                email: 'exampsszle@mail.ru',
-                createdAt: '2024-06-08T10:14:38.605Z'
-            },
-        ]
-        const CreateManyResult = await CreateManyDataUniversal(CreateManyData, MONGO_SETTINGS.COLLECTIONS.users)
+        await CreateManyDataUniversal(InsertManyDataUser, UserModel)
         // This simulates a scenario where super admin want to get all user without query params
         let GetAllElements = await GetRequest()
             .get(endpoint)

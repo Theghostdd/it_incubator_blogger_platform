@@ -79,6 +79,36 @@ export const BlogModule = {
         }
     },
 }
+
+export const PostModule = {
+    async CreatePostModule(data: any) {
+        try {
+            return await new PostModel(data).save()
+        } catch (e: any) {
+            console.error('CreatePostModule ', e)
+        }
+    },
+}
+
+export const CommentModule = {
+    async CreateCommentModule(data: any) {
+        try {
+            return await new CommentModel(data).save()
+        } catch (e: any) {
+            console.error('CreateCommentModule ', e)
+        }
+    },
+
+    async FindAllCommentModule() {
+        try {
+            return await CommentModel.find().lean()
+        } catch (e: any) {
+            console.error('FindAllCommentModule ', e)
+        }
+    },
+}
+
+
 export const Drop = {
     async DropAll () {
         await UserModel.deleteMany()

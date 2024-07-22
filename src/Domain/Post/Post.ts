@@ -8,7 +8,7 @@ const PostSchema = new mongoose.Schema<PostViewMongoModelType>({
     shortDescription: {type: String, required: true, min: 1, max: 100},
     content: {type: String, required: true, min: 1, max: 1000},
     blogId: {type: String, required: true},
-    createdAt: {type: String, required: true},
+    createdAt: {type: String, required: true, default: new Date().toISOString()},
     blogName: {type: String, required: true, min: 1, max: 15},
 })
 
