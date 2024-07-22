@@ -5,6 +5,10 @@ import { MAIL_SETTINGS } from "../../settings";
 
 const transporter = nodemailer.createTransport({
     service: MAIL_SETTINGS.MAIL_SERVICE,
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    ignoreTLS: true,
     auth: {
         user: MAIL_SETTINGS.MAIL_FROM.address,
         pass: MAIL_SETTINGS.MAIL_FROM.password,

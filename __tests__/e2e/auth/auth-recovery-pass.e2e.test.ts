@@ -7,7 +7,7 @@ import {
     GetRequest,
     InsertOneUniversal
 } from "../modules/modules";
-import {AuthDto, InsertAuthDto} from "../../Dto/AuthDto";
+import {AuthDto, InsertAuthDto, RegistrationDto} from "../../Dto/AuthDto";
 import {UserModel} from "../../../src/Domain/User/User";
 import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {AuthRepositories} from "../../../src/Repositories/AuthRepositories/AuthRepositories";
@@ -76,14 +76,18 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, (
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => {
 
     const endpoint: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password
+    const endpointAuth: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.login
 
     let InsertUserData: any;
     let RecoveryData: any;
     let NewPassData: any;
-
+    let AuthData: any;
+    let RegData : any;
     beforeEach(async () => {
         jest.clearAllMocks()
         await DropAll()
+
+        NodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
 
         InsertUserData = structuredClone(InsertAuthDto.UserInsertData)
         await InsertOneUniversal(InsertUserData, UserModel)
@@ -94,6 +98,13 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
         NewPassData = structuredClone(AuthDto.NewPassData)
         NewPassData.recoveryCode = getSession![0].code
+
+        AuthData = {
+            loginOrEmail: RecoveryData.email,
+            password: NewPassData.newPassword
+        }
+
+        RegData = structuredClone(RegistrationDto.RegistrationUserData)
     })
 
     it('POST | should change password, status: 204', async () => {
@@ -105,6 +116,41 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
 
         const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
         expect(getSession!.length).toBe(0)
+    })
+
+    it('POST | should change password, and auth with new password status: 204', async () => {
+        // This simulates a scenario where user want to change password.
+        await GetRequest()
+            .post(endpoint)
+            .send(NewPassData)
+            .expect(204)
+
+        const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
+        expect(getSession!.length).toBe(0)
+
+        // This simulates a scenario where user auth with new pass.
+        await GetRequest()
+            .post(endpointAuth)
+            .send(AuthData)
+            .expect(200)
+    })
+
+    it('POST | should change password, and not auth with old password status: 401', async () => {
+        // This simulates a scenario where user want to change password.
+        await GetRequest()
+            .post(endpoint)
+            .send(NewPassData)
+            .expect(204)
+
+        const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
+        expect(getSession!.length).toBe(0)
+
+        // This simulates a scenario where user auth with old pass.
+        AuthData.password = RegData.password
+        await GetRequest()
+            .post(endpointAuth)
+            .send(AuthData)
+            .expect(401)
     })
 
     it('POST | should not change password, bad code, status: 400', async () => {
@@ -128,10 +174,18 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
             }
         })
         // This simulates a scenario where user want to change password but recovery code was expire.
-        await GetRequest()
+        const result = await GetRequest()
             .post(endpoint)
             .send(NewPassData)
             .expect(400)
+        expect(result.body).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'recoveryCode'
+                },
+            ]
+        })
     })
 
     it('POST | should not change password, bad data, status: 400', async () => {
