@@ -236,14 +236,14 @@ AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.new_password}`,
     RuleValidations.validNewPassword,
     RuleValidations.validRecoveryCode,
     inputValidation,
-    async (req: Request<{}, {}, ChangePasswordInputViewType>, res: Response) => {
+    async (req: Request<{}, {}, ChangePasswordInputViewType>, res: Response<APIErrorsMessageType>) => {
         try {
-            const result: ResultNotificationType = await AuthService.ChangeUserPassword(req.body)
+            const result: ResultNotificationType<APIErrorsMessageType> = await AuthService.ChangeUserPassword(req.body)
             switch (result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);
                 case ResultNotificationEnum.BadRequest:
-                    return res.sendStatus(400);
+                    return res.status(400).json(result.errorField);
                 default:
                     return res.sendStatus(500)
             }

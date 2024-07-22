@@ -417,13 +417,15 @@ export const AuthService = {
     * If the user is not found, throw the error.
     * Catches any exceptions that occur during the process and throws a new error.
     */
-    async ChangeUserPassword (data: ChangePasswordInputViewType): Promise<ResultNotificationType> {
+    async ChangeUserPassword (data: ChangePasswordInputViewType): Promise<ResultNotificationType<APIErrorsMessageType>> {
         try {
             const GetCode: PasswordRecoveryMongoViewType | null = await AuthRepositories.GetRecoveryPasswordSessionByCode(data.recoveryCode)
             if (!GetCode) return {status: ResultNotificationEnum.BadRequest}
             const { expAt, email, _id: sessionId } = GetCode
 
-            if (compareAsc(new Date(), expAt) === 1) return {status: ResultNotificationEnum.BadRequest}
+            if (compareAsc(new Date(), expAt) === 1) return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages:[{message: "Bad code", field: 'recoveryCode'}]
+            }}
 
             const GetUser: UserViewMongoType | null = await UserRepositories.GetUserByEmail(email)
             if (!GetUser) return {status: ResultNotificationEnum.BadRequest}
