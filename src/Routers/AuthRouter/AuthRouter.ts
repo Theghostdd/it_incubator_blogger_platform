@@ -4,7 +4,7 @@ import { AuthService } from "../../Service/AuthService/AuthService";
 import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
 import {
     AuthModelServiceType,
-    AuthOutputModelType,
+    AuthOutputModelType, ChangePasswordInputViewType, PasswordRecoveryInputViewType,
     UserLoginInputViewType,
 } from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SaveError } from "../../Utils/error-utils/save-error";
@@ -200,4 +200,55 @@ async (req: Request, res: Response) => {
         await SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.logout}`, 'POST', 'Logout client and revoked token', e)
         return res.sendStatus(500)
     }
+})
+/*
+* Validation of data sent from the client.
+* Data transfer to the service for password recovery logic.
+* Processing other responses from the service.
+* Catches any exceptions that occur during the process of resending the confirmation code return error 500.
+*/
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.password_recovery}`,
+    requestLimiter,
+    RuleValidations.validEmail,
+    inputValidation,
+    async (req: Request<{}, {}, PasswordRecoveryInputViewType>, res: Response) => {
+        try {
+            const result: ResultNotificationType = await AuthService.PasswordRecovery(req.body)
+            switch (result.status) {
+                case ResultNotificationEnum.Success:
+                    return res.sendStatus(204)
+                default:
+                    return res.sendStatus(500)
+            }
+        } catch (e) {
+            await SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.password_recovery}`, 'POST', 'Recovery password', e)
+            return res.sendStatus(500)
+        }
+})
+/*
+* Validation of data sent from the client.
+* Data transfer to the service for change the password for user.
+* Processing other responses from the service.
+* Catches any exceptions that occur during the process of resending the confirmation code return error 500.
+*/
+AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.new_password}`,
+    requestLimiter,
+    RuleValidations.validNewPassword,
+    RuleValidations.validRecoveryCode,
+    inputValidation,
+    async (req: Request<{}, {}, ChangePasswordInputViewType>, res: Response) => {
+        try {
+            const result: ResultNotificationType = await AuthService.ChangeUserPassword(req.body)
+            switch (result.status) {
+                case ResultNotificationEnum.Success:
+                    return res.sendStatus(204);
+                case ResultNotificationEnum.BadRequest:
+                    return res.sendStatus(400);
+                default:
+                    return res.sendStatus(500)
+            }
+        } catch (e) {
+            await SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.new_password}`, 'POST', 'Change password for user', e)
+            return res.sendStatus(500)
+        }
 })

@@ -7,6 +7,7 @@ import {CommentModel} from "../../../src/Domain/Comment/Comment";
 import {BlogModel} from "../../../src/Domain/Blog/Blog";
 import {PostModel} from "../../../src/Domain/Post/Post";
 import mongoose from "mongoose";
+import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 
 
 
@@ -33,6 +34,7 @@ export const DropAll = async () => {
         CommentModel.deleteMany({}),
         AuthSessionModel.deleteMany({}),
         RequestLimiterModel.deleteMany({}),
+        RecoveryPasswordSessionModel.deleteMany({}),
     ])
 }
 
@@ -88,10 +90,21 @@ export const RegistrationResendConfirmCode = async (data: any) => {
     return result.body
 }
 
+export const CreateRecoveryPassCode = async (data: any) => {
+    const result = await GetRequest()
+        .post(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery)
+        .send(data)
+    return result.body
+}
+
 export const CreateManyDataUniversal = async (data: any, model: any) => {
     return await model.insertMany(data)
 }
 
 export const InsertOneUniversal =async (data: any, model: any) => {
     return await new model(data).save()
+}
+
+export const FindAllUniversal = async (model: any) => {
+    return await model.find().lean()
 }

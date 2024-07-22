@@ -100,6 +100,20 @@ export const UserRepositories = {
         }
     },
     /*
+    * Update user password by userId in the DB.
+    * Returns the result of operation.
+    * Catch some error and return new error if process has some error.
+    */
+    async UpdateUserPasswordById(id: string, password: string): Promise<UserViewMongoType | null> {
+        try {
+            return await UserModel.findByIdAndUpdate(id, {
+                password: password
+            })
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
     * Search and delete a user by ID.
     * Returns the result of operation.
     * Catch some error and return new error if process has some error.

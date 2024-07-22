@@ -3,15 +3,19 @@ import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/B
 import { AuthService } from "../../../src/Service/AuthService/AuthService";
 import { MONGO_SETTINGS } from "../../../src/settings";
 import { AuthDto, InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
-import {delay, Drop, UserModule} from "../modules/modules";
+import {delay, Drop, RecoverPasswordSession, UserModule} from "../modules/modules";
 import mongoose from "mongoose";
 import {NodemailerService} from "../../../src/Applications/Nodemailer/nodemailer";
+import {addMinutes} from "date-fns";
+import {AuthRepositories} from "../../../src/Repositories/AuthRepositories/AuthRepositories";
 
 const RegistrationService = AuthService.RegistrationUser;
 const LoginService = AuthService.AuthUser;
 const JWTRefreshTokenAuthService = AuthService.JWTRefreshTokenAuth;
 const RegistrationConfirm = AuthService.RegistrationUserConfirmUserByEmail;
 const RegistrationResendConfirmCode = AuthService.RegistrationResendConfirmCodeToEmail;
+const RecoveryPassService = AuthService.PasswordRecovery;
+const ChangePassService = AuthService.ChangeUserPassword;
 
 
 beforeAll(async () => {
@@ -520,5 +524,116 @@ describe(RegistrationResendConfirmCode, () => {
     })
 })
 
+describe(RecoveryPassService, () => {
+    let recoveryData: any;
+
+    beforeEach(async () => {
+        jest.clearAllMocks()
+        await Drop.DropAll()
+        recoveryData = structuredClone(AuthDto.RecoveryPassData)
+        NodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
+        await UserModule.CreateUserModule(structuredClone(InsertAuthDto.UserInsertData))
+    })
+
+    it('should send link for recovery password, status: Success', async () => {
+        const result = await RecoveryPassService(recoveryData)
+        expect(result.status).toBe(ResultNotificationEnum.Success)
+
+        const findSession = await RecoverPasswordSession.FindAllRecoverySession()
+        expect(findSession!.length).toBe(1)
+        expect(findSession![0]).toEqual({
+            _id: expect.any(ObjectId),
+            email: recoveryData.email,
+            code: expect.any(String),
+            expAt: expect.any(String),
+            __v: expect.any(Number)
+        })
+    })
+
+    it('should send link for recovery password, but not creating session, status: Success', async () => {
+        recoveryData.email = 'othermail@gmail.com'
+        const result = await RecoveryPassService(recoveryData)
+        expect(result.status).toBe(ResultNotificationEnum.Success)
+
+        const findSession = await RecoverPasswordSession.FindAllRecoverySession()
+        expect(findSession!.length).toBe(0)
+    })
+})
+
+describe(ChangePassService, () => {
+    let recoveryData: any;
+    let UserData: any;
+    let changePassData: any;
+    beforeEach(async () => {
+        jest.clearAllMocks()
+        await Drop.DropAll()
+
+        recoveryData = structuredClone(AuthDto.RecoveryPassData)
+        await UserModule.CreateUserModule(structuredClone(InsertAuthDto.UserInsertData))
+        UserData = structuredClone(RegistrationDto.RegistrationUserData)
+        await RecoveryPassService(recoveryData)
+        const getSession = await RecoverPasswordSession.FindAllRecoverySession()
+
+        changePassData = structuredClone(AuthDto.NewPassData)
+        changePassData.recoveryCode = getSession![0].code
+    })
+
+    it('should update password for user, status: Success', async () => {
+        const getUserFirst = await UserModule.GetAllUsersModule()
+
+        const result = await ChangePassService(changePassData)
+        expect(result.status).toBe(ResultNotificationEnum.Success)
+
+        const getUserSecond = await UserModule.GetAllUsersModule()
+        expect(getUserSecond![0].password).not.toBe(getUserFirst![0].password)
+
+        const getSession = await RecoverPasswordSession.FindAllRecoverySession()
+        expect(getSession!.length).toBe(0)
+    })
+
+    it('should not update password for user, code not found, status: BadRequest', async () => {
+        const getUserFirst = await UserModule.GetAllUsersModule()
+
+        changePassData.recoveryCode = 'other-code'
+        const result = await ChangePassService(changePassData)
+        expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+
+        const getUserSecond = await UserModule.GetAllUsersModule()
+        expect(getUserSecond![0].password).toBe(getUserFirst![0].password)
+    })
+
+    it('should not update password for user, code is not valid, status: BadRequest', async () => {
+        const getUserFirst = await UserModule.GetAllUsersModule()
+        AuthRepositories.GetRecoveryPasswordSessionByCode = jest.fn().mockImplementation(() => {
+            return {
+                email: recoveryData.email,
+                code: changePassData.recoveryCode,
+                expAt: '2022-07-06T13:41:33.211Z'
+            }
+        })
+
+        const result = await ChangePassService(changePassData)
+        expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+
+        const getUserSecond = await UserModule.GetAllUsersModule()
+        expect(getUserSecond![0].password).toBe(getUserFirst![0].password)
+    })
+
+    it('should not update password for user, user not found, status: BadRequest', async () => {
+        const getUserFirst = await UserModule.GetAllUsersModule()
+        AuthRepositories.GetRecoveryPasswordSessionByCode = jest.fn().mockImplementation(() => {
+            return {
+                email: 'otheremail@mail.ru',
+                code: changePassData.recoveryCode,
+                expAt: addMinutes(new Date(), 10).toISOString()
+            }
+        })
+
+        const result = await ChangePassService(changePassData)
+        expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+        const getUserSecond = await UserModule.GetAllUsersModule()
+        expect(getUserSecond![0].password).toBe(getUserFirst![0].password)
+    })
+})
 
 

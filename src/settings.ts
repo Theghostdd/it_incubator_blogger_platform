@@ -22,7 +22,9 @@ export const ROUTERS_SETTINGS = {
         registration_confirmation: '/registration-confirmation',
         registration_email_resending: '/registration-email-resending',
         refresh_token: '/refresh-token',
-        logout: '/logout'
+        logout: '/logout',
+        password_recovery: '/password-recovery',
+        new_password: '/new-password'
     },
     COMMENTS: {
         comments: '/api/comments'
@@ -48,6 +50,7 @@ export const MONGO_SETTINGS = {
         comments: 'comments',
         request_limit: 'request_limit',
         auth_session: 'auth_session',
+        recovery_pass_session: 'recovery_pass_session'
     }
 }
 

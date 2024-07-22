@@ -112,7 +112,13 @@ export const RuleValidations = {
     validConfirmCode: body('code')
         .trim()
         .notEmpty()
-        .isLength({min: 1})
+        .isLength({min: 1}),
+    validNewPassword: body("newPassword")
+        .isLength({ min: 6, max: 20 })
+        .withMessage('Password is bad'),
+    validRecoveryCode: body("recoveryCode")
+        .notEmpty()
+        .withMessage('Code is bad'),
 
 };
 

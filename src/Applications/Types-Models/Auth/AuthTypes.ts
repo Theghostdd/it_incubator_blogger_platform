@@ -70,3 +70,25 @@ export type RequestLimiterInputModelViewType = {
     date: string,
     quantity: number
 }
+/*
+*
+*
+*       Password recovery type
+*
+*
+*/
+export type PasswordRecoveryInputViewType = {
+    email: string,
+}
+
+export type PasswordRecoveryCreateModelType = PasswordRecoveryInputViewType & {
+    code: string,
+    expAt: string
+}
+
+export type PasswordRecoveryMongoViewType = WithId<PasswordRecoveryCreateModelType>
+
+export type ChangePasswordInputViewType = {
+    newPassword: "string",
+    recoveryCode: "string"
+}

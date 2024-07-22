@@ -18,9 +18,15 @@ export const AuthDto = {
         url: '/api/auth/login',
         date: addSeconds(new Date().toISOString(), 10),
         quantity: 1
+    },
+    RecoveryPassData: {
+        email: RegistrationDto.RegistrationUserData.email
+    },
+    NewPassData: {
+        newPassword: "NewPass",
+        recoveryCode: ''
     }
 }
-
 
 export const InsertAuthDto = {
     UserInsertData: {

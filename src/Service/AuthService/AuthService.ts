@@ -1,6 +1,6 @@
 import { bcryptService} from "../../Applications/Middleware/bcrypt/bcrypt"
 import {
-    AuthModelServiceType,
+    AuthModelServiceType, ChangePasswordInputViewType, PasswordRecoveryInputViewType, PasswordRecoveryMongoViewType,
     RefreshAuthOutputModelType,
     RequestLimiterInputModelViewType,
     RequestLimiterMongoViewType,
@@ -24,7 +24,7 @@ import {
 import {RegistrationDefaultValue} from "../../Utils/default-values/Registration/registration-default-value"
 import {NodemailerService} from "../../Applications/Nodemailer/nodemailer"
 import {GenerateUuid} from "../../Utils/generate-uuid/generate-uuid"
-import {addDays, compareAsc} from "date-fns";
+import {addDays, addMinutes, compareAsc} from "date-fns";
 import {PatternsMail} from "../../Applications/Nodemailer/patterns/patterns"
 import {PatternMail} from "../../Applications/Types-Models/PatternsMail/patternsMailTypes"
 import {credentialJWT} from "../../Applications/JWT/jwt"
@@ -374,5 +374,66 @@ export const AuthService = {
         } catch (e: any) {
             throw new Error(e)
         }
-    }
+    },
+    /*
+    * Checking if such an email exists
+    * Generation of a password recovery code.
+    * Creating a document object for password recovery.
+    * If the user has been found, we will create a password recovery session.
+    * Getting the email template to send.
+    * Sending a letter.
+    * Catches any exceptions that occur during the process and throws a new error.
+    */
+    async PasswordRecovery (data: PasswordRecoveryInputViewType): Promise<ResultNotificationType> {
+        try {
+            const checkEmail: UserViewMongoType | null = await UserRepositories.GetUserByEmail(data.email)
+
+            const generateConfirmCode: string = await GenerateUuid.GenerateCodeForConfirmEmail()
+            const recoverCreateData = {
+                email: data.email,
+                code: generateConfirmCode,
+                expAt: addMinutes(new Date(), 20).toISOString()
+            }
+            if (checkEmail) await AuthRepositories.CreateRecoveryPasswordSession(recoverCreateData)
+
+            const getPatternMail: PatternMail = await PatternsMail.RecoveryMail(generateConfirmCode)
+            NodemailerService.sendEmail([data.email], getPatternMail.subject, getPatternMail.html)
+                .catch((err) => {
+                    SaveError("Send Email", "SMTP", "Send link for password recovery", err)
+                })
+
+            return {status: ResultNotificationEnum.Success}
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Receiving a password recovery session using the password recovery code.
+    * If the session is not found, return an error.
+    * If a session is found, check if it is a valid session.
+    * If the session is overdue, return an error.
+    * If the session is not expired, we will find the user by email.
+    * If the user has been found, we will generate a new password hash and update it and delete recovery session.
+    * If the user is not found, throw the error.
+    * Catches any exceptions that occur during the process and throws a new error.
+    */
+    async ChangeUserPassword (data: ChangePasswordInputViewType): Promise<ResultNotificationType> {
+        try {
+            const GetCode: PasswordRecoveryMongoViewType | null = await AuthRepositories.GetRecoveryPasswordSessionByCode(data.recoveryCode)
+            if (!GetCode) return {status: ResultNotificationEnum.BadRequest}
+            const { expAt, email, _id: sessionId } = GetCode
+
+            if (compareAsc(new Date(), expAt) === 1) return {status: ResultNotificationEnum.BadRequest}
+
+            const GetUser: UserViewMongoType | null = await UserRepositories.GetUserByEmail(email)
+            if (!GetUser) return {status: ResultNotificationEnum.BadRequest}
+
+            await UserRepositories.UpdateUserPasswordById(GetUser._id.toString(), await bcryptService.genSaltAndHash(data.newPassword))
+            await AuthRepositories.DeleteRecoveryPasswordSessionById(sessionId.toString())
+
+            return {status: ResultNotificationEnum.Success}
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
 }

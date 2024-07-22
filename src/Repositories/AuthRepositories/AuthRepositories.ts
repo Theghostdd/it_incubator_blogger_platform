@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb"
 import {
+    PasswordRecoveryCreateModelType, PasswordRecoveryMongoViewType,
     RequestLimiterInputModelViewType,
     RequestLimiterMongoViewType,
     SessionsInputViewType,
@@ -7,6 +8,7 @@ import {
 } from "../../Applications/Types-Models/Auth/AuthTypes"
 import { DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
 import {AuthSessionModel, RequestLimiterModel} from "../../Domain/Auth/Auth";
+import {RecoveryPasswordSessionModel} from "../../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 
 
 export const AuthRepositories = {
@@ -36,7 +38,7 @@ export const AuthRepositories = {
     },
     /*
     * Retrieves all sessions from the DB by user ID.
-    * Returns a array result, or `null` if no sessions match the `userId`.
+    * Returns the array result, or `null` if no sessions match the `userId`.
     * Catches and throws any exceptions that occur during the retrieval process.
     */
     async GetAllSessionsByUserId (id: string): Promise<SessionsMongoViewType[] | null> {
@@ -162,9 +164,9 @@ export const AuthRepositories = {
         }
     },
     /*
-    * 1. Attempts to delete expired request records from the DB by ID.
-    * 2. Returns the result of the delete operation.
-    * 3. Catches any exceptions that occur during the database insertion and rethrows them as errors.
+    * Attempts to delete expired request records from the DB by ID.
+    * Returns the result of the delete operation.
+    * Catches any exceptions that occur during the database insertion and rethrows them as errors.
     */
     async ClearAllExpUserRequest (id: ObjectId[]): Promise<DeletedMongoSuccessType> {
         try {
@@ -173,4 +175,40 @@ export const AuthRepositories = {
             throw new Error(e)
         }
     },
+    /*
+    * Attempts to create recovery password session.
+    * Returns the result of the operation.
+    * Catches any exceptions that occur during the database insertion and rethrows them as errors.
+    */
+    async CreateRecoveryPasswordSession (data: PasswordRecoveryCreateModelType): Promise<PasswordRecoveryMongoViewType> {
+        try {
+            return await new RecoveryPasswordSessionModel(data).save()
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Get recovery session by recovery code.
+    * Returns the result of the operation.
+    * Catches any exceptions that occur during the database insertion and rethrows them as errors.
+    */
+    async GetRecoveryPasswordSessionByCode (code: string): Promise<PasswordRecoveryMongoViewType | null> {
+        try {
+            return await RecoveryPasswordSessionModel.findOne({code: code})
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    },
+    /*
+    * Delete recovery session by id.
+    * Returns the result of the operation.
+    * Catches any exceptions that occur during the database insertion and rethrows them as errors.
+    */
+    async DeleteRecoveryPasswordSessionById (id: string): Promise<PasswordRecoveryMongoViewType | null> {
+        try {
+            return await RecoveryPasswordSessionModel.findByIdAndDelete(id)
+        } catch (e: any) {
+            throw new Error(e)
+        }
+    }
 }
