@@ -420,7 +420,9 @@ export const AuthService = {
     async ChangeUserPassword (data: ChangePasswordInputViewType): Promise<ResultNotificationType<APIErrorsMessageType>> {
         try {
             const GetCode: PasswordRecoveryMongoViewType | null = await AuthRepositories.GetRecoveryPasswordSessionByCode(data.recoveryCode)
-            if (!GetCode) return {status: ResultNotificationEnum.BadRequest}
+            if (!GetCode) return {status: ResultNotificationEnum.BadRequest, errorField: {
+                    errorsMessages:[{message: "Bad code", field: 'recoveryCode'}]
+            }}
             const { expAt, email, _id: sessionId } = GetCode
 
             if (compareAsc(new Date(), expAt) === 1) return {status: ResultNotificationEnum.BadRequest, errorField: {

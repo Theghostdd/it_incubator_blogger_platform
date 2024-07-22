@@ -156,10 +156,18 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
     it('POST | should not change password, bad code, status: 400', async () => {
         // This simulates a scenario where user want to change password but recovery code not found.
         NewPassData.recoveryCode = 'other-code'
-        await GetRequest()
+        const result = await GetRequest()
             .post(endpoint)
             .send(NewPassData)
             .expect(400)
+        expect(result.body).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'recoveryCode'
+                },
+            ]
+        })
 
         const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
         expect(getSession!.length).toBe(1)
