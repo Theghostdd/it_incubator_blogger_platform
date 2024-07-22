@@ -1,15 +1,12 @@
-import { ObjectId } from "mongodb"
 import {
     CreatePaginationType,
     QueryParamsType,
     ResultDataWithPaginationType
 } from "../../Applications/Types-Models/BasicTypes"
-import { PostViewModelType, PostViewMongoModelType } from "../../Applications/Types-Models/Post/PostTypes"
+import { PostViewModelType } from "../../Applications/Types-Models/Post/PostTypes"
 import { createPostPagination } from "../../Utils/pagination/PostPagination"
 import { PostMapper } from "../../Utils/map/Post/PostMap"
 import {PostModel} from "../../Domain/Post/Post";
-
-
 
 
 
@@ -43,16 +40,15 @@ export const PostQueryRepositories = {
             throw new Error(e)
         }
     },
-    /* 
-    * 1. Convert the `id` from a string to a MongoDB `ObjectId`.
-    * 2. Attempt to find and retrieve the post from the `posts` collection where `_id` matches the converted `ObjectId`.
-    * 3. If a matching post is found (`result` is truthy), map the retrieved post
-    * 4. If no matching post is found (`result` is falsy), return null.
-    * 5. If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
+    /*
+    * Query the database to get a post by ID.
+    * * If the post is not found, the return of emptiness is found.
+    * If the post was found, the updated post model will be returned.
+    * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
     */
     async GetPostById (id: string): Promise<PostViewModelType | null> {
         try {
-            const result = await db.collection<PostViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.posts).findOne({_id: new ObjectId(id)})
+            const result = await PostModel.findById(id)
             return result ? await PostMapper.MapPost(result) : null
         } catch (e: any) {
             throw new Error(e)

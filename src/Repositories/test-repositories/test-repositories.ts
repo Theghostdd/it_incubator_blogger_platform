@@ -1,14 +1,20 @@
-import { db } from "../../Applications/ConnectionDB/Connection"
-import { MONGO_SETTINGS } from "../../settings"
+import {BlogModel} from "../../Domain/Blog/Blog";
+import {PostModel} from "../../Domain/Post/Post";
+import {UserModel} from "../../Domain/User/User";
+import {CommentModel} from "../../Domain/Comment/Comment";
+import {AuthSessionModel} from "../../Domain/Auth/Auth";
 
 
 export const TestRepositories = {
     async deleteManyAllData () {
         try {
-            await db.collection(MONGO_SETTINGS.COLLECTIONS.blogs).deleteMany({})
-            await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).deleteMany({})
-            await db.collection(MONGO_SETTINGS.COLLECTIONS.users).deleteMany({})
-            await db.collection(MONGO_SETTINGS.COLLECTIONS.comments).deleteMany({})
+            await Promise.all([
+                BlogModel.deleteMany({}),
+                PostModel.deleteMany({}),
+                UserModel.deleteMany({}),
+                CommentModel.deleteMany({}),
+                AuthSessionModel.deleteMany({}),
+            ])
             return 
         } catch (e: any) {
             throw new Error(e)

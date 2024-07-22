@@ -1,30 +1,12 @@
-import { CreatePaginationType } from "../../../Applications/Types-Models/BasicTypes";
-import { CommentMongoViewType, CommentViewModelType, CommentsViewModelType } from "../../../Applications/Types-Models/Comment/CommentTypes";
+import {CreatePaginationType, ResultDataWithPaginationType} from "../../../Applications/Types-Models/BasicTypes";
+import { CommentMongoViewType, CommentViewModelType } from "../../../Applications/Types-Models/Comment/CommentTypes";
 
 
 export const CommentsMap = {
-    /* 
-    * 1. Takes comment data.
-    * 2. Maps the comment`s model view for service when creating new comment item.
-    * 3. Returns a structured object.
+    /*
+    * Maps the comment`s model view.
     */
-    async CommentCreateMap (data: CommentMongoViewType): Promise<CommentViewModelType> {
-      return {
-        id: data._id.toString(),
-        content: data.content,
-        commentatorInfo: {
-          userId: data.commentatorInfo.userId,
-          userLogin: data.commentatorInfo.userLogin
-        },
-        createdAt: data.createdAt
-      }
-    },
-    /* 
-    * 1. Takes comment data.
-    * 2. Maps the comment`s model view for query repositories when getting comment by ID.
-    * 3. Returns a structured object.
-    */
-        async MapComment (data: CommentMongoViewType): Promise<CommentViewModelType> {
+    async MapComment (data: CommentMongoViewType): Promise<CommentViewModelType> {
           return {
               id: data._id.toString(),
               content: data.content,
@@ -36,12 +18,9 @@ export const CommentsMap = {
           }
       },
     /* 
-    * 1. Takes comment and pagination data.
-    * 2. Maps the comment`s models view for query repositories to return all comments data with pagination.
-    * 3. If comment data have empty array then 'items' must be empty array.
-    * 4. Returns a structured object.
+    * Maps the comment`s models view, if comment not found return empty array.
     */
-        async MapComments (data: CommentMongoViewType[], pagination: CreatePaginationType): Promise<CommentsViewModelType> {
+        async MapComments (data: CommentMongoViewType[], pagination: CreatePaginationType): Promise<ResultDataWithPaginationType<CommentViewModelType[]>> {
           return {
               pagesCount: pagination.pagesCount,
               page: pagination.page,

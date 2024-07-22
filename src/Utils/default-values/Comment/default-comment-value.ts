@@ -1,10 +1,10 @@
-import { CommentQueryType } from "../../../Applications/Types-Models/Comment/CommentTypes"
+import {QueryParamsType} from "../../../Applications/Types-Models/BasicTypes";
 
 export const defaultCommentValues = {
     /*
     * Sets default values for comment query parameters if they are not provided or invalid.
     */
-    async defaultQueryValue (query: CommentQueryType): Promise<CommentQueryType> {
+    async defaultQueryValue (query: QueryParamsType): Promise<QueryParamsType> {
         return {
             sortBy: query.sortBy ? query.sortBy : 'createdAt',
             sortDirection: (query.sortDirection === 'asc' || query.sortDirection === 'desc') ? query.sortDirection : 'desc',

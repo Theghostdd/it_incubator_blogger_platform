@@ -1,6 +1,4 @@
-import { ObjectId } from "mongodb"
 import { PostCreateInputModelType, PostInputModelType, PostViewMongoModelType } from "../../Applications/Types-Models/Post/PostTypes"
-import { MONGO_SETTINGS } from "../../settings"
 import {PostModel} from "../../Domain/Post/Post";
 
 
@@ -19,41 +17,44 @@ export const PostRepositories = {
         }
     },
     /*     
-    * 1. Convert the `id` from a string to a MongoDB `ObjectId`.
-    * 2. Attempt to update the specified post in the `posts` collection by setting the new values from the provided `data`.
-    * 3. If successful, return the result of the update operation, which includes the count of matched and modified documents.
-    * 4. If an error occurs during the update, catch the error and throw it as a generic Error.
+    * Updating the post by its identifier.
+    *   - title.
+    *   - short description.
+    *   - content.
+    * Return the result of the operation.
+    * If an error occurs during the update, catch the error and throw it as a generic Error.
     */
-    async UpdatePostById (id: string, data: PostInputModelType): Promise<UpdateMongoSuccessType> {
+    async UpdatePostById (id: string, data: PostInputModelType): Promise<PostViewMongoModelType | null> {
         try {
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).updateOne({_id: new ObjectId(id)}, {$set: {...data}})
+            return await PostModel.findByIdAndUpdate(id, {
+                title: data.title,
+                shortDescription: data.shortDescription,
+                content: data.content
+            })
         } catch (e: any) {
             throw new Error(e)
         }
     },
     /* 
-    * 1. Convert the `id` from a string to a MongoDB `ObjectId`.
-    * 2. Attempt to delete the specified post from the `posts` collection where `_id` matches the converted `ObjectId`.
-    * 3. If successful, return the result of the delete operation, which includes the count of deleted documents.
-    * 4. If an error occurs during the delete operation, catch the error and throw it as a generic Error.
+    * Deleting a post by its ID.
+    * Return the result of the operation.
+    * If an error occurs during the delete operation, catch the error and throw it as a generic Error.
     */
-    async DeletePostById (id: string): Promise<DeletedMongoSuccessType> {
+    async DeletePostById (id: string): Promise<PostViewMongoModelType | null> {
         try {   
-            return await db.collection(MONGO_SETTINGS.COLLECTIONS.posts).deleteOne({_id: new ObjectId(id)})
+            return await PostModel.findByIdAndDelete(id)
         } catch (e: any) {
             throw new Error(e)
         }
     },
     /*
-    * 1. Convert the `id` from a string to a MongoDB `ObjectId`.
-    * 2. Attempt to find and retrieve the post from the `posts` collection where `_id` matches the converted `ObjectId`.
-    * 3. If a matching post is found, return the post document as `PostViewMongoModelType`.
-    * 4. If no matching post is found, return null.
-    * 5. If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
+    * Getting a post by its ID.
+    * Return the result of the operation.
+    * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
     */
-    async GetPostByIdWithoutMap (id: string): Promise<PostViewMongoModelType | null> {
+    async GetPostById (id: string): Promise<PostViewMongoModelType | null> {
         try {   
-            return await db.collection<PostViewMongoModelType>(MONGO_SETTINGS.COLLECTIONS.posts).findOne({_id: new ObjectId(id)})
+            return await PostModel.findById(id)
         } catch (e: any) {
             throw new Error(e)
         }

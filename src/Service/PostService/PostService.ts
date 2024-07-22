@@ -1,4 +1,4 @@
-import { CreatedMongoSuccessType, DeletedMongoSuccessType, ResultNotificationEnum, ResultNotificationType, UpdateMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
+import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
 import { CommentCreateType, CommentInputModelType, CommentMongoViewType, CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes"
 import { PostCreateInputModelType, PostInputModelType, PostViewModelType, PostViewMongoModelType } from "../../Applications/Types-Models/Post/PostTypes"
 import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogRepositories"
@@ -10,6 +10,7 @@ import { defaultPostValues } from "../../Utils/default-values/Post/default-post-
 import { CommentsMap } from "../../Utils/map/Comments/CommentsMap"
 import { PostMapper } from "../../Utils/map/Post/PostMap"
 import {BlogViewMongoType} from "../../Applications/Types-Models/Blog/BlogTypes";
+import {UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes";
 
 
 
@@ -19,7 +20,7 @@ export const PostService = {
     /*
     * Checking the existence of the blog.
     * If the blog does not exist, throw out the error.
-    * * If a blog exists, create a post object to insert data into the database.
+    * If a blog exists, create a post object to insert data into the database.
     * Creation of a long-term contract.
     * Returning success and mapping the returned object to return the post model.
     * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
@@ -37,60 +38,52 @@ export const PostService = {
             throw new Error(e)
         }
     },
-    /* 
-    * 1. Update the post item by post ID
-    * 2. Return HTTP status 
-    *   - If the item updated status: 204 "No content",
-    *   - If the item not found status: 404 "Not found"
+    /*
+    * Updating a post by its ID.
+    * If the post was not found, the error was returned.
+    * If the post has been found and updated, the return is successful.
+    * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
     */
     async UpdatePostById (id: string, data: PostInputModelType): Promise<ResultNotificationType> { 
         try {
-            const result: UpdateMongoSuccessType = await PostRepositories.UpdatePostById(id, data)
-            return result.matchedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
+            const result: PostViewMongoModelType | null = await PostRepositories.UpdatePostById(id, data)
+            return result ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
         } catch (e: any) {
             throw new Error(e)
         }   
     },
-        /* 
-    * 1. Delete the post item by post ID
-    * 2. Return HTTP status 
-    *   - If the item deleted status: 204 "No content",
-    *   - If the item not found status: 404 "Not found"
+    /*
+    * Deleting a post by its ID.
+    * If the error was not returned when deleting the post.
+    * If the post was successfully found and deleted, a success return.
+    * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
     */
     async DeletePostById (id: string): Promise<ResultNotificationType> {
         try {
-            const result: DeletedMongoSuccessType = await PostRepositories.DeletePostById(id)
-            return result.deletedCount > 0 ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
+            const result: PostViewMongoModelType | null = await PostRepositories.DeletePostById(id)
+            return result ? {status: ResultNotificationEnum.Success} : {status: ResultNotificationEnum.NotFound}
         } catch (e: any) {
             throw new Error(e)
         }
     },
     /*
-    * 1. Fetch the user associated with `userId` 
-    *    - If the user is not found, return a `NotFound` status.
-    * 2. Fetch the post associated with `postId`
-    *    - If the post is not found, return a `NotFound` status.
-    * 3. Create a comment data object `CreateData` with the provided content and additional information
-    *    such as the user's ID and login, the post's ID, and the blog's ID and name.
-    * 4. Set the comment's creation date
-    * 5. Create the comment in the database
-    * 6. Retrieve the newly created comment from the database using its ID obtained from the creation result.
-    *    - If the comment cannot be retrieved, return a `NotFound` status.
-    * 7. Map the created comment to the appropriate view model 
-    * 8. Return a success status along with the mapped comment data.
+    * Checking that the user exists before creating a post.
+    * If the user does not exist, the error is returned.
+    * * If the user exists, check the existence of the post.
+    * If the post does not exist, the error is returned.
+    * If the post exists, create a data object to create a comment document.
+    * Create a comment on the post.
+    * Return of the post model for the client.
+    * If an error occurs during the retrieval process, catch the error and throw it as a generic Error.
     */
     async CreateCommentByPostId (data: CommentInputModelType, postId: string, userId: string): Promise<ResultNotificationType<CommentViewModelType>> {
         try {
 
-            const getUser: UserViewMongoModelType | null = await UserRepositories.GetUserByIdWithoutMap(userId)
-            if (!getUser) {
-                return {status: ResultNotificationEnum.NotFound}
-            }
+            const getUser: UserViewMongoType | null = await UserRepositories.GetUserById(userId)
+            if (!getUser) return {status: ResultNotificationEnum.NotFound}
 
-            const getPost: PostViewMongoModelType | null = await PostRepositories.GetPostByIdWithoutMap(postId)
-            if (!getPost) {
-                return {status: ResultNotificationEnum.NotFound} 
-            }
+            const getPost: PostViewMongoModelType | null = await PostRepositories.GetPostById(postId)
+            if (!getPost) return {status: ResultNotificationEnum.NotFound}
 
             const CreateData: CommentCreateType = {
                 content: data.content,
@@ -103,19 +96,13 @@ export const PostService = {
                 },
                 blogInfo: {
                     blogId: getPost.blogId,
-                    blogName: getPost.blogName
                 },
                 ...await defaultCommentValues.defaultCreateValues()
             }
 
-            const resultCreate: CreatedMongoSuccessType = await CommentRepositories.CreateComment(CreateData)
+            const resultCreate: CommentMongoViewType = await CommentRepositories.CreateComment(CreateData)
 
-            const getCreatedComment: CommentMongoViewType | null = await CommentRepositories.GetCommentByIdWithoutMap(resultCreate.insertedId.toString())
-            if (!getCreatedComment) {
-                return {status: ResultNotificationEnum.NotFound}
-            }
-
-            return {status: ResultNotificationEnum.Success, data: await CommentsMap.CommentCreateMap(getCreatedComment)}
+            return {status: ResultNotificationEnum.Success, data: await CommentsMap.MapComment(resultCreate)}
         } catch (e: any) {
             throw new Error(e)
         }

@@ -1,7 +1,6 @@
 import request from "supertest"
 import { app } from "../../../src/app"
 import { ROUTERS_SETTINGS } from "../../../src/settings"
-import { db } from "../../../src/Applications/ConnectionDB/Connection";
 
 
 

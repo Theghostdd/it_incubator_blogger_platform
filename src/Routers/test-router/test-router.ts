@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { ROUTERS_SETTINGS, SETTINGS } from "../../settings";
+import { ROUTERS_SETTINGS } from "../../settings";
 import { SaveError } from "../../Utils/error-utils/save-error";
 import { TestService } from "../../Service/test-service/test-service";
 
@@ -10,7 +10,7 @@ TestRouter.delete(ROUTERS_SETTINGS.TEST.test_all_data, async (req: Request, res:
         await TestService.DellAllElements()
         return res.sendStatus(204)
     } catch (e) {
-        SaveError(`${ROUTERS_SETTINGS.TEST.test}${ROUTERS_SETTINGS.TEST.test_all_data}`, 'DELETE', 'Delete the all data', e)
+        await SaveError(`${ROUTERS_SETTINGS.TEST.test}${ROUTERS_SETTINGS.TEST.test_all_data}`, 'DELETE', 'Delete the all data', e)
         return res.sendStatus(500)
     }
 })
