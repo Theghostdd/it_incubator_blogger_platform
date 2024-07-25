@@ -17,7 +17,7 @@ export const inputValidation = (req: Request, res: Response, next: NextFunction)
     return next()
 }
 
-export const RuleValidations = {
+export const ruleBodyValidations = {
     validName: body("name")
         .isString()
         .withMessage("The name must be a string")

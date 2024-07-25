@@ -4,8 +4,8 @@ import {
     ResultDataWithPaginationType
 } from "../../Applications/Types-Models/BasicTypes"
 import { CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes"
-import { CommentsMap } from "../../Utils/map/Comments/CommentsMap"
-import { createCommentPagination } from "../../Utils/pagination/CommentPagination"
+import { CommentsMap } from "../../utils/map/Comments/CommentsMap"
+import { createCommentPagination } from "../../utils/pagination/CommentPagination"
 import {CommentModel} from "../../Domain/Comment/Comment";
 
 export const CommentQueryRepositories = {

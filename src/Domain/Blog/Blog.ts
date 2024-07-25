@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {MONGO_SETTINGS} from "../../settings";
-import { BlogViewMongoType} from "../../Applications/Types-Models/Blog/BlogTypes";
+import {BlogViewMongoType} from "../../features/blog/blog-types";
 
 
 

@@ -597,6 +597,14 @@ describe(ChangePassService, () => {
         changePassData.recoveryCode = 'other-code'
         const result = await ChangePassService(changePassData)
         expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+        expect(result.errorField).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'recoveryCode'
+                }
+            ]
+        })
 
         const getUserSecond = await UserModule.GetAllUsersModule()
         expect(getUserSecond![0].password).toBe(getUserFirst![0].password)
@@ -614,6 +622,14 @@ describe(ChangePassService, () => {
 
         const result = await ChangePassService(changePassData)
         expect(result.status).toBe(ResultNotificationEnum.BadRequest)
+        expect(result.errorField).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'recoveryCode'
+                }
+            ]
+        })
 
         const getUserSecond = await UserModule.GetAllUsersModule()
         expect(getUserSecond![0].password).toBe(getUserFirst![0].password)

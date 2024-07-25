@@ -4,7 +4,7 @@ import { addSeconds, subSeconds} from "date-fns";
 import { AuthService } from "../../../Service/AuthService/AuthService";
 import { ResultNotificationEnum, ResultNotificationType } from "../../Types-Models/BasicTypes";
 import { RequestLimiterInputModelViewType } from "../../Types-Models/Auth/AuthTypes";
-import { SaveError } from "../../../Utils/error-utils/save-error";
+import { SaveError } from "../../../utils/error-utils/save-error";
 /*
 * 1. Gathers data including IP address, request URL, and a timestamp with 10 seconds added.
 * 2. Calls an external service with the collected data.
@@ -17,8 +17,10 @@ import { SaveError } from "../../../Utils/error-utils/save-error";
 */
 export const requestLimiter = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        if (!req.ip || !req.socket.remoteAddress) return res.sendStatus(403)
+        
         const data: RequestLimiterInputModelViewType = {
-            ip: req.ip || req.socket.remoteAddress!,
+            ip: req.ip || req.socket.remoteAddress,
             url: req.originalUrl,
             date: addSeconds(new Date(), 10).toISOString(),
             quantity: 1

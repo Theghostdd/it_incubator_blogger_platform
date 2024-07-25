@@ -21,15 +21,15 @@ import {
     RegistrationConfirmCodeType,
     RegistrationCreatType, RegistrationInputType, RegistrationResendConfirmCodeInputType,
 } from "../../Applications/Types-Models/Registration/RegistrationTypes"
-import {RegistrationDefaultValue} from "../../Utils/default-values/Registration/registration-default-value"
+import {RegistrationDefaultValue} from "../../utils/default-values/Registration/registration-default-value"
 import {NodemailerService} from "../../Applications/Nodemailer/nodemailer"
-import {GenerateUuid} from "../../Utils/generate-uuid/generate-uuid"
+import {GenerateUuid} from "../../utils/generate-uuid/generate-uuid"
 import {addDays, addMinutes, compareAsc} from "date-fns";
 import {PatternsMail} from "../../Applications/Nodemailer/patterns/patterns"
 import {PatternMail} from "../../Applications/Types-Models/PatternsMail/patternsMailTypes"
 import {credentialJWT} from "../../Applications/JWT/jwt"
 import {AuthRepositories} from "../../Repositories/AuthRepositories/AuthRepositories"
-import {SaveError} from "../../Utils/error-utils/save-error";
+import {SaveError} from "../../utils/error-utils/save-error";
 
 
 export const AuthService = {

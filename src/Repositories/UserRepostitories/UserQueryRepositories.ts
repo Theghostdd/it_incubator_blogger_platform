@@ -3,8 +3,8 @@ import {
     QueryParamsType,
     ResultDataWithPaginationType
 } from "../../Applications/Types-Models/BasicTypes"
-import { CreateUserPagination } from "../../Utils/pagination/UserPagination"
-import { UserMap } from "../../Utils/map/User/UserMap"
+import { CreateUserPagination } from "../../utils/pagination/UserPagination"
+import { UserMap } from "../../utils/map/User/UserMap"
 import {
     UserMeModelViewType,
     UserQueryParamsType,

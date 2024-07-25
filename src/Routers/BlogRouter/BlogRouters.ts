@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { authValidation } from "../../Applications/Middleware/auth/AdminAuth/AdminAuth";
+import { ruleBodyValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
+import { authValidation } from "../../internal/middleware/auth/AdminAuth/AdminAuth";
 import { ROUTERS_SETTINGS } from "../../settings";
-import { SaveError } from "../../Utils/error-utils/save-error";
+import { SaveError } from "../../utils/error-utils/save-error";
 import { BlogInputModelType, BlogQueryParamsType, BlogViewModelType } from "../../Applications/Types-Models/Blog/BlogTypes";
 import { BlogQueryRepositories } from "../../Repositories/BlogRepositories/BlogQueryRepositories";
 import { BlogService } from "../../Service/BlogService/BlogService";
@@ -15,8 +15,8 @@ import {
     ResultNotificationType
 } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
-import { defaultBlogValues } from "../../Utils/default-values/Blog/default-blog-value";
-import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value";
+import { defaultBlogValues } from "../../utils/default-values/Blog/default-blog-value";
+import { defaultPostValues } from "../../utils/default-values/Post/default-post-value";
 
 export const BlogRouter = Router()
 /*
@@ -24,17 +24,9 @@ export const BlogRouter = Router()
 * Getting all blogs according to query parameters, returning all found blogs
 * Responds with status 500 (Internal Server Error) if an error occurs.
 */
-BlogRouter.get('/',
-    async (req: Request<{}, {}, {}, QueryParamsType<BlogQueryParamsType>>, res: Response<ResultDataWithPaginationType<BlogViewModelType[]>>) => {
-    try {
-        const queryValue: QueryParamsType<BlogQueryParamsType> = await defaultBlogValues.defaultQueryValue(req.query)
-        const result: ResultDataWithPaginationType<BlogViewModelType[]> = await BlogQueryRepositories.GetAllBlogs(queryValue)
-        return res.status(200).json(result)
-    } catch (e) {
-        await SaveError(`${ROUTERS_SETTINGS.BLOG.blogs}/`, 'GET', 'Get the all blog items', e)
-        return res.sendStatus(500)
-    }    
-})
+BlogRouter.get('/',)
+
+
 /*
 * Getting a blog by its ID.
 * Processing the response from the repository in messages with a found or not found document.
@@ -75,9 +67,9 @@ async (req: Request<{id: string}, {}, {}, QueryParamsType>, res: Response<Result
 */
 BlogRouter.post('/', 
 authValidation,
-RuleValidations.validDescription,
-RuleValidations.validName,
-RuleValidations.validWebsiteUrl,
+ruleBodyValidations.validDescription,
+ruleBodyValidations.validName,
+ruleBodyValidations.validWebsiteUrl,
 inputValidation,
 async (req: Request<{}, {}, BlogInputModelType>, res: Response<BlogViewModelType>) => {
     try {
@@ -101,9 +93,9 @@ async (req: Request<{}, {}, BlogInputModelType>, res: Response<BlogViewModelType
 */ 
 BlogRouter.post(`/:id${ROUTERS_SETTINGS.BLOG.blogs_posts}`, 
 authValidation,
-RuleValidations.validTitle,
-RuleValidations.validShortDescription,
-RuleValidations.validContent,
+ruleBodyValidations.validTitle,
+ruleBodyValidations.validShortDescription,
+ruleBodyValidations.validContent,
 inputValidation,
 async (req: Request<{id: string}, {}, PostInputModelType>, res: Response<PostViewModelType>)  => {
     try {
@@ -130,9 +122,9 @@ async (req: Request<{id: string}, {}, PostInputModelType>, res: Response<PostVie
 */
 BlogRouter.put('/:id',
 authValidation,
-RuleValidations.validDescription,
-RuleValidations.validName,
-RuleValidations.validWebsiteUrl,
+ruleBodyValidations.validDescription,
+ruleBodyValidations.validName,
+ruleBodyValidations.validWebsiteUrl,
 inputValidation,
 async (req: Request<{id: string}, {}, BlogInputModelType>, res: Response) => {
     try {

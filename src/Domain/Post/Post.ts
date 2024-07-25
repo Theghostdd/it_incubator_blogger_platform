@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {MONGO_SETTINGS} from "../../settings";
-import {PostViewMongoModelType} from "../../Applications/Types-Models/Post/PostTypes";
+import {PostViewMongoModelType} from "../../features/post/post-types";
 
 
 const PostSchema = new mongoose.Schema<PostViewMongoModelType>({

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { authValidation } from "../../Applications/Middleware/auth/AdminAuth/AdminAuth";
-import { SaveError } from "../../Utils/error-utils/save-error";
+import { ruleBodyValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
+import { authValidation } from "../../internal/middleware/auth/AdminAuth/AdminAuth";
+import { SaveError } from "../../utils/error-utils/save-error";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { PostService } from "../../Service/PostService/PostService";
 import { PostInputModelType, PostViewModelType } from "../../Applications/Types-Models/Post/PostTypes";
@@ -13,9 +13,9 @@ import {
 } from "../../Applications/Types-Models/BasicTypes";
 import { PostQueryRepositories } from "../../Repositories/PostRepositories/PostQueryRepositories";
 import { CommentInputModelType, CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes";
-import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
-import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value";
-import { defaultCommentValues } from "../../Utils/default-values/Comment/default-comment-value";
+import { AuthUser } from "../../internal/middleware/auth/UserAuth/AuthUser";
+import { defaultPostValues } from "../../utils/default-values/Post/default-post-value";
+import { defaultCommentValues } from "../../utils/default-values/Comment/default-comment-value";
 import { CommentQueryRepositories } from "../../Repositories/CommentRepositories/CommentQueryRepositories";
 
 
@@ -63,10 +63,10 @@ PostRouter.get('/:id',
 */
 PostRouter.post('/', 
 authValidation,
-RuleValidations.validTitle,
-RuleValidations.validShortDescription,
-RuleValidations.validContent,
-RuleValidations.validBlogId,
+ruleBodyValidations.validTitle,
+ruleBodyValidations.validShortDescription,
+ruleBodyValidations.validContent,
+ruleBodyValidations.validBlogId,
 inputValidation,
 async (req: Request<{}, {}, PostInputModelType>, res: Response<PostViewModelType>) => {
     try {
@@ -92,10 +92,10 @@ async (req: Request<{}, {}, PostInputModelType>, res: Response<PostViewModelType
 */
 PostRouter.put('/:id', 
 authValidation,
-RuleValidations.validTitle,
-RuleValidations.validShortDescription,
-RuleValidations.validContent,
-RuleValidations.validBlogId,
+ruleBodyValidations.validTitle,
+ruleBodyValidations.validShortDescription,
+ruleBodyValidations.validContent,
+ruleBodyValidations.validBlogId,
 inputValidation,
 async (req: Request<{id: string}, {}, PostInputModelType>, res: Response) => {
     try {
@@ -145,7 +145,7 @@ async (req: Request<{id: string}>, res: Response) => {
 */
 PostRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
 AuthUser.AuthUserByAccessToken,
-RuleValidations.validContentComment,
+ruleBodyValidations.validContentComment,
 inputValidation,
 async (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelType>) => {
     try {

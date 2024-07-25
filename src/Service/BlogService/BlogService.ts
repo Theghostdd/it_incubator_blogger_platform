@@ -6,8 +6,8 @@ import {
     BlogViewMongoType
 } from "../../Applications/Types-Models/Blog/BlogTypes"
 import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogRepositories"
-import { defaultBlogValues } from "../../Utils/default-values/Blog/default-blog-value"
-import { BlogMapper } from "../../Utils/map/Blog/BlogMap"
+import { defaultBlogValues } from "../../utils/default-values/Blog/default-blog-value"
+import { BlogMapper } from "../../utils/map/Blog/BlogMap"
 
 export const BlogService = {
     /*

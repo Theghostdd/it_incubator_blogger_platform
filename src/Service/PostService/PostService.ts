@@ -5,10 +5,10 @@ import { BlogRepositories } from "../../Repositories/BlogRepositories/BlogReposi
 import { CommentRepositories } from "../../Repositories/CommentRepositories/CommentRepositories"
 import { PostRepositories } from "../../Repositories/PostRepositories/PostRepositories"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
-import { defaultCommentValues } from "../../Utils/default-values/Comment/default-comment-value"
-import { defaultPostValues } from "../../Utils/default-values/Post/default-post-value"
-import { CommentsMap } from "../../Utils/map/Comments/CommentsMap"
-import { PostMapper } from "../../Utils/map/Post/PostMap"
+import { defaultCommentValues } from "../../utils/default-values/Comment/default-comment-value"
+import { defaultPostValues } from "../../utils/default-values/Post/default-post-value"
+import { CommentsMap } from "../../utils/map/Comments/CommentsMap"
+import { PostMapper } from "../../utils/map/Post/PostMap"
 import {BlogViewMongoType} from "../../Applications/Types-Models/Blog/BlogTypes";
 import {UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes";
 

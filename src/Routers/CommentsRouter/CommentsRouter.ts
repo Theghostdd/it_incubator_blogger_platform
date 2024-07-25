@@ -1,12 +1,12 @@
 import { Router, Request, Response } from "express";
-import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
+import { AuthUser } from "../../internal/middleware/auth/UserAuth/AuthUser";
 import { ROUTERS_SETTINGS } from "../../settings";
-import { SaveError } from "../../Utils/error-utils/save-error";
+import { SaveError } from "../../utils/error-utils/save-error";
 import { CommentQueryRepositories } from "../../Repositories/CommentRepositories/CommentQueryRepositories";
 import { CommentInputModelType, CommentViewModelType } from "../../Applications/Types-Models/Comment/CommentTypes";
 import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes";
 import { CommentService } from "../../Service/CommentService/CommentService";
-import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
+import { ruleBodyValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
 
 export const CommentsRouter = Router()
 /* 
@@ -33,7 +33,7 @@ async (req: Request<{id: string}>, res: Response<CommentViewModelType>) => {
 */
 CommentsRouter.put('/:id', 
 AuthUser.AuthUserByAccessToken,
-RuleValidations.validContentComment,
+ruleBodyValidations.validContentComment,
 inputValidation,
 async (req: Request<{id: string}, {}, CommentInputModelType>, res: Response) => {
     try {

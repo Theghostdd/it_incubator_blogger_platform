@@ -2,8 +2,8 @@ import { bcryptService } from "../../Applications/Middleware/bcrypt/bcrypt"
 import { APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
 import {UserViewModelType, UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes"
 import { UserRepositories } from "../../Repositories/UserRepostitories/UserRepositories"
-import { defaultUserValues } from "../../Utils/default-values/User/default-user-value"
-import { UserMap } from "../../Utils/map/User/UserMap"
+import { defaultUserValues } from "../../utils/default-values/User/default-user-value"
+import { UserMap } from "../../utils/map/User/UserMap"
 import {
     RegistrationCreatType,
     RegistrationInputType

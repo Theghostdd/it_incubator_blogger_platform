@@ -1,22 +1,25 @@
 import { Router, Request, Response } from "express";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { AuthService } from "../../Service/AuthService/AuthService";
-import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
+import { ruleBodyValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
 import {
     AuthModelServiceType,
     AuthOutputModelType, ChangePasswordInputViewType, PasswordRecoveryInputViewType,
     UserLoginInputViewType,
 } from "../../Applications/Types-Models/Auth/AuthTypes";
-import { SaveError } from "../../Utils/error-utils/save-error";
+import { SaveError } from "../../utils/error-utils/save-error";
 import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType } from "../../Applications/Types-Models/BasicTypes";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
-import { AuthUser } from "../../Applications/Middleware/auth/UserAuth/AuthUser";
+import { AuthUser } from "../../internal/middleware/auth/UserAuth/AuthUser";
 import { requestLimiter } from "../../Applications/Middleware/request-limit/request-limit";
 import {
     RegistrationConfirmCodeType,
     RegistrationInputType, RegistrationResendConfirmCodeInputType
 } from "../../Applications/Types-Models/Registration/RegistrationTypes";
 import {UserMeModelViewType} from "../../Applications/Types-Models/User/UserTypes";
+
+
+
 
 export const AuthRouter = Router()
 /*
@@ -30,8 +33,8 @@ export const AuthRouter = Router()
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
 requestLimiter,
-RuleValidations.validLoginOrEmail,
-RuleValidations.validPassword,
+ruleBodyValidations.validLoginOrEmail,
+ruleBodyValidations.validPassword,
 inputValidation,
 async (req: Request<{}, {}, UserLoginInputViewType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) => {
     try {
@@ -80,9 +83,9 @@ async (req: Request, res: Response<UserMeModelViewType>) => {
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration}`, 
 requestLimiter,
-RuleValidations.validLogin,
-RuleValidations.validEmail,
-RuleValidations.validPassword,
+ruleBodyValidations.validLogin,
+ruleBodyValidations.validEmail,
+ruleBodyValidations.validPassword,
 inputValidation,
 async (req: Request<{}, {}, RegistrationInputType>, res: Response<APIErrorsMessageType>) => {
     try {
@@ -108,7 +111,7 @@ async (req: Request<{}, {}, RegistrationInputType>, res: Response<APIErrorsMessa
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_confirmation}`, 
 requestLimiter,
-RuleValidations.validConfirmCode,
+ruleBodyValidations.validConfirmCode,
 inputValidation,
 async (req: Request<{}, {}, RegistrationConfirmCodeType>, res: Response<APIErrorsMessageType>) => {
     try {
@@ -134,7 +137,7 @@ async (req: Request<{}, {}, RegistrationConfirmCodeType>, res: Response<APIError
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.registration_email_resending}`, 
 requestLimiter,
-RuleValidations.validEmail,
+ruleBodyValidations.validEmail,
 inputValidation,
 async (req: Request<{}, {}, RegistrationResendConfirmCodeInputType>, res: Response<APIErrorsMessageType>) => {
     try {
@@ -209,7 +212,7 @@ async (req: Request, res: Response) => {
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.password_recovery}`,
     requestLimiter,
-    RuleValidations.validEmail,
+    ruleBodyValidations.validEmail,
     inputValidation,
     async (req: Request<{}, {}, PasswordRecoveryInputViewType>, res: Response) => {
         try {
@@ -233,8 +236,8 @@ AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.password_recovery}`,
 */
 AuthRouter.post(`${ROUTERS_SETTINGS.AUTH.new_password}`,
     requestLimiter,
-    RuleValidations.validNewPassword,
-    RuleValidations.validRecoveryCode,
+    ruleBodyValidations.validNewPassword,
+    ruleBodyValidations.validRecoveryCode,
     inputValidation,
     async (req: Request<{}, {}, ChangePasswordInputViewType>, res: Response<APIErrorsMessageType>) => {
         try {

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
-import { authValidation } from "../../Applications/Middleware/auth/AdminAuth/AdminAuth";
-import { RuleValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
-import { SaveError } from "../../Utils/error-utils/save-error";
+import { authValidation } from "../../internal/middleware/auth/AdminAuth/AdminAuth";
+import { ruleBodyValidations, inputValidation } from "../../Applications/Middleware/input-validation/InputValidations";
+import { SaveError } from "../../utils/error-utils/save-error";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { UserService } from "../../Service/UserService/UserService";
 import {
@@ -11,7 +11,7 @@ import {
     ResultNotificationType
 } from "../../Applications/Types-Models/BasicTypes";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
-import { defaultUserValues } from "../../Utils/default-values/User/default-user-value";
+import { defaultUserValues } from "../../utils/default-values/User/default-user-value";
 import {UserQueryParamsType, UserViewModelType} from "../../Applications/Types-Models/User/UserTypes";
 import {RegistrationInputType} from "../../Applications/Types-Models/Registration/RegistrationTypes";
 
@@ -45,9 +45,9 @@ async (req: Request<{}, {}, {}, QueryParamsType<UserQueryParamsType>>, res: Resp
 */ 
 UserRouter.post('/', 
 authValidation,
-RuleValidations.validLogin, 
-RuleValidations.validPassword,
-RuleValidations.validEmail,
+ruleBodyValidations.validLogin,
+ruleBodyValidations.validPassword,
+ruleBodyValidations.validEmail,
 inputValidation,
 async (req: Request<{}, {}, RegistrationInputType>, res: Response<UserViewModelType | APIErrorsMessageType>) => {
     try {
