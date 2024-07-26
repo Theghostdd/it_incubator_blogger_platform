@@ -1,9 +1,9 @@
-import {ResultDataWithPaginationType} from "../../../Applications/Types-Models/BasicTypes"
+import {ResultDataWithPaginationType} from "../../../typings/basic-types"
 import {BlogViewModelType, BlogViewMongoType} from "../../../features/blog/blog-types";
 
 
 export const blogMapper = {
-    mapBlogs (data: BlogViewMongoType[], pagesCount: number, pageNumber: number, pageSize: number, totalCount: number): ResultDataWithPaginationType<BlogViewModelType[]> {
+    mapBlogs (data: BlogViewMongoType[], pagesCount: number, pageNumber: number, pageSize: number, totalCount: number): ResultDataWithPaginationType<BlogViewModelType[] | []> {
         return {
             pagesCount: pagesCount,
             page: pageNumber,

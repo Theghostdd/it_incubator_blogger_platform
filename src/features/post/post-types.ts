@@ -2,7 +2,7 @@ import {WithId} from "mongodb"
 /*
 *
 *
-*       Post View type
+*       post View type
 *
 *
 */

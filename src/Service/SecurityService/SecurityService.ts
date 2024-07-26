@@ -1,5 +1,5 @@
 import { RefreshAuthOutputModelType, SessionsMongoViewType } from "../../Applications/Types-Models/Auth/AuthTypes"
-import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes"
+import { ResultNotificationEnum, ResultNotificationType } from "../../typings/basic-types"
 import { AuthRepositories } from "../../Repositories/AuthRepositories/AuthRepositories"
 import { AuthService } from "../AuthService/AuthService"
 

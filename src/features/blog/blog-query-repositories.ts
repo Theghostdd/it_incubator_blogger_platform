@@ -1,7 +1,7 @@
 import {
     QueryParamsType,
     ResultDataWithPaginationType
-} from "../../Applications/Types-Models/BasicTypes";
+} from "../../typings/basic-types";
 
 import {BlogModel} from "../../Domain/Blog/Blog";
 import {defaultQueryValues} from "../../internal/utils/default-values/default-query-values";

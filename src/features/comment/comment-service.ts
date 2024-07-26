@@ -1,4 +1,4 @@
-import {ResultNotificationEnum, ResultNotificationType} from "../../Applications/Types-Models/BasicTypes";
+import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
 import {CommentInputModelType} from "./comment-types";
 import {CommentRepositories} from "./comment-repositories";
 import {CommentModel} from "../../Domain/Comment/Comment";

@@ -1,11 +1,11 @@
 import { ObjectId } from "mongodb";
-import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
+import { ResultNotificationEnum } from "../../../src/typings/basic-types";
 import { AuthService } from "../../../src/Service/AuthService/AuthService";
 import { MONGO_SETTINGS } from "../../../src/settings";
 import { AuthDto, InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
 import {delay, Drop, RecoverPasswordSession, UserModule} from "../modules/modules";
 import mongoose from "mongoose";
-import {NodemailerService} from "../../../src/Applications/Nodemailer/nodemailer";
+import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer";
 import {addMinutes} from "date-fns";
 import {AuthRepositories} from "../../../src/Repositories/AuthRepositories/AuthRepositories";
 
@@ -40,7 +40,7 @@ describe(LoginService, () => {
         RegistrationData = structuredClone(RegistrationDto.RegistrationUserData)
     })
 
-    it('should auth user, and create session for user, status: Success', async () => {
+    it('should auth-registration user, and create session for user, status: Success', async () => {
         const CreateUser = await UserModule.CreateUserModule(InsertOneUserData)
 
         const result = await LoginService(AuthData, '192.11.11', 'Chrome')
@@ -64,7 +64,7 @@ describe(LoginService, () => {
         })
     })
 
-    it('should not auth user, login or email not found, session not be created, status: Unauthorized', async () => {
+    it('should not auth-registration user, login or email not found, session not be created, status: Unauthorized', async () => {
         const result = await LoginService(AuthData, '192.11.11', 'Chrome')
         expect(result.status).toBe(ResultNotificationEnum.Unauthorized)
 
@@ -72,7 +72,7 @@ describe(LoginService, () => {
         expect(CheckSession!.length).toBe(0)
     })
 
-    it('should not auth user, email not confirmed, session not be created, status: Bad Request', async () => {
+    it('should not auth-registration user, email not confirmed, session not be created, status: Bad Request', async () => {
         await RegistrationService(RegistrationData)
 
         const result = await LoginService(AuthData, '192.11.11', 'Chrome')
@@ -90,7 +90,7 @@ describe(LoginService, () => {
         expect(CheckSession!.length).toBe(0)
     })
 
-    it('should not auth user, password isn`t correct, session not be created, status: Unauthorized', async () => {
+    it('should not auth-registration user, password isn`t correct, session not be created, status: Unauthorized', async () => {
         await UserModule.CreateUserModule(InsertOneUserData)
 
         AuthData = {...AuthData, password: 'otherPassword'}
@@ -101,7 +101,7 @@ describe(LoginService, () => {
         expect(CheckSession!.length).toBe(0)
     })
 
-    it('should auth user, from two devices, must be two sessions, status: Success', async () => {
+    it('should auth-registration user, from two devices, must be two sessions, status: Success', async () => {
         await UserModule.CreateUserModule(InsertOneUserData)
         await LoginService(AuthData, '191.22.33', 'Chrome')
         await delay(1000)

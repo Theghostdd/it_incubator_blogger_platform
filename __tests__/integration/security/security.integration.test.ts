@@ -2,7 +2,7 @@ import { MONGO_SETTINGS } from "../../../src/settings";
 import { SecurityService } from '../../../src/Service/SecurityService/SecurityService'
 import { AuthDto, InsertAuthDto } from "../../Dto/AuthDto";
 import { AuthService } from "../../../src/Service/AuthService/AuthService";
-import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
+import { ResultNotificationEnum } from "../../../src/typings/basic-types";
 import { ObjectId } from "mongodb";
 import { Drop, UserModule} from "../modules/modules";
 import mongoose from "mongoose";

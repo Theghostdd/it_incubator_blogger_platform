@@ -8,14 +8,14 @@ import {
     UserLoginInputViewType,
 } from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SaveError } from "../../utils/error-utils/save-error";
-import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType } from "../../Applications/Types-Models/BasicTypes";
+import { ResultNotificationType, ResultNotificationEnum, APIErrorsMessageType } from "../../typings/basic-types";
 import { UserQueryRepositories } from "../../Repositories/UserRepostitories/UserQueryRepositories";
 import { AuthUser } from "../../internal/middleware/auth/UserAuth/AuthUser";
-import { requestLimiter } from "../../Applications/Middleware/request-limit/request-limit";
+import { requestLimiter } from "../../internal/middleware/request-limit/request-limit";
 import {
     RegistrationConfirmCodeType,
     RegistrationInputType, RegistrationResendConfirmCodeInputType
-} from "../../Applications/Types-Models/Registration/RegistrationTypes";
+} from "../../Applications/Types-Models/registration/RegistrationTypes";
 import {UserMeModelViewType} from "../../Applications/Types-Models/User/UserTypes";
 
 
@@ -98,7 +98,7 @@ async (req: Request<{}, {}, RegistrationInputType>, res: Response<APIErrorsMessa
             default: return res.sendStatus(500)
         }
     } catch (e) {
-        await SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'Registration new user', e)
+        await SaveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.registration}`, 'POST', 'registration new user', e)
         return res.sendStatus(500)
     }
 })

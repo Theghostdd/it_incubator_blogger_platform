@@ -2,7 +2,7 @@ import {WithId} from "mongodb"
 /*
 *
 *
-*       Blog View type
+*       blog View type
 *
 *
 */
@@ -30,7 +30,7 @@ export type BlogViewMongoType = WithId<BlogCreateInputModelType>
 /*
 *
 *
-*       Blog query params
+*       blog query params
 *
 *
 */

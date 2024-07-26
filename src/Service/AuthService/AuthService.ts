@@ -1,4 +1,4 @@
-import { bcryptService} from "../../Applications/Middleware/bcrypt/bcrypt"
+import { bcryptService} from "../../internal/application/bcrypt/bcrypt"
 import {
     AuthModelServiceType, ChangePasswordInputViewType, PasswordRecoveryInputViewType, PasswordRecoveryMongoViewType,
     RefreshAuthOutputModelType,
@@ -15,19 +15,19 @@ import {
     ResultNotificationEnum,
     APIErrorsMessageType,
     JWTRefreshPayloadType, JWTAccessTokenType
-} from "../../Applications/Types-Models/BasicTypes"
+} from "../../typings/basic-types"
 import {UserRepositories} from "../../Repositories/UserRepostitories/UserRepositories"
 import {
     RegistrationConfirmCodeType,
     RegistrationCreatType, RegistrationInputType, RegistrationResendConfirmCodeInputType,
-} from "../../Applications/Types-Models/Registration/RegistrationTypes"
-import {RegistrationDefaultValue} from "../../utils/default-values/Registration/registration-default-value"
-import {NodemailerService} from "../../Applications/Nodemailer/nodemailer"
+} from "../../Applications/Types-Models/registration/RegistrationTypes"
+import {RegistrationDefaultValue} from "../../utils/default-values/registration/registration-default-value"
+import {NodemailerService} from "../../internal/application/nodlemailer/nodemailer"
 import {GenerateUuid} from "../../utils/generate-uuid/generate-uuid"
 import {addDays, addMinutes, compareAsc} from "date-fns";
-import {PatternsMail} from "../../Applications/Nodemailer/patterns/patterns"
+import {PatternsMail} from "../../internal/application/nodlemailer/patterns/patterns"
 import {PatternMail} from "../../Applications/Types-Models/PatternsMail/patternsMailTypes"
-import {credentialJWT} from "../../Applications/JWT/jwt"
+import {credentialJWT} from "../../internal/application/jwt/jwt"
 import {AuthRepositories} from "../../Repositories/AuthRepositories/AuthRepositories"
 import {SaveError} from "../../utils/error-utils/save-error";
 

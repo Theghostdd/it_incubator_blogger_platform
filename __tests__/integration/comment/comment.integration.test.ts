@@ -2,7 +2,7 @@ import { CommentService } from '../../../src/Service/CommentService/CommentServi
 import { MONGO_SETTINGS } from '../../../src/settings';
 import { CommentDto, InsertComment } from '../../Dto/CommentDto'
 import { InsertAuthDto } from '../../Dto/AuthDto';
-import { ResultNotificationEnum } from '../../../src/Applications/Types-Models/BasicTypes';
+import { ResultNotificationEnum } from '../../../src/typings/basic-types';
 import { ObjectId } from 'mongodb';
 import mongoose from "mongoose";
 import {BlogModule, CommentModule, Drop, PostModule, UserModule} from "../modules/modules";

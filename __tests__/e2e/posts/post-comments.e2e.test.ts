@@ -40,7 +40,7 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
         const idBlog = CreatedBlog.id
 
         const CreateDataPost = {
-            title: 'Some Title Post',
+            title: 'Some Title post',
             shortDescription: "Some short description",
             content: "Some content",
             blogId: idBlog

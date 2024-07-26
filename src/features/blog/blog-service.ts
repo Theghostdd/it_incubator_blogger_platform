@@ -1,7 +1,7 @@
 
-import {ResultNotificationEnum, ResultNotificationType} from "../../Applications/Types-Models/BasicTypes";
+import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
 import {BlogRepositories} from "./blog-repositories";
-import {defaultBlogValues} from "../../internal/utils/default-values/Blog/default-blog-value";
+import {defaultBlogValues} from "../../internal/utils/default-values/blog/default-blog-value";
 import {BlogModel} from "../../Domain/Blog/Blog";
 import {blogMapper} from "../../internal/utils/map/blogMap";
 import {BlogCreateInputModelType, BlogInputModelType, BlogViewModelType, BlogViewMongoType} from "./blog-types";

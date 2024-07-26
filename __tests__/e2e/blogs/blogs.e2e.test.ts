@@ -155,7 +155,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
         CreateManyData = [
             {
                 name: "IT-Incubator",
-                description: "Blog about IT Incubator ;)",
+                description: "blog about IT Incubator ;)",
                 websiteUrl:	"https://samurai.it-incubator.io/",
                 createdAt: "2024-06-07T12:44:43.684Z",
                 isMembership: false
@@ -195,7 +195,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs, () => {
 
             {
                 name: "IT Kamasutra",
-                description: "IT Blog",
+                description: "IT blog",
                 websiteUrl:	"https://samurai.it-incubator.io/",
                 createdAt: "2024-06-07T17:44:43.684Z",
                 isMembership: false

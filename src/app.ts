@@ -24,7 +24,7 @@ app.use(ROUTERS_SETTINGS.BLOG.blogs, blogRouter)
 app.use(ROUTERS_SETTINGS.POST.post, postRouter)
 app.use(ROUTERS_SETTINGS.TEST.test, testRouter)
 // app.use(ROUTERS_SETTINGS.USER.user, UserRouter)
-// app.use(ROUTERS_SETTINGS.AUTH.auth, AuthRouter)
+// app.use(ROUTERS_SETTINGS.AUTH.auth-registration, AuthRouter)
 // app.use(ROUTERS_SETTINGS.COMMENTS.comments, CommentsRouter)
 // app.use(ROUTERS_SETTINGS.SECURITY.security, SecurityRouter)
 

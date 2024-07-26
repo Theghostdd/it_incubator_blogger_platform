@@ -2,7 +2,7 @@ import { MONGO_SETTINGS } from "../../../src/settings";
 import { PostService } from '../../../src/Service/PostService/PostService'
 import { InsertPost, PostDto } from "../../Dto/PostDto";
 import { BlogDto, BlogInsert } from "../../Dto/BlogDto";
-import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
+import { ResultNotificationEnum } from "../../../src/typings/basic-types";
 import { InsertAuthDto } from "../../Dto/AuthDto";
 import {BlogModule, Drop, PostModule, UserModule} from "../modules/modules";
 import mongoose from "mongoose";
@@ -29,7 +29,7 @@ describe(PostCreateService, () => {
         CreatePostData.blogId = CreateBlog!._id.toString()
     })
 
-    it('should create new Post, and return post item, status: Success', async () => {
+    it('should create new post, and return post item, status: Success', async () => {
         const result = await PostCreateService(CreatePostData)
         expect(result).toEqual({
             status: ResultNotificationEnum.Success,
@@ -45,7 +45,7 @@ describe(PostCreateService, () => {
         })
     })
 
-    it('should not create new Post, status: NotFound', async () => {
+    it('should not create new post, status: NotFound', async () => {
         CreatePostData.blogId = '6697b3bb206b31770075052b';
         const result = await PostCreateService(CreatePostData)
         expect(result.status).toBe(ResultNotificationEnum.NotFound)
@@ -119,7 +119,7 @@ describe(CreateCommentByPostIdService, () => {
         CommentData = structuredClone(PostDto.CommentData)
     })
 
-    it('should create comment by Post ID, status: Success', async () => {
+    it('should create comment by post ID, status: Success', async () => {
         const result = await CreateCommentByPostIdService(CommentData, PostId, UserId)
         expect(result.status).toBe(ResultNotificationEnum.Success)
         expect(result.data).toEqual({
@@ -133,12 +133,12 @@ describe(CreateCommentByPostIdService, () => {
         })
     })
 
-    it('should not create comment by Post ID, user not found status: NotFound', async () => {
+    it('should not create comment by post ID, user not found status: NotFound', async () => {
         const result = await CreateCommentByPostIdService(CommentData, PostId, '5697b5d550748cd875a4645b')
         expect(result.status).toBe(ResultNotificationEnum.NotFound)
     })
 
-    it('should not create comment by Post ID, post not found status: NotFound', async () => {
+    it('should not create comment by post ID, post not found status: NotFound', async () => {
         const result = await CreateCommentByPostIdService(CommentData, '5697b5d550748cd875a4645b', UserId)
         expect(result.status).toBe(ResultNotificationEnum.NotFound)
     })

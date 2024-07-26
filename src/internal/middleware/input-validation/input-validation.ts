@@ -59,7 +59,7 @@ export const ruleBodyValidations = {
             if (result) {
                 return true;
             }
-            throw new Error("Blog id not found");
+            throw new Error("blog id not found");
         }),
     validationBodyLogin: body("login")
         .trim()

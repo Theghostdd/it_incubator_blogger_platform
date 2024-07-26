@@ -1,7 +1,7 @@
 import {
     QueryParamsType,
     ResultDataWithPaginationType
-} from "../../Applications/Types-Models/BasicTypes";
+} from "../../typings/basic-types";
 import {PostModel} from "../../Domain/Post/Post";
 import {PostViewModelType, PostViewMongoModelType} from "./post-types";
 import {defaultQueryValues} from "../../internal/utils/default-values/default-query-values";

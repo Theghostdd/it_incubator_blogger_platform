@@ -1,5 +1,6 @@
-import {QueryParamsType} from "../../../Applications/Types-Models/BasicTypes";
+import {QueryParamsType} from "../../../typings/basic-types";
 import {BlogQueryParamsType} from "../../../features/blog/blog-types";
+import {UserQueryParamsType} from "../../../features/user/user-types";
 
 
 export const defaultQueryValues = {
@@ -17,6 +18,14 @@ export const defaultQueryValues = {
         return {
             ...this.defaultQueryValue(query),
             searchNameTerm: query.searchNameTerm ? query.searchNameTerm : ''
+        }
+    },
+
+    defaultQueryUserValues (query: QueryParamsType<UserQueryParamsType>): QueryParamsType<UserQueryParamsType> {
+        return {
+            ...this.defaultQueryValue(query),
+            searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : '',
+            searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : ''
         }
     }
 }

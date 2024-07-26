@@ -1,7 +1,7 @@
 import { SETTINGS } from "./settings"
 import { app } from "./app"
-import { startDB } from "./Applications/ConnectionDB/Connection"
-import { clearRequestCollection } from "./Applications/Middleware/request-limit/request-limit"
+import { startDB } from "./internal/application/connection-db/connection"
+import { clearRequestCollection } from "./internal/middleware/request-limit/request-limit"
 
 
 

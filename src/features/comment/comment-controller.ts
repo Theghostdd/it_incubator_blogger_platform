@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
-import {ResultNotificationEnum, ResultNotificationType} from "../../Applications/Types-Models/BasicTypes";
+import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
 import {CommentInputModelType, CommentViewModelType} from "./comment-types";
 import {saveError} from "../../internal/utils/error-utils/save-error";
 import {CommentQueryRepositories} from "./comment-query-repositories";

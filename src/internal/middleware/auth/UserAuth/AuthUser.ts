@@ -4,7 +4,7 @@ import {
     JWTAccessTokenType,
     ResultNotificationEnum,
     ResultNotificationType,
-} from "../../../../Applications/Types-Models/BasicTypes";
+} from "../../../../typings/basic-types";
 
 export const AuthUser = {
     async AuthUserByAccessToken (req: Request, res: Response, next: NextFunction) {

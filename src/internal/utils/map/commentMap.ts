@@ -1,10 +1,10 @@
-import {ResultDataWithPaginationType} from "../../../Applications/Types-Models/BasicTypes";
+import {ResultDataWithPaginationType} from "../../../typings/basic-types";
 import {CommentMongoViewType, CommentViewModelType} from "../../../features/comment/comment-types";
 
 
 export const commentMap = {
 
-    async mapComment (data: CommentMongoViewType): Promise<CommentViewModelType> {
+    mapComment (data: CommentMongoViewType): CommentViewModelType {
           return {
               id: data._id.toString(),
               content: data.content,
@@ -16,7 +16,7 @@ export const commentMap = {
           }
       },
 
-    async mapComments (data: CommentMongoViewType[], pagesCount: number, page: number, pageSize: number, totalCount: number ): Promise<ResultDataWithPaginationType<CommentViewModelType[]>> {
+    mapComments (data: CommentMongoViewType[], pagesCount: number, page: number, pageSize: number, totalCount: number ): ResultDataWithPaginationType<CommentViewModelType[] | []> {
           return {
               pagesCount: pagesCount,
               page: page,

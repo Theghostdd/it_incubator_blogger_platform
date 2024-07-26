@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { ROUTERS_SETTINGS } from "../../settings";
 import { SaveError } from "../../utils/error-utils/save-error";
-import { ResultNotificationEnum, ResultNotificationType } from "../../Applications/Types-Models/BasicTypes";
+import { ResultNotificationEnum, ResultNotificationType } from "../../typings/basic-types";
 import { RefreshAuthOutputModelType, SessionOutputModelViewType } from "../../Applications/Types-Models/Auth/AuthTypes";
 import { SecurityService } from "../../Service/SecurityService/SecurityService";
 import { AuthQueryRepositories } from "../../Repositories/AuthRepositories/AuthQueryRepositories";

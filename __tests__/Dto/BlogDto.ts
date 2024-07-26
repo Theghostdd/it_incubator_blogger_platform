@@ -2,13 +2,13 @@ import {RegistrationDto} from "./AuthDto";
 
 export const BlogDto = {
     CreateBlogData: {
-        name: "My Blog",
+        name: "My blog",
         description: "This is my blog",
         websiteUrl: "https://my-blog.ru"
     },
 
     UpdateBlogData: {
-        name: "My New Blog",
+        name: "My New blog",
         description: "This is my new blog",
         websiteUrl: "https://my-new-blog.ru"
     }

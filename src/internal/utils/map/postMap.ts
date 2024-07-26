@@ -1,4 +1,4 @@
-import {ResultDataWithPaginationType} from "../../../Applications/Types-Models/BasicTypes"
+import {ResultDataWithPaginationType} from "../../../typings/basic-types"
 import {PostViewModelType, PostViewMongoModelType} from "../../../features/post/post-types";
 
 export const postMapper = {

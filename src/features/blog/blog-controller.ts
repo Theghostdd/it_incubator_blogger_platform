@@ -3,7 +3,7 @@ import {
     QueryParamsType,
     ResultDataWithPaginationType, ResultNotificationEnum,
     ResultNotificationType
-} from "../../Applications/Types-Models/BasicTypes";
+} from "../../typings/basic-types";
 
 import {ROUTERS_SETTINGS} from "../../settings";
 

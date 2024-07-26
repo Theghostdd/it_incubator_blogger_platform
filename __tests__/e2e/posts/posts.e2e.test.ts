@@ -26,14 +26,14 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
         blogName = CreatedBlog.name
 
         CreateDataPost = {
-            title: 'Some Title Post',
+            title: 'Some Title post',
             shortDescription: "Some short description",
             content: "Some content",
             blogId: idBlog
         }
 
         DataUpdate = {
-            title: 'Some Title Post 2',
+            title: 'Some Title post 2',
             shortDescription: "Some short description 2",
             content: "Some content 2",
             blogId: idBlog
@@ -209,7 +209,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
         // Create data 
         const CreateManyData = [
             {
-                title: 'Post is number 1',
+                title: 'post is number 1',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -218,7 +218,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 2',
+                title: 'post is number 2',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -227,7 +227,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 3',
+                title: 'post is number 3',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -236,7 +236,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 4',
+                title: 'post is number 4',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -245,7 +245,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 5',
+                title: 'post is number 5',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -254,7 +254,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 6',
+                title: 'post is number 6',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -263,7 +263,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 7',
+                title: 'post is number 7',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -272,7 +272,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 8',
+                title: 'post is number 8',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -281,7 +281,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 9',
+                title: 'post is number 9',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -290,7 +290,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 10',
+                title: 'post is number 10',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -299,7 +299,7 @@ describe(ROUTERS_SETTINGS.POST.post, () => {
             },
 
             {
-                title: 'Post is number 11',
+                title: 'post is number 11',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,

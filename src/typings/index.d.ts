@@ -1,4 +1,4 @@
-import {UserRequestType} from "../Applications/Types-Models/BasicTypes";
+import {UserRequestType} from "./basic-types";
 
 declare global {
     namespace Express {

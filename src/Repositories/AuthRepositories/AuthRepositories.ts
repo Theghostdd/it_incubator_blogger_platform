@@ -6,7 +6,7 @@ import {
     SessionsInputViewType,
     SessionsMongoViewType,
 } from "../../Applications/Types-Models/Auth/AuthTypes"
-import { DeletedMongoSuccessType } from "../../Applications/Types-Models/BasicTypes"
+import { DeletedMongoSuccessType } from "../../typings/basic-types"
 import {AuthSessionModel, RequestLimiterModel} from "../../Domain/Auth/Auth";
 import {RecoveryPasswordSessionModel} from "../../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 

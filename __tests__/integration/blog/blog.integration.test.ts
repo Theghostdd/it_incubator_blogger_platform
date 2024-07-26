@@ -1,6 +1,6 @@
 import { MONGO_SETTINGS, } from "../../../src/settings"
 import { BlogService } from "../../../src/Service/BlogService/BlogService"
-import { ResultNotificationEnum } from "../../../src/Applications/Types-Models/BasicTypes";
+import { ResultNotificationEnum } from "../../../src/typings/basic-types";
 import { BlogDto, BlogInsert } from "../../Dto/BlogDto";
 import {BlogModule, Drop} from "../modules/modules";
 import mongoose from "mongoose";
@@ -24,7 +24,7 @@ describe(BlogCreateService, () => {
         CreateBlogData = structuredClone(BlogDto.CreateBlogData)
     })
 
-    it('should create new Blog, and return blog item, status: Success', async () => {
+    it('should create new blog, and return blog item, status: Success', async () => {
         const result = await BlogCreateService(CreateBlogData)
         expect(result).toEqual({
             status: ResultNotificationEnum.Success,

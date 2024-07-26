@@ -33,11 +33,11 @@ postRouter.put('/:id',
 )
 postRouter.delete('/:id', authValidation, postController.deletePostById.bind(postController))
 
-// postRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
-//     AuthUser.AuthUserByAccessToken,
-//     ruleBodyValidations.validationBodyContentComment,
-//     inputValidation,
-//     postController.createCommentByPostId.bind(postController)
-// )
-//
-// postRouter.get(`/:id${ROUTERS_SETTINGS.POST.comments}`, postController.getCommentsByPostId.bind(postController))
+postRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
+    AuthUser.AuthUserByAccessToken,
+    ruleBodyValidations.validationBodyContentComment,
+    inputValidation,
+    postController.createCommentByPostId.bind(postController)
+)
+
+postRouter.get(`/:id${ROUTERS_SETTINGS.POST.comments}`, postController.getCommentsByPostId.bind(postController))

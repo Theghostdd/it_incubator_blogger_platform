@@ -1,5 +1,4 @@
 import {CommentModel} from "../../Domain/Comment/Comment";
-import {CommentMongoViewType} from "./comment-types";
 import {DeleteResult} from "mongodb";
 
 
@@ -9,7 +8,7 @@ export class CommentRepositories {
         protected commentModel: typeof CommentModel
     ) {}
 
-    async save (comment: InstanceType<typeof CommentModel>): Promise<CommentMongoViewType> {
+    async save (comment: InstanceType<typeof CommentModel>): Promise<InstanceType<typeof CommentModel>> {
         try {
             return await comment.save()
         } catch (e: any) {

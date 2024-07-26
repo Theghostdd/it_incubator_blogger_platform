@@ -25,7 +25,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
         blogName = CreateBlogElementResult.name
 
         CreateData = {
-            title: 'Some Title Post',
+            title: 'Some Title post',
             shortDescription: "Some short description",
             content: "Some content"
         }
@@ -49,7 +49,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
                 blogId: idBlog,
                 createdAt: expect.any(String)
         })
-        // This simulates a scenario where getting all post items by Blog id in URI params
+        // This simulates a scenario where getting all post items by blog id in URI params
         const GetCreatedElementResult = await GetRequest()
             .get(endpointBlogAndPost)
             .expect(200)
@@ -70,7 +70,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
         // Create many data in DB
         const CreateManyData = [
             {
-                title: 'Post is number 1',
+                title: 'post is number 1',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -79,7 +79,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 2',
+                title: 'post is number 2',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -88,7 +88,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 3',
+                title: 'post is number 3',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -97,7 +97,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 4',
+                title: 'post is number 4',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -106,7 +106,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 5',
+                title: 'post is number 5',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -115,7 +115,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 6',
+                title: 'post is number 6',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -124,7 +124,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 7',
+                title: 'post is number 7',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -133,7 +133,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 8',
+                title: 'post is number 8',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -142,7 +142,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 9',
+                title: 'post is number 9',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -151,7 +151,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 10',
+                title: 'post is number 10',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,
@@ -160,7 +160,7 @@ describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_post
             },
 
             {
-                title: 'Post is number 11',
+                title: 'post is number 11',
                 shortDescription: "Some short description",
                 content: "Some content",
                 blogId: idBlog,

@@ -1,5 +1,5 @@
 import {ROUTERS_SETTINGS} from "../../../src/settings";
-import {NodemailerService} from "../../../src/Applications/Nodemailer/nodemailer";
+import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer";
 import {
     CreateRecoveryPassCode,
     DropAll,
@@ -118,7 +118,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         expect(getSession!.length).toBe(0)
     })
 
-    it('POST | should change password, and auth with new password status: 204', async () => {
+    it('POST | should change password, and auth-registration with new password status: 204', async () => {
         // This simulates a scenario where user want to change password.
         await GetRequest()
             .post(endpoint)
@@ -128,14 +128,14 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
         expect(getSession!.length).toBe(0)
 
-        // This simulates a scenario where user auth with new pass.
+        // This simulates a scenario where user auth-registration with new pass.
         await GetRequest()
             .post(endpointAuth)
             .send(AuthData)
             .expect(200)
     })
 
-    it('POST | should change password, and not auth with old password status: 401', async () => {
+    it('POST | should change password, and not auth-registration with old password status: 401', async () => {
         // This simulates a scenario where user want to change password.
         await GetRequest()
             .post(endpoint)
@@ -145,7 +145,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         const getSession = await FindAllUniversal(RecoveryPasswordSessionModel)
         expect(getSession!.length).toBe(0)
 
-        // This simulates a scenario where user auth with old pass.
+        // This simulates a scenario where user auth-registration with old pass.
         AuthData.password = RegData.password
         await GetRequest()
             .post(endpointAuth)

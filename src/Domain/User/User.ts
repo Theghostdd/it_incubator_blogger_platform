@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import {UserViewMongoType} from "../../Applications/Types-Models/User/UserTypes";
 import {MONGO_SETTINGS} from "../../settings";
+import {UserViewMongoType} from "../../features/user/user-types";
 
 
 
