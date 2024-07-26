@@ -7,11 +7,17 @@ import {PostQueryRepository} from "../features/post/post-query-repositories";
 import {commentQueryRepositories, commentRepositories} from "./comment-composition-root";
 import {userRepositories} from "./user-composition-root";
 import {CommentModel} from "../Domain/Comment/Comment";
+import {BlogRepositories} from "../features/blog/blog-repositories";
+import {BlogModel} from "../Domain/Blog/Blog";
+import {UserRepositories} from "../features/user/user-repositories";
+import {UserModel} from "../Domain/User/User";
+import {CommentRepositories} from "../features/comment/comment-repositories";
+import {CommentQueryRepositories} from "../features/comment/comment-query-repositories";
 
 
 
 export const postRepositories = new PostRepositories(PostModel)
 export const postQueryRepositories = new PostQueryRepository(PostModel)
-export const postService = new PostService(postRepositories, blogRepositories, PostModel, userRepositories, CommentModel, commentRepositories)
-export const postController = new PostController(postService, postQueryRepositories, commentQueryRepositories);
+export const postService = new PostService(postRepositories, new BlogRepositories(BlogModel), PostModel, new UserRepositories(UserModel), CommentModel, new CommentRepositories(CommentModel))
+export const postController = new PostController(postService, postQueryRepositories, new CommentQueryRepositories(CommentModel));
 

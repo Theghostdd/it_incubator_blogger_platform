@@ -91,7 +91,7 @@ export class PostService {
 
             const resultCreate: InstanceType<typeof CommentModel> = await this.commentRepositories.save(new this.commentModel(CreateData))
 
-            return {status: ResultNotificationEnum.Success, data: await commentMap.mapComment(resultCreate)}
+            return {status: ResultNotificationEnum.Success, data: commentMap.mapComment(resultCreate)}
         } catch (e: any) {
             throw new Error(e)
         }

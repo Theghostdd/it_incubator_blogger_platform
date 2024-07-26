@@ -25,7 +25,7 @@ export class BlogQueryRepositories {
 
             const totalCount = +getTotalDocument;
             const pagesCount = Math.ceil(totalCount / pageSize!);
-            const skip = (pageNumber! - 1) * pageSize!;
+            const skip = (+pageNumber! - 1) * pageSize!;
 
 
 

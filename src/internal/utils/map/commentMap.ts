@@ -18,10 +18,10 @@ export const commentMap = {
 
     mapComments (data: CommentMongoViewType[], pagesCount: number, page: number, pageSize: number, totalCount: number ): ResultDataWithPaginationType<CommentViewModelType[] | []> {
           return {
-              pagesCount: pagesCount,
-              page: page,
-              pageSize: pageSize,
-              totalCount: totalCount,
+              pagesCount: +pagesCount,
+              page: +page,
+              pageSize: +pageSize,
+              totalCount: +totalCount,
               items: data.map((item) => {
                   return {
                       id: item._id.toString(),

@@ -16,7 +16,7 @@ export class UserQueryRepositories {
     async getAllUsers (query: QueryParamsType<UserQueryParamsType>): Promise<ResultDataWithPaginationType<UserViewModelType[] | []>> {
         try {
 
-            const {pageNumber, pageSize, sortBy, sortDirection, searchLoginTerm, searchEmailTerm}: QueryParamsType<UserQueryParamsType> = defaultQueryValues.defaultQueryValue(query)
+            const {pageNumber, pageSize, sortBy, sortDirection, searchLoginTerm, searchEmailTerm}: QueryParamsType<UserQueryParamsType> = defaultQueryValues.defaultQueryUserValues(query)
 
             const sort = {
                 [sortBy!]: sortDirection!
@@ -27,6 +27,7 @@ export class UserQueryRepositories {
                     {email: {$regex: searchEmailTerm, $options: 'i'}}
                 ]
             }
+
             const getTotalDocument: number = await this.userModel.countDocuments(filter)
             const totalCount = +getTotalDocument
             const pagesCount = Math.ceil(totalCount / pageSize!)

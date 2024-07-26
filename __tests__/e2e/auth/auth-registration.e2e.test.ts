@@ -2,7 +2,7 @@ import { ROUTERS_SETTINGS } from "../../../src/settings"
 import {AdminAuth, CreateUser, DropAll, GetRequest, InsertOneUniversal} from "../modules/modules"
 import { addMinutes } from "date-fns"
 import { InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
-import { NodemailerService } from "../../../src/internal/application/nodlemailer/nodemailer";
+import { nodemailerService } from "../../../src/internal/application/nodlemailer/nodemailer";
 import {UserModel} from "../../../src/Domain/User/User";
 
 
@@ -20,7 +20,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     let ResendConfirmCodeData: any = {}
 
     beforeEach(async () => {
-        NodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
+        nodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
         await DropAll()
         
         CreatedUserData = {...RegistrationDto.RegistrationUserData}
@@ -40,7 +40,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
 
     it('POST => GET | should create new user, and send email, status: 204, get all user list, status: 200', async () => {
         // This simulates a scenario where user success registration in system
-        const RegistrationUser = await GetRequest()
+        await GetRequest()
             .post(endpoint)
             .send(CreatedUserData)
             .expect(204)
@@ -110,7 +110,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     })
 
     it('POST | shouldn`t create new user, not uniq data, status: 400', async () => {
-        const CreateUserResult = await CreateUser(CreatedUserData)
+        await CreateUser(CreatedUserData)
         // This simulates a scenario where user send not uniq data: login and email
         const RegistrationUser = await GetRequest()
             .post(endpoint)
@@ -133,9 +133,9 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     it('POST | should confirm new user, status: 204', async () => {
         // Crate user
         InsertOneData.userConfirm.dataExpire = addMinutes(new Date(), 1)
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
+        await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user confirmed email
-        const RegistrationUserConfirm = await GetRequest()
+        await GetRequest()
             .post(endpointRegistrationConfirm)
             .send(ConfirmUserData)
             .expect(204)
@@ -145,8 +145,8 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
         // Create user
         InsertOneData.userConfirm.dataExpire = '2022-06-25T13:17:37.078Z'
         InsertOneData.userConfirm.ifConfirm = true
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
-        // This simulates a scenario where user doesn`t confirm email, the date has expired
+        await InsertOneUniversal(InsertOneData, UserModel)
+        // This simulates a scenario where user does not confirm email, the date has expired
         let RegistrationUser = await GetRequest()
             .post(endpointRegistrationConfirm)
             .send(CreatedUserData)
@@ -159,7 +159,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
                 }, 
             ]
         })
-        // This simulates a scenario where user doesn`t confirm email, user has been confirmed
+        // This simulates a scenario where user does not confirm email, user has been confirmed
         RegistrationUser = await GetRequest()
             .post(endpointRegistrationConfirm)
             .send(CreatedUserData)
@@ -172,7 +172,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
                 }, 
             ]
         })   
-        // This simulates a scenario where user doesn`t confirm email, confirm code is not found
+        // This simulates a scenario where user does not confirm email, confirm code is not found
         ConfirmUserData.code = 'not code'
         RegistrationUser = await GetRequest()
             .post(endpointRegistrationConfirm)
@@ -187,7 +187,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
             ]
         })
 
-        // This simulates a scenario where user doesn`t confirm email, bad confirm code
+        // This simulates a scenario where user does not confirm email, bad confirm code
         ConfirmUserData.code = ''
         RegistrationUser = await GetRequest()
             .post(endpointRegistrationConfirm)
@@ -206,9 +206,9 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     it('POST | should resend confirmation code, status: 204', async () => {
         // Create user
         InsertOneData.userConfirm.ifConfirm = false
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
+        await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user want to get the new confirmation code
-        const RegistrationUser = await GetRequest()
+        await GetRequest()
             .post(endpointRegistrationResendConfirmationCode)
             .send(ResendConfirmCodeData)
             .expect(204)
@@ -217,7 +217,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => 
     it('POST | shouldn`t resend confirmation code, status: 400 and 404', async () => {
         // Create user
         InsertOneData.userConfirm.ifConfirm = true
-        const CreateUserResult = await InsertOneUniversal(InsertOneData, UserModel)
+        await InsertOneUniversal(InsertOneData, UserModel)
         // This simulates a scenario where user want to get the new confirmation code but email not found
         ResendConfirmCodeData.email = 'someemail@mail.ru'
         let RegistrationUser = await GetRequest()

@@ -5,10 +5,10 @@ import {BlogViewModelType, BlogViewMongoType} from "../../../features/blog/blog-
 export const blogMapper = {
     mapBlogs (data: BlogViewMongoType[], pagesCount: number, pageNumber: number, pageSize: number, totalCount: number): ResultDataWithPaginationType<BlogViewModelType[] | []> {
         return {
-            pagesCount: pagesCount,
-            page: pageNumber,
-            pageSize: pageSize,
-            totalCount: totalCount,
+            pagesCount: +pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
             items: data.map((item) => {
                 return {
                     id: item._id.toString(),

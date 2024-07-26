@@ -1,17 +1,26 @@
-import {NextFunction, Request, Response} from "express";
+import {Request, Response} from "express";
 import {RefreshAuthOutputModelType, SessionOutputModelViewType} from "../auth-registration/auth/auth-types";
 import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
 import {ROUTERS_SETTINGS} from "../../settings";
 import {saveError} from "../../internal/utils/error-utils/save-error";
+import {SecurityDeviceService} from "./security-device-service";
+import {SecurityDeviceQueryRepositories} from "./security-device-query-repositories";
+import {AuthService} from "../auth-registration/auth/auth-service";
 
 
 export class SecurityDeviceController {
+    constructor(
+        protected securityDeviceService: SecurityDeviceService,
+        protected authService: AuthService,
+        protected securityDeviceQueryRepositories: SecurityDeviceQueryRepositories
+    ) {
+    }
     async getAllSessions(req: Request, res: Response<SessionOutputModelViewType[]>) {
         try {
-            const verifyJwt: ResultNotificationType<RefreshAuthOutputModelType> = await AuthService.JWTRefreshTokenAuth(req.cookies.refreshToken)
+            const verifyJwt: ResultNotificationType<RefreshAuthOutputModelType> = await this.authService.jwtRefreshTokenAuth(req.cookies.refreshToken)
             if (verifyJwt.status != ResultNotificationEnum.Success) return res.sendStatus(401)
 
-            const result: SessionOutputModelViewType[] | [] = await AuthQueryRepositories.GetAllSessionsByUserId(verifyJwt.data!.RefreshJWTPayload.userId)
+            const result: SessionOutputModelViewType[] | [] = await this.securityDeviceQueryRepositories.getSessionsByUserId(verifyJwt.data!.refreshJWTPayload.userId)
             return res.status(200).json(result);
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.SECURITY.security}${ROUTERS_SETTINGS.SECURITY.devices}`, 'GET', 'Get all sessions', e)
@@ -21,7 +30,7 @@ export class SecurityDeviceController {
 
     async deleteSessionsExcludeCurrent (req: Request, res: Response) {
         try {
-            const result: ResultNotificationType = await SecurityService.DeleteAllSessionExcludeCurrent(req.cookies.refreshToken)
+            const result: ResultNotificationType = await this.securityDeviceService.deleteAllSessionExcludeCurrent(req.cookies.refreshToken)
             switch(result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);
@@ -39,7 +48,7 @@ export class SecurityDeviceController {
 
     async deleteSessionById (req: Request<{deviceId: string}>, res: Response) {
         try {
-            const result: ResultNotificationType = await SecurityService.DeleteSessionByDeviceId(req.params.deviceId, req.cookies.refreshToken)
+            const result: ResultNotificationType = await this.securityDeviceService.deleteSessionByDeviceId(req.params.deviceId, req.cookies.refreshToken)
             switch(result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);

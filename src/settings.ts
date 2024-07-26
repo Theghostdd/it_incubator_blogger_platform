@@ -15,7 +15,7 @@ export const ROUTERS_SETTINGS = {
         user: '/api/users'
     },
     AUTH: {
-        auth: '/api/auth-registration',
+        auth: '/api/auth',
         login: '/login',
         me: '/me',
         registration: '/registration',

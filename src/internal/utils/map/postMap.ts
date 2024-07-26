@@ -4,10 +4,10 @@ import {PostViewModelType, PostViewMongoModelType} from "../../../features/post/
 export const postMapper = {
     mapPosts (data: PostViewMongoModelType[], pagesCount: number, page: number, pageSize: number, totalCount: number): ResultDataWithPaginationType<PostViewModelType[]> {
         return {
-            pagesCount: pagesCount,
-            page: page,
-            pageSize: pageSize,
-            totalCount: totalCount,
+            pagesCount: +pagesCount,
+            page: +page,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
             items: data.map((item) => {
                 return {
                     id: item._id.toString(),

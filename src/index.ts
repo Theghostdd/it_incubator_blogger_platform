@@ -1,7 +1,7 @@
 import { SETTINGS } from "./settings"
 import { app } from "./app"
 import { startDB } from "./internal/application/connection-db/connection"
-import { clearRequestCollection } from "./internal/middleware/request-limit/request-limit"
+import {requestLimiter} from "./composition-root/request-limiter-composition-root";
 
 
 
@@ -15,6 +15,6 @@ const start = async () => {
 start()
 
 setInterval(async () => {
-  await clearRequestCollection()
+  await requestLimiter.clearRequestCollection()
 }, 259200)
 

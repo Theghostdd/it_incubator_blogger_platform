@@ -3,7 +3,7 @@ import {authValidation} from "../../internal/middleware/auth/AdminAuth/AdminAuth
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
 import express from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
-import {AuthUser} from "../../internal/middleware/auth/UserAuth/auth-user";
+import {authUserMiddleware} from "../../composition-root/auth-registration-composition-root";
 
 
 export const postRouter = express.Router();
@@ -34,7 +34,7 @@ postRouter.put('/:id',
 postRouter.delete('/:id', authValidation, postController.deletePostById.bind(postController))
 
 postRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
-    AuthUser.AuthUserByAccessToken,
+    authUserMiddleware.authUserByAccessToken.bind(authUserMiddleware),
     ruleBodyValidations.validationBodyContentComment,
     inputValidation,
     postController.createCommentByPostId.bind(postController)

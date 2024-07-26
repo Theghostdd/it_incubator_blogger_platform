@@ -26,10 +26,10 @@ export const userMap = {
 
     usersMapperView (data: UserViewMongoType[], pagesCount: number, page: number, pageSize: number, totalCount: number ): ResultDataWithPaginationType<UserViewModelType[] | []> {
         return {
-            pagesCount: pagesCount,
-            page: page,
-            pageSize: pageSize,
-            totalCount: totalCount,
+            pagesCount: +pagesCount,
+            page: +page,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
             items: data.map((item) => {
                 return {
                     id: item._id.toString(),

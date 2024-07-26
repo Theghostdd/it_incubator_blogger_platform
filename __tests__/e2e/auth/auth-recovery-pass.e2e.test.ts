@@ -1,5 +1,5 @@
 import {ROUTERS_SETTINGS} from "../../../src/settings";
-import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer";
+import {nodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer";
 import {
     CreateRecoveryPassCode,
     DropAll,
@@ -10,8 +10,10 @@ import {
 import {AuthDto, InsertAuthDto, RegistrationDto} from "../../Dto/AuthDto";
 import {UserModel} from "../../../src/Domain/User/User";
 import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
-import {AuthRepositories} from "../../../src/Repositories/AuthRepositories/AuthRepositories";
-import {UserRepositories} from "../../../src/Repositories/UserRepostitories/UserRepositories";
+import {userRepositories} from "../../../src/composition-root/user-composition-root";
+import {
+    recoveryPasswordSessionRepository
+} from "../../../src/composition-root/auth-registration-composition-root";
 
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, () => {
@@ -24,7 +26,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, (
     beforeEach(async () => {
         jest.clearAllMocks()
 
-        NodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
+        nodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
         await DropAll()
 
         RecoveryData = structuredClone(AuthDto.RecoveryPassData)
@@ -87,7 +89,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         jest.clearAllMocks()
         await DropAll()
 
-        NodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
+        nodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
 
         InsertUserData = structuredClone(InsertAuthDto.UserInsertData)
         await InsertOneUniversal(InsertUserData, UserModel)
@@ -174,7 +176,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
     })
 
     it('POST | should not change password, code was expire, status: 400', async () => {
-        AuthRepositories.GetRecoveryPasswordSessionByCode = jest.fn().mockImplementation(() => {
+        recoveryPasswordSessionRepository.getSessionByCode = jest.fn().mockImplementation(() => {
             return {
                 email: InsertUserData.email,
                 code: NewPassData.recoveryCode,
@@ -221,7 +223,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
     })
 
     it('POST | should not change password, user not found, status: 400', async () => {
-        UserRepositories.GetUserByEmail = jest.fn().mockImplementation(() => null)
+        userRepositories.getUserByEmail = jest.fn().mockImplementation(() => null)
         // This simulates a scenario where user want to change password but user not found.
         await GetRequest()
             .post(endpoint)

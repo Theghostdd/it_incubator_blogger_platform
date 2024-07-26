@@ -17,7 +17,7 @@ authRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
     authRegistrationController.login.bind(authRegistrationController)
     )
 
-authRouter.get(`${ROUTERS_SETTINGS.AUTH.me}`, authUserMiddleware.authUserByAccessToken, authRegistrationController.getInfoAboutCurrentUserByAccessToken.bind(authRegistrationController))
+authRouter.get(`${ROUTERS_SETTINGS.AUTH.me}`, authUserMiddleware.authUserByAccessToken.bind(authUserMiddleware), authRegistrationController.getInfoAboutCurrentUserByAccessToken.bind(authRegistrationController))
 
 authRouter.post(`${ROUTERS_SETTINGS.AUTH.registration}`,
     requestLimiter.requestLimiter.bind(requestLimiter),
