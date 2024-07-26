@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-export const NodemailerService = {
+export const nodemailerService = {
     async sendEmail (mailTo: string[], subject: string, mailHtml: string) {
         return await transporter.sendMail({
             from: `${MAIL_SETTINGS.MAIL_FROM.name} <${MAIL_SETTINGS.MAIL_FROM.address}>`,

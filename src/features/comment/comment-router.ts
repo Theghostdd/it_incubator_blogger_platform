@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {AuthUser} from "../../internal/middleware/auth/UserAuth/AuthUser";
+import {AuthUser} from "../../internal/middleware/auth/UserAuth/auth-user";
 import {commentController} from "../../composition-root/comment-composition-root";
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
 

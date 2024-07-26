@@ -114,21 +114,7 @@ export type DeletedMongoSuccessType = {
 *   Patterns mail
 *
 */
-export type PatternMail = {
+export type PatternMailType = {
     subject: string,
     html: string
-}
-/*
-*
-*
-*       Request Limiter Type
-*
-*
-*/
-export type RequestLimiterMongoViewType = WithId<RequestLimiterInputModelViewType>
-export type RequestLimiterInputModelViewType = {
-    ip: string,
-    url: string,
-    date: string,
-    quantity: number
 }

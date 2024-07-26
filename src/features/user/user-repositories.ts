@@ -15,7 +15,7 @@ export class UserRepositories {
         }
     }
 
-    async gtUserByEmail (email: string): Promise<InstanceType<typeof UserModel> | null> {
+    async getUserByEmail (email: string): Promise<InstanceType<typeof UserModel> | null> {
         try {
             return await this.userModel.findOne({email: email})
         } catch (e: any) {

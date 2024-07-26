@@ -4,7 +4,7 @@ import { SETTINGS } from '../../../settings'
 
 
 export const credentialJWT = {
-    async SignJWT (userId: string, dId: string) {
+    async signJWT (userId: string, dId: string) {
         try {
             return {
                 accessToken: jwt.sign({userId: userId}, SETTINGS.JWT_ACCESS_SECRET_KEY ,{expiresIn: SETTINGS.JWTAccessToken_Expires}),
@@ -15,7 +15,7 @@ export const credentialJWT = {
         }
     },
 
-    async VerifyJWT (token: string) {
+    async verifyJWT (token: string) {
         try {
             return jwt.verify(token, SETTINGS.JWT_ACCESS_SECRET_KEY)
         } catch (e: any) {
@@ -23,7 +23,7 @@ export const credentialJWT = {
         }
     },
 
-    async VerifyJWTrefresh (token: string) {
+    async verifyJWTrefresh (token: string) {
         try {
             return jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET_KEY)
         } catch (e: any) {

@@ -3,7 +3,7 @@ import {authValidation} from "../../internal/middleware/auth/AdminAuth/AdminAuth
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
 import express from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
-import {AuthUser} from "../../internal/middleware/auth/UserAuth/AuthUser";
+import {AuthUser} from "../../internal/middleware/auth/UserAuth/auth-user";
 
 
 export const postRouter = express.Router();

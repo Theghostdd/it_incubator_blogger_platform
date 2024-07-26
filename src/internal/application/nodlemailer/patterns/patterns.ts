@@ -1,5 +1,7 @@
-export const PatternsMail = {
-    async ConfirmMail(code: string) {
+import {PatternMailType} from "../../../../typings/basic-types";
+
+export const patternsMailService = {
+    async confirmMail(code: string): Promise<PatternMailType> {
         return {
             subject: 'Some Subject',
             html: `
@@ -10,7 +12,7 @@ export const PatternsMail = {
             `
         }
     },
-    async RecoveryMail(code: string) {
+    async recoveryPasswordMail(code: string): Promise<PatternMailType> {
         return {
             subject: 'Recovery password',
             html: `

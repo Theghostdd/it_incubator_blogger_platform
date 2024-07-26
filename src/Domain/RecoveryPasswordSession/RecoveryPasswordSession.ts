@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {MONGO_SETTINGS} from "../../settings";
-import {PasswordRecoveryMongoViewType} from "../../Applications/Types-Models/Auth/AuthTypes";
+import {PasswordRecoveryMongoViewType} from "../../features/auth-registration/auth/auth-types";
 
 
 const RecoveryPasswordSessionSchema = new mongoose.Schema<PasswordRecoveryMongoViewType>({

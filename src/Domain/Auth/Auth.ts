@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import {RequestLimiterMongoViewType, SessionsMongoViewType} from "../../Applications/Types-Models/Auth/AuthTypes";
 import {MONGO_SETTINGS} from "../../settings";
+import {SessionsMongoViewType} from "../../features/auth-registration/auth/auth-types";
+import {RequestLimiterMongoViewType} from "../../features/request-limiter/request-limiter-types";
 
 
 

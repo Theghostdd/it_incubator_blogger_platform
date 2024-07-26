@@ -52,8 +52,8 @@ export type SessionOutputModelViewType = {
 }
 
 export type RefreshAuthOutputModelType = {
-    RefreshJWTPayload: JWTRefreshPayloadType,
-    SessionData: SessionsMongoViewType
+    refreshJWTPayload: JWTRefreshPayloadType,
+    sessionData: SessionsMongoViewType
 }
 /*
 *
