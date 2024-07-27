@@ -39,4 +39,4 @@ postRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
     postController.createCommentByPostId.bind(postController)
 )
 
-postRouter.get(`/:id${ROUTERS_SETTINGS.POST.comments}`, postController.getCommentsByPostId.bind(postController))
+postRouter.get(`/:id${ROUTERS_SETTINGS.POST.comments}`, authUserMiddleware.verifyUserByAccessToken.bind(authUserMiddleware), postController.getCommentsByPostId.bind(postController))

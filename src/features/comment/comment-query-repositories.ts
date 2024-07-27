@@ -16,10 +16,16 @@ export class CommentQueryRepositories {
         protected likeModel: typeof LikeModel
     ) {
     }
-    async getAllComments (query: QueryParamsType, postId: string, userId: string): Promise<ResultDataWithPaginationType<CommentViewModelType[] | []>> {
+
+    async getAllComments(query: QueryParamsType, postId: string, userId: string): Promise<ResultDataWithPaginationType<CommentViewModelType[] | []>> {
         try {
 
-            const {sortBy, sortDirection, pageSize, pageNumber}: QueryParamsType<BlogQueryParamsType> = defaultQueryValues.defaultQueryValue(query)
+            const {
+                sortBy,
+                sortDirection,
+                pageSize,
+                pageNumber
+            }: QueryParamsType<BlogQueryParamsType> = defaultQueryValues.defaultQueryValue(query)
 
             const sort = {
                 [sortBy!]: sortDirection!
@@ -29,39 +35,48 @@ export class CommentQueryRepositories {
             }
 
 
-
             const getTotalDocument: number = await this.commentModel.countDocuments(filter).lean()
             const totalCount = +getTotalDocument;
             const pagesCount = Math.ceil(totalCount / pageSize!);
             const skip = (pageNumber! - 1) * pageSize!;
 
-            const result: CommentMongoViewType[] | [] = await this.commentModel
-                .find(filter)
-                .sort(sort)
-                .skip(skip)
-                .limit(pageSize!)
-                .lean()
+
+            const [ comments, likes ]: [CommentMongoViewType[], LikeMongoViewType[]]  = await Promise.all([
+                this.commentModel
+                    .find(filter)
+                    .sort(sort)
+                    .skip(skip)
+                    .limit(pageSize!)
+                    .lean(),
+
+                this.likeModel
+                    .find({userId: userId, postId: postId})
+                    .lean()
+            ])
+
+            const likesStorage = new Map()
+            likes.forEach((item: LikeMongoViewType) => likesStorage.set(item.commentId, item.status))
+            const commentsDto: CommentDtoViewType[] = comments.map((item: CommentMongoViewType) => {
+                return {
+                    ...item,
+                    statusUserLike: likesStorage.get(item._id.toString()) || LikeStatusEnum.None
+                }
+            })
 
 
-            const like = await this.likeModel.find({userId: userId, postId: postId}).lean()
-
-
-
-
-
-            return commentMap.mapComments(result, pagesCount, pageNumber!, pageSize!, totalCount)
+            return commentMap.mapComments(commentsDto, pagesCount, pageNumber!, pageSize!, totalCount)
         } catch (e: any) {
             throw new Error(e)
         }
     }
 
-    async getCommentById (id: string, userId: string): Promise<CommentViewModelType| null> {
+    async getCommentById(id: string, userId: string): Promise<CommentViewModelType | null> {
         try {
             let like: LikeMongoViewType | null = null;
             if (userId) like = await this.likeModel.findOne({userId: userId, commentId: id}).lean()
 
-            const result: CommentMongoViewType | null  = await this.commentModel.findById(id).lean()
-            return result ? commentMap.mapComment(result,  !like ? LikeStatusEnum.None : like.status) : null
+            const result: CommentMongoViewType | null = await this.commentModel.findById(id).lean()
+            return result ? commentMap.mapComment(result, !like ? LikeStatusEnum.None : like.status) : null
         } catch (e: any) {
             throw new Error(e)
         }

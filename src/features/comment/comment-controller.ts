@@ -15,7 +15,7 @@ export class CommentController {
 
     async getCommentById(req: Request<{id: string}>, res: Response<CommentViewModelType>) {
         try {
-            const result: CommentViewModelType | null = await this.commentQueryRepositories.getCommentById(req.params.id, "66a3e960bb6a7b6cd13a6548")
+            const result: CommentViewModelType | null = await this.commentQueryRepositories.getCommentById(req.params.id, req.user.userId)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.COMMENTS.comments}/:id`, 'GET', 'Get comment by ID', e)

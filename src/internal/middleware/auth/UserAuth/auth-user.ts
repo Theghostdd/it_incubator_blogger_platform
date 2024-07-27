@@ -26,4 +26,25 @@ export class AuthUserMiddleware {
             return res.sendStatus(500)
         }
     }
+
+    async verifyUserByAccessToken (req: Request, res: Response, next: NextFunction) {
+        try {
+            if (!req.headers.authorization || req.headers.authorization.split(' ')[0] !== "Bearer")  {
+                req.user = {userId: 'none'}
+                return next()
+            }
+
+            const authJwtAccessResult: ResultNotificationType<JWTAccessTokenType> = await this.authService.jwtAccessTokenAuth(req.headers.authorization.split(' ')[1])
+            if (authJwtAccessResult.status != ResultNotificationEnum.Success) {
+                req.user = {userId: 'none'}
+                return next()
+            }
+
+            req.user = {userId: authJwtAccessResult.data!.userId}
+            return next()
+        } catch (e: any) {
+            return res.sendStatus(500)
+        }
+    }
+
 }

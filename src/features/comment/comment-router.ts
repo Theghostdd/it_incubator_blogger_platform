@@ -6,7 +6,7 @@ import {authUserMiddleware, commentController} from "../../composition-root/comp
 
 export const commentsRouter = Router()
 
-commentsRouter.get('/:id', commentController.getCommentById.bind(commentController))
+commentsRouter.get('/:id', authUserMiddleware.verifyUserByAccessToken.bind(authUserMiddleware), commentController.getCommentById.bind(commentController))
 
 commentsRouter.put('/:id', authUserMiddleware.authUserByAccessToken.bind(authUserMiddleware), ruleBodyValidations.validationBodyContentComment, inputValidation, commentController.updateCommentById.bind(commentController))
 
