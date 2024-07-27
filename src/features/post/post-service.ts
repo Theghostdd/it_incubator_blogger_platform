@@ -1,5 +1,5 @@
 import {PostCreateInputModelType, PostInputModelType, PostViewModelType} from "./post-types";
-import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
+import {LikeStatusEnum, ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
 import {BlogRepositories} from "../blog/blog-repositories";
 import {BlogModel} from "../../Domain/Blog/Blog";
 import {defaultPostValues} from "../../internal/utils/default-values/post/default-post-value";
@@ -86,12 +86,16 @@ export class PostService {
                 blogInfo: {
                     blogId: post.blogId,
                 },
+                likesInfo: {
+                    likesCount: 0,
+                    dislikesCount: 0
+                },
                 createdAt: new Date().toISOString(),
             }
 
             const resultCreate: InstanceType<typeof CommentModel> = await this.commentRepositories.save(new this.commentModel(CreateData))
 
-            return {status: ResultNotificationEnum.Success, data: commentMap.mapComment(resultCreate)}
+            return {status: ResultNotificationEnum.Success, data: commentMap.mapComment(resultCreate, LikeStatusEnum.None)}
         } catch (e: any) {
             throw new Error(e)
         }

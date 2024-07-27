@@ -1,8 +1,8 @@
 import {Router} from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
 import {authValidation} from "../../internal/middleware/auth/AdminAuth/AdminAuth";
-import {blogController} from "../../composition-root/blog-composition-root";
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
+import {blogController} from "../../composition-root/composition-root";
 
 
 export const blogRouter = Router()

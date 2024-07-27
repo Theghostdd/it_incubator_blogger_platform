@@ -1,8 +1,8 @@
 import { NextFunction, Response, Request } from "express";
 import { body, validationResult, Result } from 'express-validator';
 import {BlogQueryRepositories} from "../../../features/blog/blog-query-repositories";
-import {blogQueryRepositories} from "../../../composition-root/blog-composition-root";
 import {LikeStatusEnum} from "../../../typings/basic-types";
+import {blogQueryRepositories} from "../../../composition-root/composition-root";
 
 export const inputValidation = (req: Request, res: Response, next: NextFunction) => {
     const error: Result = validationResult(req)

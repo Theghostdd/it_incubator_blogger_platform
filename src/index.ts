@@ -1,7 +1,7 @@
 import { SETTINGS } from "./settings"
 import { app } from "./app"
 import { startDB } from "./internal/application/connection-db/connection"
-import {requestLimiter} from "./composition-root/request-limiter-composition-root";
+import {requestLimiter} from "./composition-root/composition-root";
 
 
 

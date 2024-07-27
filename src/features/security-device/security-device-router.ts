@@ -1,6 +1,6 @@
 import {ROUTERS_SETTINGS} from "../../settings";
 import {Router} from "express";
-import {securityDeviceController} from "../../composition-root/securyti-device-composition-root";
+import {securityDeviceController} from "../../composition-root/composition-root";
 
 
 

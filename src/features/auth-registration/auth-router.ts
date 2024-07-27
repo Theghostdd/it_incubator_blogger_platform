@@ -1,11 +1,8 @@
 import {Router} from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
-import {
-    authRegistrationController,
-    authUserMiddleware
-} from "../../composition-root/auth-registration-composition-root";
+
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
-import {requestLimiter} from "../../composition-root/request-limiter-composition-root";
+import {authRegistrationController, authUserMiddleware, requestLimiter} from "../../composition-root/composition-root";
 
 export const authRouter = Router()
 

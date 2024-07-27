@@ -36,9 +36,9 @@ export const commentMap = {
                         userLogin: item.commentatorInfo.userLogin
                       },
                       likesInfo: {
-                          likesCount: item.likesInfo.likesCount,
-                          dislikesCount: item.likesInfo.dislikesCount,
-                          myStatus: '' // TODO LikeStatusEnum
+                          likesCount: 0,
+                          dislikesCount: 0,
+                          myStatus: LikeStatusEnum.None // TODO LikeStatusEnum
                       },
                       createdAt: item.createdAt
                   }

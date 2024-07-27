@@ -36,20 +36,9 @@ export const BlogInsert = {
             blogInfo: {
                 blogId: ''
             },
-            createdAt: '2024-06-20T15:00:01.817Z'
-        },
-
-        {
-            content: "string",
-            commentatorInfo: {
-                userId: '',
-                userLogin: RegistrationDto.RegistrationUserData.login
-            },
-            postInfo: {
-                postId: ''
-            },
-            blogInfo: {
-                blogId: ''
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
             },
             createdAt: '2024-06-20T15:00:01.817Z'
         },
@@ -66,19 +55,9 @@ export const BlogInsert = {
             blogInfo: {
                 blogId: ''
             },
-            createdAt: '2024-06-20T15:00:01.817Z'
-        },
-        {
-            content: "string",
-            commentatorInfo: {
-                userId: '',
-                userLogin: RegistrationDto.RegistrationUserData.login
-            },
-            postInfo: {
-                postId: ''
-            },
-            blogInfo: {
-                blogId: ''
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
             },
             createdAt: '2024-06-20T15:00:01.817Z'
         },
@@ -95,9 +74,12 @@ export const BlogInsert = {
             blogInfo: {
                 blogId: ''
             },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+            },
             createdAt: '2024-06-20T15:00:01.817Z'
         },
-
         {
             content: "string",
             commentatorInfo: {
@@ -110,35 +92,9 @@ export const BlogInsert = {
             blogInfo: {
                 blogId: ''
             },
-            createdAt: '2024-06-20T15:00:01.817Z'
-        },
-
-        {
-            content: "string",
-            commentatorInfo: {
-                userId: '',
-                userLogin: RegistrationDto.RegistrationUserData.login
-            },
-            postInfo: {
-                postId: ''
-            },
-            blogInfo: {
-                blogId: ''
-            },
-            createdAt: '2024-06-20T15:00:01.817Z'
-        },
-
-        {
-            content: "string",
-            commentatorInfo: {
-                userId: '',
-                userLogin: RegistrationDto.RegistrationUserData.login
-            },
-            postInfo: {
-                postId: ''
-            },
-            blogInfo: {
-                blogId: ''
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
             },
             createdAt: '2024-06-20T15:00:01.817Z'
         },
@@ -155,20 +111,9 @@ export const BlogInsert = {
             blogInfo: {
                 blogId: ''
             },
-            createdAt: '2024-06-20T15:00:01.817Z'
-        },
-
-        {
-            content: "string",
-            commentatorInfo: {
-                userId: '',
-                userLogin: RegistrationDto.RegistrationUserData.login
-            },
-            postInfo: {
-                postId: ''
-            },
-            blogInfo: {
-                blogId: ''
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
             },
             createdAt: '2024-06-20T15:00:01.817Z'
         },
@@ -184,6 +129,105 @@ export const BlogInsert = {
             },
             blogInfo: {
                 blogId: ''
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+            },
+            createdAt: '2024-06-20T15:00:01.817Z'
+        },
+
+        {
+            content: "string",
+            commentatorInfo: {
+                userId: '',
+                userLogin: RegistrationDto.RegistrationUserData.login
+            },
+            postInfo: {
+                postId: ''
+            },
+            blogInfo: {
+                blogId: ''
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
             },
             createdAt: '2024-06-20T15:00:01.817Z'
         },

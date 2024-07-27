@@ -10,10 +10,8 @@ import {
 import {AuthDto, InsertAuthDto, RegistrationDto} from "../../Dto/AuthDto";
 import {UserModel} from "../../../src/Domain/User/User";
 import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
-import {userRepositories} from "../../../src/composition-root/user-composition-root";
-import {
-    recoveryPasswordSessionRepository
-} from "../../../src/composition-root/auth-registration-composition-root";
+import {recoveryPasswordSessionRepository, userRepositories} from "../../../src/composition-root/composition-root";
+
 
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, () => {

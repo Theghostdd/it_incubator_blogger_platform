@@ -27,7 +27,7 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
 
     let CreatedUserData: any = {}
     let userId: string
-    let InsertPostData: any;
+    let InsertBlogData: any;
     beforeEach(async () => {
         await DropAll()
 
@@ -71,11 +71,11 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
             content: "some content some content some content some content"
         }
 
-        InsertPostData = structuredClone(BlogInsert.CreateManyData)
-        for (let i in InsertPostData) {
-            InsertPostData[i].blogInfo.blogId = idBlog
-            InsertPostData[i].commentatorInfo.userId = userId
-            InsertPostData[i].postInfo.postId = idPost
+        InsertBlogData = structuredClone(BlogInsert.CreateManyData)
+        for (let i in InsertBlogData) {
+            InsertBlogData[i].blogInfo.blogId = idBlog
+            InsertBlogData[i].commentatorInfo.userId = userId
+            InsertBlogData[i].postInfo.postId = idPost
         }
 
     })
@@ -93,6 +93,11 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
             commentatorInfo: {
                 userId: userId,
                 userLogin: CreatedUserData.login
+            },
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 0,
+                myStatus: "None",
             },
             createdAt: expect.any(String)
           })
@@ -147,7 +152,7 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
     it('POST => GET | should get all post elements with pagination and filters by blog ID, status: 200', async () => {
         // Create many data
 
-        await CreateManyDataUniversal(InsertPostData, CommentModel)
+        await CreateManyDataUniversal(InsertBlogData, CommentModel)
         // This simulates a scenario where user want to get all comments without query params
         let GetAllElements = await GetRequest()
             .get(endpointPostComments)

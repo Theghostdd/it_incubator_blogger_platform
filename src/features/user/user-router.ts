@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {authValidation} from "../../internal/middleware/auth/AdminAuth/AdminAuth";
-import {userController} from "../../composition-root/user-composition-root";
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
+import {userController} from "../../composition-root/composition-root";
 
 
 export const userRouter = Router()

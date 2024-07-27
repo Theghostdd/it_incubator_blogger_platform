@@ -1,8 +1,7 @@
 import {Router} from "express";
-import {commentController} from "../../composition-root/comment-composition-root";
 import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
-import {authUserMiddleware} from "../../composition-root/auth-registration-composition-root";
 import {ROUTERS_SETTINGS} from "../../settings";
+import {authUserMiddleware, commentController} from "../../composition-root/composition-root";
 
 
 export const commentsRouter = Router()
