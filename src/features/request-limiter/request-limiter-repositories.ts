@@ -24,9 +24,9 @@ export class RequestLimiterRepository {
         }
     }
 
-    async deleteMany (id: ObjectId[]): Promise<DeleteResult> {
+    async deleteMany (ids: ObjectId[]): Promise<DeleteResult> {
         try {
-            return await this.requestLimiterModel.deleteMany(id)
+            return await this.requestLimiterModel.deleteMany({ _id: { $in: ids } })
         } catch (e:any) {
             throw new Error(e)
         }

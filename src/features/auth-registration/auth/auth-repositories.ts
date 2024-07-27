@@ -49,9 +49,9 @@ export class AuthRepositories {
         }
     }
 
-    async deleteSessions (id: ObjectId[]): Promise<DeleteResult> {
+    async deleteSessions (ids: ObjectId[]): Promise<DeleteResult> {
         try {
-            return await this.authSessionModel.deleteMany(id)
+            return await this.authSessionModel.deleteMany({ _id: { $in: ids } })
         } catch (e: any) {
             throw new Error(e)
         }

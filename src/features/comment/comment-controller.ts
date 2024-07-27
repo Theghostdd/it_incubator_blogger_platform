@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
 import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
-import {CommentInputModelType, CommentViewModelType} from "./comment-types";
+import {CommentInputModelType, CommentViewModelType, LikeStatusType} from "./comment-types";
 import {saveError} from "../../internal/utils/error-utils/save-error";
 import {CommentQueryRepositories} from "./comment-query-repositories";
 import {CommentService} from "./comment-service";
@@ -15,7 +15,7 @@ export class CommentController {
 
     async getCommentById(req: Request<{id: string}>, res: Response<CommentViewModelType>) {
         try {
-            const result: CommentViewModelType | null = await this.commentQueryRepositories.getCommentById(req.params.id)
+            const result: CommentViewModelType | null = await this.commentQueryRepositories.getCommentById(req.params.id, req.user.userId)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.COMMENTS.comments}/:id`, 'GET', 'Get comment by ID', e)
@@ -55,6 +55,22 @@ export class CommentController {
             }
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.COMMENTS.comments}/:id`, 'DELETE', 'Delete comment by ID', e)
+            return res.sendStatus(500)
+        }
+    }
+
+    async updateCommentLikeStatusById (req: Request<{id: string}, {}, LikeStatusType>, res: Response) {
+        try {
+            const result: ResultNotificationType = await this.commentService.updateLikeStatusForCommentById(req.body, req.params.id, req.user.userId)
+            switch (result.status) {
+                case ResultNotificationEnum.Success:
+                    return res.sendStatus(204);
+                case ResultNotificationEnum.NotFound:
+                    return res.sendStatus(404)
+                default: return res.sendStatus(500)
+            }
+        } catch (e: any) {
+            await saveError(`${ROUTERS_SETTINGS.COMMENTS.comments}/:id${ROUTERS_SETTINGS.COMMENTS.like_status}`, 'Update', 'Update comment`s like status', e)
             return res.sendStatus(500)
         }
     }

@@ -1,5 +1,4 @@
 import {AuthController} from "../features/auth-registration/auth-controller";
-import {userQueryRepositories} from "./user-composition-root";
 import {RegistrationService} from "../features/auth-registration/registartion/registration-service";
 import {UserModel} from "../Domain/User/User";
 import {AuthService} from "../features/auth-registration/auth/auth-service";

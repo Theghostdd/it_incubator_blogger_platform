@@ -118,3 +118,25 @@ export type PatternMailType = {
     subject: string,
     html: string
 }
+/*
+*
+*   Like status
+*
+*/
+export enum LikeStatusEnum {
+    'None' = 'None',
+    'Like' = 'Like',
+    'Dislike' = 'Dislike'
+}
+
+export type LikeChangeType = {
+    newLikesCount: number,
+    newDislikesCount: number,
+    newStatus: LikeStatusEnum
+}
+
+export type LikeStateType = {
+    [value in LikeStatusEnum]: {
+        [value in LikeStatusEnum]: LikeChangeType
+    }
+}

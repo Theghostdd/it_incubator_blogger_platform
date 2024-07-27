@@ -2,7 +2,7 @@ import {SecurityDeviceController} from "../features/security-device/security-dev
 import {SecurityDeviceService} from "../features/security-device/security-device-service";
 import {SecurityDeviceQueryRepositories} from "../features/security-device/security-device-query-repositories";
 import {AuthSessionModel} from "../Domain/Auth/Auth";
-import {authRepositories, authService, recoveryPasswordSessionRepository} from "./auth-registration-composition-root";
+import {authRepositories, recoveryPasswordSessionRepository} from "./auth-registration-composition-root";
 import {AuthRepositories} from "../features/auth-registration/auth/auth-repositories";
 import {AuthService} from "../features/auth-registration/auth/auth-service";
 import {UserRepositories} from "../features/user/user-repositories";

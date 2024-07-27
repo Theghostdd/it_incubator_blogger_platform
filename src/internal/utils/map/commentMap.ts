@@ -1,16 +1,21 @@
-import {ResultDataWithPaginationType} from "../../../typings/basic-types";
+import {LikeStatusEnum, ResultDataWithPaginationType} from "../../../typings/basic-types";
 import {CommentMongoViewType, CommentViewModelType} from "../../../features/comment/comment-types";
 
 
 export const commentMap = {
 
-    mapComment (data: CommentMongoViewType): CommentViewModelType {
+    mapComment (data: CommentMongoViewType, userLikeStatus: LikeStatusEnum): CommentViewModelType {
           return {
               id: data._id.toString(),
               content: data.content,
               commentatorInfo: {
                 userId: data.commentatorInfo.userId,
                 userLogin: data.commentatorInfo.userLogin
+              },
+              likesInfo: {
+                  likesCount: data.likesInfo.likesCount,
+                  dislikesCount: data.likesInfo.dislikesCount,
+                  myStatus: userLikeStatus
               },
               createdAt: data.createdAt,
           }
@@ -29,6 +34,11 @@ export const commentMap = {
                       commentatorInfo: {
                         userId: item.commentatorInfo.userId,
                         userLogin: item.commentatorInfo.userLogin
+                      },
+                      likesInfo: {
+                          likesCount: item.likesInfo.likesCount,
+                          dislikesCount: item.likesInfo.dislikesCount,
+                          myStatus: '' // TODO LikeStatusEnum
                       },
                       createdAt: item.createdAt
                   }

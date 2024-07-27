@@ -27,7 +27,10 @@ export const ROUTERS_SETTINGS = {
         new_password: '/new-password'
     },
     COMMENTS: {
-        comments: '/api/comments'
+        comments: '/api/comments',
+        like_status: "/like-status",
+
+
     },
     TEST: {
         test: '/api/testing',
@@ -50,7 +53,8 @@ export const MONGO_SETTINGS = {
         comments: 'comments',
         request_limit: 'request_limit',
         auth_session: 'auth_session',
-        recovery_pass_session: 'recovery_pass_session'
+        recovery_pass_session: 'recovery_pass_session',
+        comments_like: 'comments_like'
     }
 }
 
@@ -59,8 +63,8 @@ export const SETTINGS = {
     SALTRounds: 10,
     JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY || "SecretKey",
     JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY || "SecretKey2",
-    JWTAccessToken_Expires: '10s',
-    JWTRefreshToken_Expires: '20s',
+    JWTAccessToken_Expires: '5m',
+    JWTRefreshToken_Expires: '1h',
 }
 
 export const AuthData = [
