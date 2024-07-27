@@ -1,7 +1,7 @@
 import {BlogModel} from "../../Domain/Blog/Blog";
 import {PostModel} from "../../Domain/Post/Post";
 import {UserModel} from "../../Domain/User/User";
-import {CommentModel} from "../../Domain/Comment/Comment";
+import {CommentModel, LikeModel} from "../../Domain/Comment/Comment";
 import {AuthSessionModel, RequestLimiterModel} from "../../Domain/Auth/Auth";
 import {RecoveryPasswordSessionModel} from "../../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {iTestRepositories} from "./test-interface";
@@ -15,6 +15,7 @@ export class TestRepositories implements iTestRepositories {
         protected authSessionModel: typeof AuthSessionModel,
         protected requestLimiterModel: typeof RequestLimiterModel,
         protected recoveryPasswordSessionModel: typeof RecoveryPasswordSessionModel,
+        protected likeModel: typeof LikeModel
     ) {}
     async deleteManyAllData (): Promise<void> {
         try {
@@ -26,6 +27,7 @@ export class TestRepositories implements iTestRepositories {
                 this.authSessionModel.deleteMany({}),
                 this.requestLimiterModel.deleteMany({}),
                 this.recoveryPasswordSessionModel.deleteMany({}),
+                this.likeModel.deleteMany({}),
             ])
             return
         } catch (e: any) {

@@ -3,7 +3,7 @@ import { app } from "../../../src/app"
 import {MONGO_SETTINGS, ROUTERS_SETTINGS} from "../../../src/settings"
 import {AuthSessionModel, RequestLimiterModel} from "../../../src/Domain/Auth/Auth";
 import {UserModel} from "../../../src/Domain/User/User";
-import {CommentModel} from "../../../src/Domain/Comment/Comment";
+import {CommentModel, LikeModel} from "../../../src/Domain/Comment/Comment";
 import {BlogModel} from "../../../src/Domain/Blog/Blog";
 import {PostModel} from "../../../src/Domain/Post/Post";
 import mongoose from "mongoose";
@@ -35,6 +35,7 @@ export const DropAll = async () => {
         AuthSessionModel.deleteMany({}),
         RequestLimiterModel.deleteMany({}),
         RecoveryPasswordSessionModel.deleteMany({}),
+        LikeModel.deleteMany({})
     ])
 }
 

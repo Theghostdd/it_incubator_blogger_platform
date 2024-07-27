@@ -11,6 +11,7 @@ import {
 } from '../modules/modules';
 import {CommentModel} from "../../../src/Domain/Comment/Comment";
 import {BlogInsert} from "../../Dto/BlogDto";
+import {CommentDto} from "../../Dto/CommentDto";
 
 
 
@@ -18,12 +19,15 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
 
     const endpointPost: string = ROUTERS_SETTINGS.POST.post
     const endpointComments: string =ROUTERS_SETTINGS.POST.comments
+    const endpointComment: string = ROUTERS_SETTINGS.COMMENTS.comments
+    const endpointCommentsLikeStatus: string = ROUTERS_SETTINGS.COMMENTS.like_status
 
     let endpointPostComments: string
     let idPost: string
     let AuthData: any = {}
     let CreateDataComment: any = {}
     let CreateDataBlog: any = {}
+    let likeStatus: any;
 
     let CreatedUserData: any = {}
     let userId: string
@@ -77,6 +81,8 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
             InsertBlogData[i].commentatorInfo.userId = userId
             InsertBlogData[i].postInfo.postId = idPost
         }
+
+        likeStatus = structuredClone(CommentDto.updateLikeStatusForComment)
 
     })
 
@@ -194,4 +200,169 @@ describe(ROUTERS_SETTINGS.POST.post + '/:id' + ROUTERS_SETTINGS.POST.comments, (
         }) 
         expect(GetAllElements.body.items).toHaveLength(11)
     })
+
+    it('POST => GET | should get all comment without access token, like must be None', async () => {
+        // Create many data
+        await CreateManyDataUniversal(InsertBlogData, CommentModel)
+        // This simulates a scenario where user want to get all comments without query params
+        let GetAllElements = await GetRequest()
+            .get(endpointPostComments)
+            .expect(200)
+        expect(GetAllElements.body).toEqual({
+            pagesCount: 2,
+            page: 1,
+            pageSize: 10,
+            totalCount: 11,
+            items: expect.any(Array)
+        })
+        expect(GetAllElements.body.items).toHaveLength(10)
+        GetAllElements.body.items.forEach((item: any) => expect(item.likesInfo.myStatus).toBe("None"))
+    })
+
+    it('POST => GET | should add like and dislike to comments, and get all comments with info about like and about like current user', async () => {
+        // Create many data
+        const createMany = await CreateManyDataUniversal(InsertBlogData, CommentModel)
+
+        const elementIdFirst = createMany[0]._id.toString()
+        const elementIdSecond = createMany[1]._id.toString()
+
+        // This simulates a scenario where client want to send like for comment 1
+        await GetRequest()
+            .put(`${endpointComment}/${elementIdFirst}${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus)
+            .expect(204)
+        // This simulates a scenario where client want to send like for comment 2
+        await GetRequest()
+            .put(`${endpointComment}/${elementIdSecond}${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus)
+            .expect(204)
+        // This simulates a scenario where client want to get all comment without access token
+        let getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => expect(item.likesInfo.myStatus).toBe("None"))
+        // This simulates a scenario where client want to get all comment witch access token
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .set(AuthData)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => {
+            if (item.id === elementIdFirst || item.id === elementIdSecond) {
+                expect(item.likesInfo.myStatus).toBe("Like")
+            } else {
+                expect(item.likesInfo.myStatus).toBe("None")
+            }
+        })
+
+        // This simulates a scenario where client want to send "Like" again to first element, logic repeat
+        await GetRequest()
+            .put(`${endpointComment}/${elementIdFirst}${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus)
+            .expect(204)
+
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => expect(item.likesInfo.myStatus).toBe("None"))
+
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .set(AuthData)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => {
+            if (item.id === elementIdFirst || item.id === elementIdSecond) {
+                expect(item.likesInfo.myStatus).toBe("Like")
+            } else {
+                expect(item.likesInfo.myStatus).toBe("None")
+            }
+        })
+
+
+        // This simulates a scenario where client want to send "Dislike" to comment clint sent "like"
+        likeStatus.likeStatus = "Dislike"
+        await GetRequest()
+            .put(`${endpointComment}/${elementIdFirst}${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus)
+            .expect(204)
+
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => expect(item.likesInfo.myStatus).toBe("None"))
+
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .set(AuthData)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => {
+            if (item.id === elementIdFirst) {
+                expect(item.likesInfo.myStatus).toBe("Dislike")
+            } else if (item.id === elementIdSecond) {
+                expect(item.likesInfo.myStatus).toBe("Like")
+            } else {
+                expect(item.likesInfo.myStatus).toBe("None")
+            }
+        })
+
+        // This simulates a scenario where client want to send "None" to comments clint sent "like" and "dislike"
+        likeStatus.likeStatus = "None"
+        await GetRequest()
+            .put(`${endpointComment}/${elementIdFirst}${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus)
+            .expect(204)
+        await GetRequest()
+            .put(`${endpointComment}/${elementIdSecond}${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus)
+            .expect(204)
+
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => expect(item.likesInfo.myStatus).toBe("None"))
+
+        getAllComments = await GetRequest()
+            .get(endpointPostComments)
+            .set(AuthData)
+            .expect(200)
+        getAllComments.body.items.forEach((item: any) => {
+            expect(item.likesInfo.myStatus).toBe("None")
+        })
+
+
+    })
+
+    it('POST | should not update status like, bad data and Unauthorized', async () => {
+        // Create many data
+
+        // This simulates a scenario where client want to send like without access token
+        await GetRequest()
+            .put(`${endpointComment}/1${endpointCommentsLikeStatus}`)
+            .send(likeStatus)
+            .expect(401)
+
+        // This simulates a scenario where client want to send bad value for like
+        const result = await GetRequest()
+            .put(`${endpointComment}/1${endpointCommentsLikeStatus}`)
+            .set(AuthData)
+            .send(likeStatus.likeStatus = "DISLIKET")
+            .expect(400)
+        expect(result.body).toEqual({
+            errorsMessages: [
+                {
+                    message: expect.any(String),
+                    field: 'likeStatus',
+                }
+            ]
+        })
+
+
+
+    })
+
 })

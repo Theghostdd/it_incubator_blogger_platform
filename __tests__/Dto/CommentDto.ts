@@ -5,6 +5,10 @@ import { PostDto } from "./PostDto"
 export const CommentDto = {
     UpdateComment: {
         content: "My update comment content"
+    },
+
+    updateLikeStatusForComment: {
+        likeStatus: "Like"
     }
 }
 

@@ -40,7 +40,7 @@ import {RequestLimiter} from "../internal/middleware/request-limit/request-limit
 import {AuthUserMiddleware} from "../internal/middleware/auth/UserAuth/auth-user";
 
 export const userRepositories = new UserRepositories(UserModel)
-export const testRepositories = new TestRepositories(BlogModel, PostModel, UserModel, CommentModel, AuthSessionModel, RequestLimiterModel, RecoveryPasswordSessionModel)
+export const testRepositories = new TestRepositories(BlogModel, PostModel, UserModel, CommentModel, AuthSessionModel, RequestLimiterModel, RecoveryPasswordSessionModel, LikeModel)
 export const requestLimiterRepository = new RequestLimiterRepository(RequestLimiterModel)
 export const postRepositories = new PostRepositories(PostModel)
 export const commentRepositories = new CommentRepositories(CommentModel, LikeModel)

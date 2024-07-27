@@ -106,7 +106,6 @@ export class PostController {
 
     async getCommentsByPostId(req: Request<{id: string}, {}, {}, QueryParamsType>, res: Response<ResultDataWithPaginationType<CommentViewModelType[]>>) {
         try {
-            console.log("req.user.userId", req.user.userId)
             const result:ResultDataWithPaginationType<CommentViewModelType[]> = await this.commentQueryRepositories.getAllComments(req.query, req.params.id, req.user.userId)
             return result.items.length > 0 ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
