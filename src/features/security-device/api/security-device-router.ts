@@ -1,10 +1,12 @@
-import {ROUTERS_SETTINGS} from "../../settings";
+import {ROUTERS_SETTINGS} from "../../../settings";
 import {Router} from "express";
-import {securityDeviceController} from "../../composition-root/composition-root";
+import {container} from "../../../composition-root/composition-root";
+import {SecurityDeviceController} from "./security-device-controller";
 
 
 
 export const securityRouter = Router()
+const securityDeviceController = container.resolve(SecurityDeviceController)
 
 securityRouter.get(ROUTERS_SETTINGS.SECURITY.devices, securityDeviceController.getAllSessions.bind(securityDeviceController))
 

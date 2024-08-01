@@ -24,7 +24,7 @@ UserSchema.statics.createInstance = function (registerInputDto: UserRegisterInpu
         email: registerInputDto.email,
         password: hashPass,
         userConfirm: {
-            ifConfirm: false,
+            ifConfirm: confirmCode === 'none',
             confirmationCode: confirmCode,
             dataExpire: addDays(new Date(), 1).toISOString()
         },

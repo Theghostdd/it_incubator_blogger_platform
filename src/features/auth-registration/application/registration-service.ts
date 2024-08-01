@@ -5,7 +5,7 @@ import {
 } from "../../../typings/basic-types";
 import {BcryptService} from "../../../internal/application/bcrypt/bcrypt";
 import {compareAsc} from "date-fns";
-import {UserRepositories} from "../../user/user-repositories";
+import {UserRepositories} from "../../user/infrastructure/user-repositories";
 import {UserModel} from "../domain/user-entity";
 import {inject, injectable} from "inversify";
 import {

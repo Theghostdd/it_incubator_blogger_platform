@@ -4,13 +4,3 @@ export class AuthViewModelDto {
     ) {
     }
 }
-
-
-export class UserViewMeModelDto {
-    constructor(
-        public login: string,
-        public email: string,
-        public userId: string
-    ) {
-    }
-}

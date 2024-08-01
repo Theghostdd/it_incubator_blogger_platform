@@ -3,7 +3,6 @@ import {MONGO_SETTINGS} from "../../../settings";
 import {CommentDto} from "./dto";
 import {ICommentInstanceMethod, ICommentModel} from "./interfaces";
 import {CommentCreateInputModelDto, CommentUpdateInputModelDto} from "../api/input-models/dto";
-import {CreateInputBlogDto} from "../../blog/api/input-models/dto";
 import {LikeStatusEnum} from "../../../typings/basic-types";
 
 

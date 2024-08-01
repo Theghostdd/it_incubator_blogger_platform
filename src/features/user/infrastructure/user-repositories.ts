@@ -1,9 +1,9 @@
 import {DeleteResult} from "mongodb";
 import {inject, injectable} from "inversify";
 import {HydratedDocument} from "mongoose";
-import {UserDto} from "../auth-registration/domain/dto";
-import {IUserInstanceMethods} from "../auth-registration/domain/interfaces";
-import {UserModel} from "../auth-registration/domain/user-entity";
+import {UserDto} from "../../auth-registration/domain/dto";
+import {IUserInstanceMethods} from "../../auth-registration/domain/interfaces";
+import {UserModel} from "../../auth-registration/domain/user-entity";
 
 
 

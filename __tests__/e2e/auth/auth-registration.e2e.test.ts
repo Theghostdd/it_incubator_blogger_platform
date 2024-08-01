@@ -2,10 +2,14 @@ import { ROUTERS_SETTINGS } from "../../../src/settings"
 import {AdminAuth, CreateUser, DropAll, GetRequest, InsertOneUniversal} from "../modules/modules"
 import { addMinutes } from "date-fns"
 import { InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
-import { nodemailerService } from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
-import {UserModel} from "../../../src/Domain/User/User";
+import {container} from "../../../src/composition-root/composition-root";
+import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
+import {UserRepositories} from "../../../src/features/user/infrastructure/user-repositories";
+import {UserModel} from "../../../src/features/auth-registration/domain/user-entity";
 
 
+
+const nodemailerService = container.resolve(NodemailerService)
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.registration, () => {
 

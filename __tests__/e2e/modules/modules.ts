@@ -1,13 +1,15 @@
 import request from "supertest"
 import { app } from "../../../src/app"
 import {MONGO_SETTINGS, ROUTERS_SETTINGS} from "../../../src/settings"
-import {AuthSessionModel, RequestLimiterModel} from "../../../src/Domain/Auth/Auth";
-import {UserModel} from "../../../src/Domain/User/User";
-import {CommentModel, LikeModel} from "../../../src/Domain/Comment/Comment";
-import {PostModel} from "../../../src/Domain/Post/Post";
 import mongoose from "mongoose";
-import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {BlogModel} from "../../../src/features/blog/domain/entity";
+import {UserModel} from "../../../src/features/auth-registration/domain/user-entity";
+import {PostModel} from "../../../src/features/post/domain/entity";
+import {AuthSessionModel} from "../../../src/features/auth-registration/domain/session-entity";
+import {CommentModel} from "../../../src/features/comment/domain/entity";
+import {RequestLimiterModel} from "../../../src/features/request-limiter/domain/entity";
+import {RecoveryPasswordSessionModel} from "../../../src/features/auth-registration/domain/recovery-password-entity";
+import {LikeModel} from "../../../src/features/likes/domain/entity";
 
 
 

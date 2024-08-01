@@ -1,7 +1,7 @@
 import {ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
 import {BlogRepositories} from "../../blog/infrastructure/blog-repositories";
 import {PostRepositories} from "../infrastructure/post-repositories";
-import {UserRepositories} from "../../user/user-repositories";
+import {UserRepositories} from "../../user/infrastructure/user-repositories";
 import {CommentRepositories} from "../../comment/infrastucture/comment-repositories";
 import {inject, injectable} from "inversify";
 import {PostInputModel, PostUpdateModel} from "../api/input-models/dto";

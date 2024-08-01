@@ -6,7 +6,7 @@ import {
 import {ROUTERS_SETTINGS} from "../../../settings";
 import {saveError} from "../../../internal/utils/error-utils/save-error";
 import {Response, Request} from "express";
-import {CommentInputModelType, CommentViewModelType} from "../../comment/comment-types";
+import {CommentInputModelType} from "../../comment/comment-types";
 import {PostService} from "../application/post-service";
 import {PostQueryRepository} from "./post-query-repositories";
 import {CommentQueryRepositories} from "../../comment/api/comment-query-repositories";

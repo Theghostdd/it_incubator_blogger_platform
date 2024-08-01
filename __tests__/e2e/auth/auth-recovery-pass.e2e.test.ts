@@ -1,5 +1,4 @@
 import {ROUTERS_SETTINGS} from "../../../src/settings";
-import {nodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
 import {
     CreateRecoveryPassCode,
     DropAll,
@@ -8,11 +7,18 @@ import {
     InsertOneUniversal
 } from "../modules/modules";
 import {AuthDto, InsertAuthDto, RegistrationDto} from "../../Dto/AuthDto";
-import {UserModel} from "../../../src/Domain/User/User";
-import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
-import {recoveryPasswordSessionRepository, userRepositories} from "../../../src/composition-root/composition-root";
+import {RecoveryPasswordSessionModel} from "../../../src/features/auth-registration/domain/recovery-password-entity";
+import {UserModel} from "../../../src/features/auth-registration/domain/user-entity";
+import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
+import {container} from "../../../src/composition-root/composition-root";
+import {
+    RecoveryPasswordSessionRepository
+} from "../../../src/features/auth-registration/infrastructure/recovery-password-session-repositories";
+import {UserRepositories} from "../../../src/features/user/infrastructure/user-repositories";
 
-
+const nodemailerService = container.resolve(NodemailerService)
+const recoveryPasswordSessionRepository = container.get(RecoveryPasswordSessionRepository)
+const userRepositories = container.get(UserRepositories)
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, () => {
 
@@ -23,8 +29,7 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, (
 
     beforeEach(async () => {
         jest.clearAllMocks()
-
-        nodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve(true))
+        nodemailerService.sendEmail = jest.fn().mockImplementation(() => Promise.resolve());
         await DropAll()
 
         RecoveryData = structuredClone(AuthDto.RecoveryPassData)
@@ -74,7 +79,6 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, (
 })
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => {
-
     const endpoint: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password
     const endpointAuth: string = ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.login
 

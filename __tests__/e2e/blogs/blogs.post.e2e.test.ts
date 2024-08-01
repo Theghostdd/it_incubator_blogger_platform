@@ -1,6 +1,6 @@
 import { ROUTERS_SETTINGS } from "../../../src/settings";
 import {AdminAuth, CreateBlog, CreateManyDataUniversal, DropAll, GetRequest} from "../modules/modules";
-import {PostModel} from "../../../src/Domain/Post/Post";
+import {PostModel} from "../../../src/features/post/domain/entity";
 
 describe(ROUTERS_SETTINGS.BLOG.blogs + '/:id' + ROUTERS_SETTINGS.BLOG.blogs_posts, () => {
 

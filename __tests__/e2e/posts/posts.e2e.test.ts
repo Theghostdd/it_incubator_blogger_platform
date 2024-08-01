@@ -1,6 +1,6 @@
 import { ROUTERS_SETTINGS } from '../../../src/settings'
 import {CreateBlog, GetRequest, AdminAuth, CreatedPost, DropAll, CreateManyDataUniversal} from '../modules/modules';
-import {PostModel} from "../../../src/Domain/Post/Post";
+import {PostModel} from "../../../src/features/post/domain/entity";
 
 
 

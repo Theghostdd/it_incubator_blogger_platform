@@ -1,5 +1,9 @@
 import {MailDto} from "../domain/dto";
+import {injectable} from "inversify";
 
+
+
+@injectable()
 export class PatternsMailService {
     confirmMail(code: string): MailDto {
         return {

@@ -52,11 +52,13 @@ export class CommentQueryRepositories {
             .limit(pageSize!)
 
         let likes: HydratedDocument<LikeDto, ILikesInstanceMethods>[] | [] = []
+
         if (userId) {
             const commentsIds: ObjectId[] = comments.map(id => id._id)
             likes = await this.likeModel
-                .find({userId: userId, commentId: {$in: commentsIds}})
+                .find({userId: userId, parentId: {$in: commentsIds}})
         }
+
 
 
         return {

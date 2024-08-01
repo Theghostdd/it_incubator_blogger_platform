@@ -1,7 +1,7 @@
 import { ROUTERS_SETTINGS } from "../../../src/settings";
 import {AdminAuth, CreateManyDataUniversal, CreateUser, DropAll, GetRequest} from "../modules/modules";
-import {UserModel} from "../../../src/Domain/User/User";
 import {InsertAuthDto} from "../../Dto/AuthDto";
+import {UserModel} from "../../../src/features/auth-registration/domain/user-entity";
 
 describe(ROUTERS_SETTINGS.USER.user, () => {
 

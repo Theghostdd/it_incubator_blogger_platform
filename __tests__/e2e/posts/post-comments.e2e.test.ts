@@ -9,9 +9,9 @@ import {
     DropAll,
     CreateManyDataUniversal
 } from '../modules/modules';
-import {CommentModel} from "../../../src/Domain/Comment/Comment";
 import {BlogInsert} from "../../Dto/BlogDto";
 import {CommentDto} from "../../Dto/CommentDto";
+import {CommentModel} from "../../../src/features/comment/domain/entity";
 
 
 

@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
 import {ROUTERS_SETTINGS} from "../../../settings";
-import {UserQueryRepositories} from "../../user/user-query-repositories";
+import {UserQueryRepositories} from "../../user/api/user-query-repositories";
 import {saveError} from "../../../internal/utils/error-utils/save-error";
 
 import {RegistrationService} from "../application/registration-service";
@@ -15,7 +15,8 @@ import {
     UserRegistrationResendConfirmCodeInputDto
 } from "./input-models/dto";
 import {TokensDto} from "../../../internal/application/jwt/domain/dto";
-import {AuthViewModelDto, UserViewMeModelDto} from "./view-models/dto";
+import {AuthViewModelDto} from "./view-models/dto";
+import {UserMeViewModelDto} from "../../user/api/view-models/dto";
 
 @injectable()
 export class AuthController {
@@ -166,10 +167,9 @@ export class AuthController {
         }
     }
 
-    async getInfoAboutCurrentUserByAccessToken(req: Request, res: Response<UserViewMeModelDto>) {
+    async getInfoAboutCurrentUserByAccessToken(req: Request, res: Response<UserMeViewModelDto>) {
         try {
-            //TODO:
-            // const result: UserViewMeModelDto | null = await this.userQueryRepositories.getUserByIdAuthMe(req.user.userId)
+            const result: UserMeViewModelDto | null = await this.userQueryRepositories.getUserByIdAuthMe(req.user.userId)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.me}`, 'GET', 'Get information about current user by accessToken.', e)

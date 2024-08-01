@@ -4,11 +4,10 @@ import {
 } from "../../../typings/basic-types";
 import {JWTService} from "../../../internal/application/jwt/application/jwt";
 import {compareAsc} from "date-fns";
-import {UserRepositories} from "../../user/user-repositories";
+import {UserRepositories} from "../../user/infrastructure/user-repositories";
 import {RecoveryPasswordSessionRepository} from "../infrastructure/recovery-password-session-repositories";
 import {AuthRepositories} from "../infrastructure/auth-repositories";
 import {inject, injectable} from "inversify";
-import {UserModel} from "../domain/user-entity";
 import {AuthSessionModel} from "../domain/session-entity";
 import {RecoveryPasswordSessionModel} from "../domain/recovery-password-entity";
 import {UserChangePasswordInputDto, UserLoginInputDto, UserPasswordRecoveryInputDto} from "../api/input-models/dto";
@@ -31,7 +30,6 @@ export class AuthService {
         @inject(RecoveryPasswordSessionRepository) private recoveryPasswordSessionRepository: RecoveryPasswordSessionRepository,
         @inject(AuthRepositories) private authRepositories: AuthRepositories,
         @inject(AuthSessionModel)private authSessionModel: typeof AuthSessionModel,
-        @inject(UserModel) private userModel: typeof UserModel,
         @inject(RecoveryPasswordSessionModel) private recoveryPasswordSessionModel: typeof RecoveryPasswordSessionModel,
         @inject(BcryptService) private bcryptService: BcryptService,
         @inject(Uuid) private uuid: Uuid,
