@@ -1,5 +1,5 @@
 import {ROUTERS_SETTINGS} from "../../../src/settings";
-import {nodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer";
+import {nodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
 import {
     CreateRecoveryPassCode,
     DropAll,

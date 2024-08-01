@@ -1,5 +1,5 @@
 import {WithId} from "mongodb"
-import {JWTRefreshPayloadType} from "../../../typings/basic-types";
+import {JWTRefreshPayloadType} from "../../typings/basic-types";
 
 /*
 *

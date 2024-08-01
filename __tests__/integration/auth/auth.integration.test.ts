@@ -5,7 +5,7 @@ import { MONGO_SETTINGS } from "../../../src/settings";
 import { AuthDto, InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
 import {delay, Drop, RecoverPasswordSession, UserModule} from "../modules/modules";
 import mongoose from "mongoose";
-import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer";
+import {NodemailerService} from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
 import {addMinutes} from "date-fns";
 import {AuthRepositories} from "../../../src/Repositories/AuthRepositories/AuthRepositories";
 

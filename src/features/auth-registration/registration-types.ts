@@ -1,4 +1,4 @@
-import {UserConfirmationViewType} from "../../user/user-types";
+import {UserConfirmationViewType} from "../user/user-types";
 
 export type RegistrationInputType = {
     login: string,

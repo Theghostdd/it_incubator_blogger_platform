@@ -1,4 +1,4 @@
-import {SessionOutputModelViewType, SessionsMongoViewType} from "../../../features/auth-registration/auth/auth-types";
+import {SessionOutputModelViewType, SessionsMongoViewType} from "../../../features/auth-registration/auth-types";
 
 export const securityMapper = {
     mapsDevices (data: SessionsMongoViewType[]): SessionOutputModelViewType[] {

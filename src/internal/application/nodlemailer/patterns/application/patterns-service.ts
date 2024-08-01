@@ -1,7 +1,7 @@
-import {PatternMailType} from "../../../../typings/basic-types";
+import {MailDto} from "../domain/dto";
 
-export const patternsMailService = {
-    async confirmMail(code: string): Promise<PatternMailType> {
+export class PatternsMailService {
+    confirmMail(code: string): MailDto {
         return {
             subject: 'Some Subject',
             html: `
@@ -11,8 +11,9 @@ export const patternsMailService = {
                 </p>
             `
         }
-    },
-    async recoveryPasswordMail(code: string): Promise<PatternMailType> {
+    }
+
+    recoveryPasswordMail(code: string): MailDto {
         return {
             subject: 'Recovery password',
             html: `

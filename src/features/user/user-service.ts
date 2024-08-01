@@ -7,7 +7,7 @@ import {bcryptService} from "../../internal/application/bcrypt/bcrypt";
 import {UserViewModelType} from "./user-types";
 import {UserModel} from "../../Domain/User/User";
 import {UserRepositories} from "./user-repositories";
-import {RegistrationCreatType, RegistrationInputType} from "../auth-registration/registartion/registration-types";
+import {RegistrationCreatType, RegistrationInputType} from "../auth-registration/registration-types";
 import {userMap} from "../../internal/utils/map/userMap";
 
 

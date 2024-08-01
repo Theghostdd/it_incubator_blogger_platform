@@ -1,5 +1,5 @@
 import {WithId} from "mongodb"
-import {RegistrationCreatType} from "../auth-registration/registartion/registration-types";
+import {RegistrationCreatType} from "../auth-registration/registration-types";
 /*
 *
 *

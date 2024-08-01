@@ -2,7 +2,7 @@ import { ROUTERS_SETTINGS } from "../../../src/settings"
 import {AdminAuth, CreateUser, DropAll, GetRequest, InsertOneUniversal} from "../modules/modules"
 import { addMinutes } from "date-fns"
 import { InsertAuthDto, RegistrationDto } from "../../Dto/AuthDto";
-import { nodemailerService } from "../../../src/internal/application/nodlemailer/nodemailer";
+import { nodemailerService } from "../../../src/internal/application/nodlemailer/nodemailer/nodemailer";
 import {UserModel} from "../../../src/Domain/User/User";
 
 

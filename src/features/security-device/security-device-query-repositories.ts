@@ -1,5 +1,5 @@
 import {AuthSessionModel} from "../../Domain/Auth/Auth";
-import {SessionOutputModelViewType, SessionsMongoViewType} from "../auth-registration/auth/auth-types";
+import {SessionOutputModelViewType, SessionsMongoViewType} from "../auth-registration/auth-types";
 import {securityMapper} from "../../internal/utils/map/securityMap";
 
 

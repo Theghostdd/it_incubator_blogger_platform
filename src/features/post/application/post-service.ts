@@ -2,7 +2,6 @@ import {ResultNotificationEnum, ResultNotificationType} from "../../../typings/b
 import {BlogRepositories} from "../../blog/infrastructure/blog-repositories";
 import {PostRepositories} from "../infrastructure/post-repositories";
 import {UserRepositories} from "../../user/user-repositories";
-import {UserModel} from "../../../Domain/User/User";
 import {CommentRepositories} from "../../comment/infrastucture/comment-repositories";
 import {inject, injectable} from "inversify";
 import {PostInputModel, PostUpdateModel} from "../api/input-models/dto";
@@ -14,6 +13,8 @@ import {PostDto} from "../domain/dto";
 import {CommentCreateInputModelDto} from "../../comment/api/input-models/dto";
 import {IPostInstanceMethod} from "../domain/interfaces";
 import {CommentModel} from "../../comment/domain/entity";
+import {UserDto} from "../../auth-registration/domain/dto";
+import {IUserInstanceMethods} from "../../auth-registration/domain/interfaces";
 
 @injectable()
 export class PostService {
@@ -60,8 +61,7 @@ export class PostService {
 
 
     async createCommentByPostId(commentDto: CommentCreateInputModelDto, postId: string, userId: string): Promise<ResultNotificationType<string | null>> {
-        // TODO:
-        // const user: InstanceType<typeof UserModel> | null = await this.userRepositories.getUserById(userId)
+        const user: HydratedDocument<UserDto, IUserInstanceMethods> | null = await this.userRepositories.getUserById(userId)
         if (!user) return {status: ResultNotificationEnum.NotFound, data: null}
         //
         const post: HydratedDocument<PostDto, IPostInstanceMethod> | null = await this.postRepositories.getPostById(postId)

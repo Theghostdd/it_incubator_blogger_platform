@@ -6,9 +6,6 @@ import {BlogService} from "../features/blog/application/blog-service";
 import {BlogController} from "../features/blog/api/blog-controller";
 import {BlogModel} from "../features/blog/domain/entity";
 import {BlogRepositories} from "../features/blog/infrastructure/blog-repositories";
-import {UserModel} from "../Domain/User/User";
-import {AuthSessionModel, RequestLimiterModel} from "../Domain/Auth/Auth";
-import {RecoveryPasswordSessionModel} from "../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {TestController} from "../features/test/test-controller";
 import {TestService} from "../features/test/test-service";
 import {TestRepositories} from "../features/test/test-repositories";
@@ -17,9 +14,15 @@ import {PostController} from "../features/post/api/post-controller";
 import {PostRepositories} from "../features/post/infrastructure/post-repositories";
 import {PostQueryRepository} from "../features/post/api/post-query-repositories";
 import {PostModel} from "../features/post/domain/entity";
-import {AuthService} from "../features/auth-registration/auth/auth-service";
+import {AuthService} from "../features/auth-registration/application/auth-service";
 import {CommentModel} from "../features/comment/domain/entity";
 import {LikeModel} from "../features/likes/domain/entity";
+import {AuthController} from "../features/auth-registration/api/auth-controller";
+import {AuthRepositories} from "../features/auth-registration/infrastructure/auth-repositories";
+import {UserModel} from "../features/auth-registration/domain/user-entity";
+import {AuthSessionModel} from "../features/auth-registration/domain/session-entity";
+import {RequestLimiterModel} from "../features/request-limiter/domain/entity";
+import {RecoveryPasswordSessionModel} from "../features/auth-registration/domain/recovery-password-entity";
 
 
 
@@ -30,8 +33,7 @@ export const container: Container = new Container();
 container.bind<BlogController>(BlogController).toSelf()
 container.bind<PostController>(PostController).toSelf()
 container.bind<TestController>(TestController).toSelf()
-
-
+container.bind<AuthController>(AuthController).toSelf()
 
 
 container.bind<PostService>(PostService).toSelf()
@@ -45,6 +47,7 @@ container.bind<PostRepositories>(PostRepositories).toSelf()
 container.bind<TestRepositories>(TestRepositories).toSelf()
 container.bind<BlogQueryRepositories>(BlogQueryRepositories).toSelf()
 container.bind<PostQueryRepository>(PostQueryRepository).toSelf()
+container.bind<AuthRepositories>(AuthRepositories).toSelf()
 
 
 container.bind<typeof BlogModel>(BlogModel).toConstantValue(BlogModel)

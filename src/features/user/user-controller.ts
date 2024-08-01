@@ -8,7 +8,7 @@ import {ROUTERS_SETTINGS} from "../../settings";
 import {saveError} from "../../internal/utils/error-utils/save-error";
 import {UserQueryRepositories} from "./user-query-repositories";
 import {UserQueryParamsType, UserViewModelType} from "./user-types";
-import {RegistrationInputType} from "../auth-registration/registartion/registration-types";
+import {RegistrationInputType} from "../auth-registration/registration-types";
 import {UserService} from "./user-service";
 
 

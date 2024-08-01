@@ -4,7 +4,7 @@ import { addSeconds, subSeconds} from "date-fns";
 import { ResultNotificationEnum, ResultNotificationType } from "../../../typings/basic-types";
 import {RequestLimiterInputModelViewType} from "../../../features/request-limiter/request-limiter-types";
 import {saveError} from "../../utils/error-utils/save-error";
-import {RequestLimiterService} from "../../../features/request-limiter/request-limiter-service";
+import {RequestLimiterService} from "../../../features/request-limiter/application/request-limiter-service";
 
 
 export class RequestLimiter {

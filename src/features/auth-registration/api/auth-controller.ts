@@ -2,18 +2,10 @@ import {Request, Response} from "express";
 import {APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
 import {ROUTERS_SETTINGS} from "../../../settings";
 import {UserQueryRepositories} from "../../user/user-query-repositories";
-import {UserMeModelViewType} from "../../user/user-types";
 import {saveError} from "../../../internal/utils/error-utils/save-error";
 
-import {RegistrationService} from "../registartion/registration-service";
-import {
-    AuthModelServiceType,
-    AuthOutputModelType,
-    ChangePasswordInputViewType,
-    PasswordRecoveryInputViewType,
-    UserLoginInputViewType
-} from "../auth/auth-types";
-import {AuthService} from "../auth/auth-service";
+import {RegistrationService} from "../application/registration-service";
+import {AuthService} from "../application/auth-service";
 import {inject, injectable} from "inversify";
 import {
     UserChangePasswordInputDto,
@@ -22,6 +14,8 @@ import {
     UserRegistrationConfirmCodeInputDto,
     UserRegistrationResendConfirmCodeInputDto
 } from "./input-models/dto";
+import {TokensDto} from "../../../internal/application/jwt/domain/dto";
+import {AuthViewModelDto, UserViewMeModelDto} from "./view-models/dto";
 
 @injectable()
 export class AuthController {
@@ -31,9 +25,9 @@ export class AuthController {
         @inject(UserQueryRepositories) private userQueryRepositories: UserQueryRepositories,
     ) {
     }
-    async login (req: Request<{}, {}, UserLoginInputDto>, res: Response<AuthOutputModelType | APIErrorsMessageType>) {
+    async login (req: Request<{}, {}, UserLoginInputDto>, res: Response<AuthViewModelDto | APIErrorsMessageType>) {
         try {
-            const result: ResultNotificationType<AuthModelServiceType> = await this.authService.auth(req.body, req.ip || req.socket.remoteAddress!, req.useragent!.os || "anonyms")
+            const result: ResultNotificationType<TokensDto | null> = await this.authService.auth(req.body, req.ip || req.socket.remoteAddress!, req.useragent!.os || "anonyms")
             switch (result.status) {
                 case ResultNotificationEnum.Success:
                     const {refreshToken, ...data} = result.data!
@@ -73,7 +67,7 @@ export class AuthController {
 
     async registrationUser(req: Request<{}, {}, UserRegisterInputDto>, res: Response<APIErrorsMessageType>) {
         try {
-            const result: ResultNotificationType = await this.registrationService.registrationUser(req.body)
+            const result: ResultNotificationType<APIErrorsMessageType | null> = await this.registrationService.registrationUser(req.body)
             switch(result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);
@@ -89,7 +83,7 @@ export class AuthController {
 
     async registrationUserConfirm(req: Request<{}, {}, UserRegistrationConfirmCodeInputDto>, res: Response<APIErrorsMessageType>) {
         try {
-            const result: ResultNotificationType = await this.registrationService.registrationUserConfirmUserByEmail(req.body)
+            const result: ResultNotificationType<APIErrorsMessageType | null> = await this.registrationService.registrationUserConfirmUserByEmail(req.body)
             switch(result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);
@@ -105,7 +99,7 @@ export class AuthController {
 
     async registrationUserResendConfirmationCode (req: Request<{}, {}, UserRegistrationResendConfirmCodeInputDto>, res: Response<APIErrorsMessageType>) {
         try {
-            const result: ResultNotificationType = await this.registrationService.registrationResendConfirmCodeToEmail(req.body)
+            const result: ResultNotificationType<APIErrorsMessageType | null> = await this.registrationService.registrationResendConfirmCodeToEmail(req.body)
             switch(result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);
@@ -119,9 +113,9 @@ export class AuthController {
         }
     }
 
-    async refreshToken(req: Request, res: Response<AuthOutputModelType>) {
+    async refreshToken(req: Request, res: Response<AuthViewModelDto>) {
         try {
-            const result: ResultNotificationType<AuthModelServiceType> = await this.authService.refreshToken(req.cookies.refreshToken)
+            const result: ResultNotificationType<TokensDto | null> = await this.authService.refreshToken(req.cookies.refreshToken)
             switch (result.status) {
                 case ResultNotificationEnum.Success:
                     const {refreshToken, ...data} = result.data!
@@ -157,7 +151,7 @@ export class AuthController {
 
     async changePassword(req: Request<{}, {}, UserChangePasswordInputDto>, res: Response<APIErrorsMessageType>) {
         try {
-            const result: ResultNotificationType<APIErrorsMessageType> = await this.authService.changeUserPassword(req.body)
+            const result: ResultNotificationType<APIErrorsMessageType | null> = await this.authService.changeUserPassword(req.body)
             switch (result.status) {
                 case ResultNotificationEnum.Success:
                     return res.sendStatus(204);
@@ -172,9 +166,10 @@ export class AuthController {
         }
     }
 
-    async getInfoAboutCurrentUserByAccessToken(req: Request, res: Response<UserMeModelViewType>) {
+    async getInfoAboutCurrentUserByAccessToken(req: Request, res: Response<UserViewMeModelDto>) {
         try {
-            const result: UserMeModelViewType | null = await this.userQueryRepositories.getUserByIdAuthMe(req.user.userId)
+            //TODO:
+            // const result: UserViewMeModelDto | null = await this.userQueryRepositories.getUserByIdAuthMe(req.user.userId)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.AUTH.auth}${ROUTERS_SETTINGS.AUTH.me}`, 'GET', 'Get information about current user by accessToken.', e)

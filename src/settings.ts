@@ -76,6 +76,10 @@ export const AuthData = [
 
 export const MAIL_SETTINGS = {
     MAIL_SERVICE: 'gmail',
+    MAIL_HOST: 'smtp.gmail.com',
+    MAIL_PORT: 465,
+    MAIL_SECURE: true,
+    MAIL_IGNORE_TLS: true,
     MAIL_FROM: {
         address: 'mixailmar4uk78@gmail.com',
         name: 'Mikhail',

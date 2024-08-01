@@ -1,11 +1,11 @@
 import {Request, Response} from "express";
-import {RefreshAuthOutputModelType, SessionOutputModelViewType} from "../auth-registration/auth/auth-types";
+import {RefreshAuthOutputModelType, SessionOutputModelViewType} from "../auth-registration/auth-types";
 import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
 import {ROUTERS_SETTINGS} from "../../settings";
 import {saveError} from "../../internal/utils/error-utils/save-error";
 import {SecurityDeviceService} from "./security-device-service";
 import {SecurityDeviceQueryRepositories} from "./security-device-query-repositories";
-import {AuthService} from "../auth-registration/auth/auth-service";
+import {AuthService} from "../auth-registration/application/auth-service";
 
 
 export class SecurityDeviceController {

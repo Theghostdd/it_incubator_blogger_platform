@@ -4,7 +4,7 @@ import {
     ResultNotificationEnum,
     ResultNotificationType,
 } from "../../../../typings/basic-types";
-import {AuthService} from "../../../../features/auth-registration/auth/auth-service";
+import {AuthService} from "../../../../features/auth-registration/application/auth-service";
 import {inject, injectable} from "inversify";
 
 @injectable()

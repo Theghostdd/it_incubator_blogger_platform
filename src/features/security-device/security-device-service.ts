@@ -1,7 +1,7 @@
 import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
-import {AuthRepositories} from "../auth-registration/auth/auth-repositories";
-import {AuthService} from "../auth-registration/auth/auth-service";
-import {RefreshAuthOutputModelType, SessionsMongoViewType} from "../auth-registration/auth/auth-types";
+import {AuthRepositories} from "../auth-registration/infrastructure/auth-repositories";
+import {AuthService} from "../auth-registration/application/auth-service";
+import {RefreshAuthOutputModelType, SessionsMongoViewType} from "../auth-registration/auth-types";
 import {AuthSessionModel} from "../../Domain/Auth/Auth";
 
 
