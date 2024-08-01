@@ -1,8 +1,9 @@
 import { NextFunction, Response, Request } from "express";
 import { body, validationResult, Result } from 'express-validator';
-import {BlogQueryRepositories} from "../../../features/blog/blog-query-repositories";
+import {BlogQueryRepositories} from "../../../features/blog/api/blog-query-repositories";
 import {LikeStatusEnum} from "../../../typings/basic-types";
-import {blogQueryRepositories} from "../../../composition-root/composition-root";
+import {container} from "../../../composition-root/composition-root";
+import {BlogViewModelType} from "../../../features/blog/blog-types";
 
 export const inputValidation = (req: Request, res: Response, next: NextFunction) => {
     const error: Result = validationResult(req)
@@ -56,7 +57,7 @@ export const ruleBodyValidations = {
         .notEmpty()
         .isMongoId()
         .custom(async (id: string) => {
-            const result = await blogQueryRepositories.getBlogById(id);
+            const result: BlogViewModelType | null = await container.resolve(BlogQueryRepositories).getBlogById(id);
             if (result) {
                 return true;
             }

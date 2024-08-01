@@ -1,11 +1,13 @@
 import {Router} from "express";
-import {ROUTERS_SETTINGS} from "../../settings";
-import {authValidation} from "../../internal/middleware/auth/AdminAuth/AdminAuth";
-import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
-import {blogController} from "../../composition-root/composition-root";
+import {ROUTERS_SETTINGS} from "../../../settings";
+import {authValidation} from "../../../internal/middleware/auth/AdminAuth/AdminAuth";
+import {inputValidation, ruleBodyValidations} from "../../../internal/middleware/input-validation/input-validation";
+import {container} from "../../../composition-root/composition-root";
+import {BlogController} from "./blog-controller";
 
 
 export const blogRouter = Router()
+const blogController = container.resolve(BlogController);
 
 blogRouter.get('/', blogController.getAllBlogs.bind(blogController))
 blogRouter.get('/:id', blogController.getBlogById.bind(blogController))

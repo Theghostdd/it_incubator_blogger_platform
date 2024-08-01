@@ -1,21 +1,25 @@
-import {BlogModel} from "../../Domain/Blog/Blog";
 import {PostModel} from "../../Domain/Post/Post";
 import {UserModel} from "../../Domain/User/User";
 import {CommentModel, LikeModel} from "../../Domain/Comment/Comment";
 import {AuthSessionModel, RequestLimiterModel} from "../../Domain/Auth/Auth";
 import {RecoveryPasswordSessionModel} from "../../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {iTestRepositories} from "./test-interface";
+import {BlogModel} from "../blog/domain/entity";
+import {inject, injectable} from "inversify";
+import "reflect-metadata";
 
+
+@injectable()
 export class TestRepositories implements iTestRepositories {
     constructor(
-        protected blogModel: typeof BlogModel,
-        protected postModel: typeof PostModel,
-        protected userModel: typeof UserModel,
-        protected commentModel: typeof CommentModel,
-        protected authSessionModel: typeof AuthSessionModel,
-        protected requestLimiterModel: typeof RequestLimiterModel,
-        protected recoveryPasswordSessionModel: typeof RecoveryPasswordSessionModel,
-        protected likeModel: typeof LikeModel
+       @inject(BlogModel) protected blogModel: typeof BlogModel,
+       @inject(PostModel)protected postModel: typeof PostModel,
+       @inject(UserModel)protected userModel: typeof UserModel,
+       @inject(CommentModel)protected commentModel: typeof CommentModel,
+       @inject(AuthSessionModel)protected authSessionModel: typeof AuthSessionModel,
+       @inject(RequestLimiterModel)protected requestLimiterModel: typeof RequestLimiterModel,
+       @inject(RecoveryPasswordSessionModel)protected recoveryPasswordSessionModel: typeof RecoveryPasswordSessionModel,
+       @inject(LikeModel)protected likeModel: typeof LikeModel
     ) {}
     async deleteManyAllData (): Promise<void> {
         try {

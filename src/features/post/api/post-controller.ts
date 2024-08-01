@@ -1,28 +1,31 @@
-import {PostInputModelType, PostViewModelType} from "./post-types";
+import {PostInputModelType, PostViewModelType} from "../post-types";
 import {
     QueryParamsType, ResultDataWithPaginationType,
     ResultNotificationEnum,
     ResultNotificationType
-} from "../../typings/basic-types";
-import {ROUTERS_SETTINGS} from "../../settings";
-import {saveError} from "../../internal/utils/error-utils/save-error";
+} from "../../../typings/basic-types";
+import {ROUTERS_SETTINGS} from "../../../settings";
+import {saveError} from "../../../internal/utils/error-utils/save-error";
 import {Response, Request} from "express";
-import {CommentInputModelType, CommentViewModelType} from "../comment/comment-types";
-import {PostService} from "./post-service";
+import {CommentInputModelType, CommentViewModelType} from "../../comment/comment-types";
+import {PostService} from "../application/post-service";
 import {PostQueryRepository} from "./post-query-repositories";
-import {CommentQueryRepositories} from "../comment/comment-query-repositories";
+import {CommentQueryRepositories} from "../../comment/comment-query-repositories";
+import {PostInputModel, PostUpdateModel} from "./input-models/dto";
+import {PostViewModel} from "./view-models/dto";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class PostController {
     constructor(
-        protected postService: PostService,
-        protected postQueryRepositories: PostQueryRepository,
-        protected commentQueryRepositories: CommentQueryRepositories
+        @inject(PostService) protected postService: PostService,
+        @inject(PostQueryRepository) protected postQueryRepositories: PostQueryRepository,
+        @inject(CommentQueryRepositories) protected commentQueryRepositories: CommentQueryRepositories
     ) {}
 
-    async getPosts (req: Request<{},{},{},QueryParamsType>, res: Response<ResultDataWithPaginationType<PostViewModelType[]>>) {
+    async getPosts (req: Request<{},{},{},QueryParamsType>, res: Response<ResultDataWithPaginationType<PostViewModel[]>>) {
         try {
-            const result: ResultDataWithPaginationType<PostViewModelType[]> = await this.postQueryRepositories.getAllPost(req.query)
+            const result: ResultDataWithPaginationType<PostViewModel[]> = await this.postQueryRepositories.getAllPost(req.query)
             return res.status(200).json(result)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.POST.post}/`, 'GET', 'GET all a post items', e)
@@ -30,9 +33,9 @@ export class PostController {
         }
     }
 
-    async getPostById (req: Request<{id: string}>, res: Response<PostViewModelType>) {
+    async getPostById (req: Request<{id: string}>, res: Response<PostViewModel>) {
         try {
-            const result: PostViewModelType | null = await this.postQueryRepositories.getPostById(req.params.id)
+            const result: PostViewModel | null = await this.postQueryRepositories.getPostById(req.params.id)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.POST.post}/:id`, 'GET', 'GET the post item by ID', e)
@@ -40,12 +43,13 @@ export class PostController {
         }
     }
 
-    async createPost(req: Request<{}, {}, PostInputModelType>, res: Response<PostViewModelType>) {
+    async createPost(req: Request<{}, {}, PostInputModel>, res: Response<PostViewModel>) {
         try {
-            const result: ResultNotificationType<PostViewModelType> = await this.postService.createPostItemByBlogId(req.body)
+            const result: ResultNotificationType<string | null> = await this.postService.createPostItemByBlogId(req.body)
             switch (result.status) {
                 case ResultNotificationEnum.Success:
-                    return res.status(201).json(result.data);
+                    const post: PostViewModel | null = await this.postQueryRepositories.getPostById(result.data!)
+                    return post ? res.status(201).json(post) : res.sendStatus(404)
                 case ResultNotificationEnum.NotFound:
                     return res.sendStatus(404);
                 default: return res.sendStatus(500)
@@ -56,7 +60,7 @@ export class PostController {
         }
     }
 
-    async updatePostById(req: Request<{id: string}, {}, PostInputModelType>, res: Response) {
+    async updatePostById(req: Request<{id: string}, {}, PostUpdateModel>, res: Response) {
         try {
             const result: ResultNotificationType = await this.postService.updatePostById(req.params.id, req.body)
             switch (result.status) {
@@ -87,6 +91,15 @@ export class PostController {
             return res.sendStatus(500)
         }
     }
+
+
+
+
+
+
+
+
+
 
     async createCommentByPostId (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelType>) {
         try {

@@ -1,8 +1,8 @@
-import {authValidation} from "../../internal/middleware/auth/AdminAuth/AdminAuth";
-import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
+import {authValidation} from "../../../internal/middleware/auth/AdminAuth/AdminAuth";
+import {inputValidation, ruleBodyValidations} from "../../../internal/middleware/input-validation/input-validation";
 import express from "express";
-import {ROUTERS_SETTINGS} from "../../settings";
-import {authUserMiddleware, postController} from "../../composition-root/composition-root";
+import {ROUTERS_SETTINGS} from "../../../settings";
+import {authUserMiddleware, postController} from "../../../composition-root/composition-root";
 
 
 export const postRouter = express.Router();

@@ -2,10 +2,15 @@ import {Request, Response} from "express";
 import {ROUTERS_SETTINGS} from "../../settings";
 import {iTestController, iTestService} from "./test-interface";
 import {saveError} from "../../internal/utils/error-utils/save-error";
+import {inject, injectable} from "inversify";
+import {TestService} from "./test-service";
+import "reflect-metadata";
 
 
+@injectable()
 export class TestController implements iTestController{
-    constructor(protected testService: iTestService) {}
+    constructor(
+        @inject(TestService)protected testService: iTestService) {}
     async clearDb (req: Request, res: Response): Promise<Response> {
         try {
             await this.testService.clearAllDb()

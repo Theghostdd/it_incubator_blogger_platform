@@ -1,5 +1,5 @@
 import {LikeStatusEnum, ResultDataWithPaginationType} from "../../../typings/basic-types";
-import {CommentDtoViewType, CommentMongoViewType, CommentViewModelType} from "../../../features/comment/comment-types";
+import {CommentMongoViewType, CommentViewModelType, LikeMongoViewType} from "../../../features/comment/comment-types";
 
 
 export const commentMap = {
@@ -21,13 +21,13 @@ export const commentMap = {
           }
       },
 
-    mapComments (data: CommentDtoViewType[], pagesCount: number, page: number, pageSize: number, totalCount: number ): ResultDataWithPaginationType<CommentViewModelType[] | []> {
+    mapComments (comments: CommentMongoViewType[], likes: LikeMongoViewType[], pagesCount: number, page: number, pageSize: number, totalCount: number ): ResultDataWithPaginationType<CommentViewModelType[] | []> {
           return {
               pagesCount: +pagesCount,
               page: +page,
               pageSize: +pageSize,
               totalCount: +totalCount,
-              items: data.map((item) => {
+              items: comments.map((item) => {
                   return {
                       id: item._id.toString(),
                       content: item.content,
@@ -38,12 +38,12 @@ export const commentMap = {
                       likesInfo: {
                           likesCount: item.likesInfo.likesCount,
                           dislikesCount: item.likesInfo.dislikesCount,
-                          myStatus: item.statusUserLike
+                          myStatus: likes.find(like => like.commentId === item._id.toString() ? like.status : LikeStatusEnum.None)
                       },
                       createdAt: item.createdAt
                   }
               })
-      
+
           }
       },
 }

@@ -66,7 +66,7 @@ export type ResultNotificationType<T = null> = {
     status: ResultNotificationEnum,
     errorMessage?: string,
     errorField?: APIErrorsMessageType
-    data?: T
+    data: T
 }
 
 export type ResultDataWithPaginationType<T = []> = PaginationType & {

@@ -4,8 +4,8 @@ import cookieParser from 'cookie-parser'
 import { ROUTERS_SETTINGS } from './settings'
 import UserAgent  from 'express-useragent'
 import {testRouter} from "./features/test/test-router";
-import {blogRouter} from "./features/blog/blog-router";
-import {postRouter} from "./features/post/post-router";
+import {blogRouter} from "./features/blog/api/blog-router";
+import {postRouter} from "./features/post/api/post-router";
 import {userRouter} from "./features/user/user-router";
 import {authRouter} from "./features/auth-registration/auth-router";
 import {commentsRouter} from "./features/comment/comment-router";

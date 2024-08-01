@@ -4,10 +4,10 @@ import {MONGO_SETTINGS, ROUTERS_SETTINGS} from "../../../src/settings"
 import {AuthSessionModel, RequestLimiterModel} from "../../../src/Domain/Auth/Auth";
 import {UserModel} from "../../../src/Domain/User/User";
 import {CommentModel, LikeModel} from "../../../src/Domain/Comment/Comment";
-import {BlogModel} from "../../../src/Domain/Blog/Blog";
 import {PostModel} from "../../../src/Domain/Post/Post";
 import mongoose from "mongoose";
 import {RecoveryPasswordSessionModel} from "../../../src/Domain/RecoveryPasswordSession/RecoveryPasswordSession";
+import {BlogModel} from "../../../src/features/blog/domain/entity";
 
 
 
