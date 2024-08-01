@@ -1,9 +1,9 @@
 import {
+    BlogQueryParamsType,
     LikeStatusEnum,
     QueryParamsType,
     ResultDataWithPaginationType
 } from "../../../typings/basic-types";
-import {BlogQueryParamsType} from "../../blog/blog-types";
 import {defaultQueryValues} from "../../../internal/utils/default-values/default-query-values";
 import {ObjectId} from "mongodb";
 import {CommentViewModelDto} from "./view-models/dto";

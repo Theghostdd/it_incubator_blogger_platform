@@ -1,8 +1,8 @@
-import {ROUTERS_SETTINGS} from "../../settings";
+import {ROUTERS_SETTINGS} from "../../../settings";
 import {Router} from "express";
 import {TestController} from "./test-controller";
 import "reflect-metadata";
-import {container} from "../../composition-root/composition-root";
+import {container} from "../../../composition-root/composition-root";
 
 
 const testController = container.resolve(TestController);

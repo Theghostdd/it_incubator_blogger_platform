@@ -5,9 +5,9 @@ import {BlogService} from "../features/blog/application/blog-service";
 import {BlogController} from "../features/blog/api/blog-controller";
 import {BlogModel} from "../features/blog/domain/entity";
 import {BlogRepositories} from "../features/blog/infrastructure/blog-repositories";
-import {TestController} from "../features/test/test-controller";
-import {TestService} from "../features/test/test-service";
-import {TestRepositories} from "../features/test/test-repositories";
+import {TestController} from "../features/test/api/test-controller";
+import {TestService} from "../features/test/application/test-service";
+import {TestRepositories} from "../features/test/infrastructure/test-repositories";
 import {PostService} from "../features/post/application/post-service";
 import {PostController} from "../features/post/api/post-controller";
 import {PostRepositories} from "../features/post/infrastructure/post-repositories";
@@ -43,9 +43,11 @@ import {CommentService} from "../features/comment/application/comment-service";
 import {LikesRepositories} from "../features/likes/infrastructure/likes-repositories";
 import {SecurityDeviceService} from "../features/security-device/application/security-device-service";
 import {SecurityDeviceQueryRepositories} from "../features/security-device/api/security-device-query-repositories";
+import {DataBase} from "../internal/application/connection-db/connection";
 
 
 export const container: Container = new Container();
+container.bind<DataBase>(DataBase).toSelf()
 container.bind<BlogController>(BlogController).toSelf()
 container.bind<PostController>(PostController).toSelf()
 container.bind<TestController>(TestController).toSelf()

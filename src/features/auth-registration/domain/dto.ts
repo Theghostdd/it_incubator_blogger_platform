@@ -1,5 +1,3 @@
-import {JWTRefreshPayloadType} from "../../../typings/basic-types";
-import {SessionsMongoViewType} from "../auth-types";
 import {RefreshTokenPayloadDto} from "../../../internal/application/jwt/domain/dto";
 
 export class UserConfirmInfoDto {

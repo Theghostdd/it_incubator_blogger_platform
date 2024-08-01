@@ -6,7 +6,6 @@ import {
 import {ROUTERS_SETTINGS} from "../../../settings";
 import {saveError} from "../../../internal/utils/error-utils/save-error";
 import {Response, Request} from "express";
-import {CommentInputModelType} from "../../comment/comment-types";
 import {PostService} from "../application/post-service";
 import {PostQueryRepository} from "./post-query-repositories";
 import {CommentQueryRepositories} from "../../comment/api/comment-query-repositories";
@@ -14,6 +13,7 @@ import {PostInputModel, PostUpdateModel} from "./input-models/dto";
 import {PostViewModel} from "./view-models/dto";
 import {inject, injectable} from "inversify";
 import {CommentViewModelDto} from "../../comment/api/view-models/dto";
+import {CommentCreateInputModelDto} from "../../comment/api/input-models/dto";
 
 @injectable()
 export class PostController {
@@ -94,7 +94,7 @@ export class PostController {
 
 
 
-    async createCommentByPostId (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelDto>) {
+    async createCommentByPostId (req: Request<{id: string}, {}, CommentCreateInputModelDto>, res: Response<CommentViewModelDto>) {
         try {
             const result: ResultNotificationType<string | null> = await this.postService.createCommentByPostId(req.body, req.params.id, req.user.userId)
             switch (result.status) {

@@ -1,6 +1,4 @@
-import {QueryParamsType} from "../../../typings/basic-types";
-import {BlogQueryParamsType} from "../../../features/blog/blog-types";
-import {UserQueryParamsType} from "../../../features/user/user-types";
+import {BlogQueryParamsType, QueryParamsType, UserQueryParamsType} from "../../../typings/basic-types";
 
 
 export const defaultQueryValues = {

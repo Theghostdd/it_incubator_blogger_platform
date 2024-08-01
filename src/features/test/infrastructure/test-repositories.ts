@@ -1,18 +1,17 @@
-import {iTestRepositories} from "./test-interface";
-import {BlogModel} from "../blog/domain/entity";
+import {BlogModel} from "../../blog/domain/entity";
 import {inject, injectable} from "inversify";
 import "reflect-metadata";
-import {CommentModel} from "../comment/domain/entity";
-import {PostModel} from "../post/domain/entity";
-import {LikeModel} from "../likes/domain/entity";
-import {UserModel} from "../auth-registration/domain/user-entity";
-import {AuthSessionModel} from "../auth-registration/domain/session-entity";
-import {RequestLimiterModel} from "../request-limiter/domain/entity";
-import {RecoveryPasswordSessionModel} from "../auth-registration/domain/recovery-password-entity";
+import {CommentModel} from "../../comment/domain/entity";
+import {PostModel} from "../../post/domain/entity";
+import {LikeModel} from "../../likes/domain/entity";
+import {UserModel} from "../../auth-registration/domain/user-entity";
+import {AuthSessionModel} from "../../auth-registration/domain/session-entity";
+import {RequestLimiterModel} from "../../request-limiter/domain/entity";
+import {RecoveryPasswordSessionModel} from "../../auth-registration/domain/recovery-password-entity";
 
 
 @injectable()
-export class TestRepositories implements iTestRepositories {
+export class TestRepositories  {
     constructor(
        @inject(BlogModel) protected blogModel: typeof BlogModel,
        @inject(PostModel)protected postModel: typeof PostModel,

@@ -3,7 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { ROUTERS_SETTINGS } from './settings'
 import UserAgent  from 'express-useragent'
-import {testRouter} from "./features/test/test-router";
+import {testRouter} from "./features/test/api/test-router";
 import {blogRouter} from "./features/blog/api/blog-router";
 import {postRouter} from "./features/post/api/post-router";
 import {userRouter} from "./features/user/api/user-router";

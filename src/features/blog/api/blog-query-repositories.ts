@@ -1,10 +1,10 @@
 import {
+    BlogQueryParamsType,
     QueryParamsType,
     ResultDataWithPaginationType
 } from "../../../typings/basic-types";
 
 import {defaultQueryValues} from "../../../internal/utils/default-values/default-query-values";
-import {BlogQueryParamsType, BlogViewModelType} from "../blog-types";
 import {BlogModel} from "../domain/entity";
 import {inject, injectable} from "inversify";
 import {BlogViewModelDto} from "./view-models/dto";
@@ -62,7 +62,7 @@ export class BlogQueryRepositories {
     }
 
 
-    async getBlogById(id: string): Promise<BlogViewModelType | null> {
+    async getBlogById(id: string): Promise<BlogViewModelDto | null> {
         const result: HydratedDocument<BlogDto, IBlogInstanceMethod> | null = await this.blogModel.findById(id)
 
         return result ? {

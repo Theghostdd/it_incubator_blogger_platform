@@ -1,9 +1,8 @@
 import {
     QueryParamsType,
-    ResultDataWithPaginationType
+    ResultDataWithPaginationType, UserQueryParamsType
 } from "../../../typings/basic-types";
 import {defaultQueryValues} from "../../../internal/utils/default-values/default-query-values";
-import {UserQueryParamsType,} from "../user-types";
 import {HydratedDocument} from "mongoose";
 import {UserDto} from "../../auth-registration/domain/dto";
 import {IUserInstanceMethods} from "../../auth-registration/domain/interfaces";

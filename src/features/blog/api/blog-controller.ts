@@ -1,5 +1,6 @@
 import {Request, Response} from "express";
 import {
+    BlogQueryParamsType,
     QueryParamsType,
     ResultDataWithPaginationType, ResultNotificationEnum,
     ResultNotificationType
@@ -9,7 +10,6 @@ import {ROUTERS_SETTINGS} from "../../../settings";
 import {saveError} from "../../../internal/utils/error-utils/save-error";
 import {BlogQueryRepositories} from "./blog-query-repositories";
 import {BlogService} from "../application/blog-service";
-import {BlogQueryParamsType} from "../blog-types";
 import {PostService} from "../../post/application/post-service";
 import {PostQueryRepository} from "../../post/api/post-query-repositories";
 import {inject, injectable} from "inversify";

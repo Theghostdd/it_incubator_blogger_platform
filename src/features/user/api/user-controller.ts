@@ -2,12 +2,11 @@ import {Request, Response} from "express";
 import {
     APIErrorsMessageType,
     QueryParamsType,
-    ResultDataWithPaginationType, ResultNotificationEnum, ResultNotificationType
+    ResultDataWithPaginationType, ResultNotificationEnum, ResultNotificationType, UserQueryParamsType
 } from "../../../typings/basic-types";
 import {ROUTERS_SETTINGS} from "../../../settings";
 import {saveError} from "../../../internal/utils/error-utils/save-error";
 import {UserQueryRepositories} from "./user-query-repositories";
-import {UserQueryParamsType} from "../user-types";
 import {UserService} from "../application/user-service";
 import {UserRegisterInputDto} from "../../auth-registration/api/input-models/dto";
 import {inject, injectable} from "inversify";

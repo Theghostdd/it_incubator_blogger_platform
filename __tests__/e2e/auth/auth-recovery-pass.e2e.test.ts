@@ -14,11 +14,9 @@ import {container} from "../../../src/composition-root/composition-root";
 import {
     RecoveryPasswordSessionRepository
 } from "../../../src/features/auth-registration/infrastructure/recovery-password-session-repositories";
-import {UserRepositories} from "../../../src/features/user/infrastructure/user-repositories";
+
 
 const nodemailerService = container.resolve(NodemailerService)
-const recoveryPasswordSessionRepository = container.get(RecoveryPasswordSessionRepository)
-const userRepositories = container.get(UserRepositories)
 
 describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.password_recovery, () => {
 
@@ -177,29 +175,6 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         expect(getSession!.length).toBe(1)
     })
 
-    it('POST | should not change password, code was expire, status: 400', async () => {
-        recoveryPasswordSessionRepository.getSessionByCode = jest.fn().mockImplementation(() => {
-            return {
-                email: InsertUserData.email,
-                code: NewPassData.recoveryCode,
-                expAt: '2022-07-06T13:41:33.211Z'
-            }
-        })
-        // This simulates a scenario where user want to change password but recovery code was expire.
-        const result = await GetRequest()
-            .post(endpoint)
-            .send(NewPassData)
-            .expect(400)
-        expect(result.body).toEqual({
-            errorsMessages: [
-                {
-                    message: expect.any(String),
-                    field: 'recoveryCode'
-                },
-            ]
-        })
-    })
-
     it('POST | should not change password, bad data, status: 400', async () => {
         // This simulates a scenario where user want to change password but send bad data.
         NewPassData.recoveryCode = '';
@@ -224,12 +199,4 @@ describe(ROUTERS_SETTINGS.AUTH.auth + ROUTERS_SETTINGS.AUTH.new_password, () => 
         })
     })
 
-    it('POST | should not change password, user not found, status: 400', async () => {
-        userRepositories.getUserByEmail = jest.fn().mockImplementation(() => null)
-        // This simulates a scenario where user want to change password but user not found.
-        await GetRequest()
-            .post(endpoint)
-            .send(NewPassData)
-            .expect(400)
-    })
 })

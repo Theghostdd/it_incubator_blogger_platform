@@ -1,33 +1,5 @@
-import {ObjectId, WithId} from "mongodb";
-/*
-*
-*   jwt Payload
-*
-*/
-export type JWTAccessTokenType = {
-    userId: string,
-    iat: number,
-    exp: number
-}
-
-export type JWTRefreshPayloadType = {
-    deviceId: string,
-    userId: string,
-    iat: number,
-    exp: number
-}
-/*
-*
-*   Query Types
-*
-*/
 export type QueryParamsType<T = {}> = PaginationQueryType & SortQueryType & T
 
-/*
-*
-*   Pagination and sort Types
-*
-*/
 type PaginationQueryType = {
     pageNumber?: number,
     pageSize?: number,
@@ -45,14 +17,7 @@ type PaginationType = {
     totalCount: number,
 }
 
-export type CreatePaginationType = PaginationType & {
-    skip: number
-}
-/*
-*
-*   Response Notification Type Enum
-*
-*/
+
 export enum ResultNotificationEnum {
     'Success' = 'Success',
     'NotFound' = 'NotFound',
@@ -91,35 +56,6 @@ export type UserRequestType = {
 }
 /*
 *
-*   Mongo Types
-*
-*/
-export type UpdateMongoSuccessType = {
-    acknowledged: boolean,
-    modifiedCount: number,
-    upsertedId: ObjectId | null,
-    upsertedCount: number,
-    matchedCount: number
-}
-export type CreatedMongoSuccessType = {
-    acknowledged: boolean,
-    insertedId: ObjectId
-}
-export type DeletedMongoSuccessType = {
-    acknowledged: boolean,
-    deletedCount: number
-}
-/*
-*
-*   Patterns mail
-*
-*/
-export type PatternMailType = {
-    subject: string,
-    html: string
-}
-/*
-*
 *   Like status
 *
 */
@@ -129,14 +65,11 @@ export enum LikeStatusEnum {
     'Dislike' = 'Dislike'
 }
 
-export type LikeChangeType = {
-    newLikesCount: number,
-    newDislikesCount: number,
-    newStatus: LikeStatusEnum
+export type BlogQueryParamsType = {
+    searchNameTerm?: string
 }
 
-export type LikeStateType = {
-    [value in LikeStatusEnum]: {
-        [value in LikeStatusEnum]: LikeChangeType
-    }
+export type UserQueryParamsType = {
+    searchLoginTerm?: string,
+    searchEmailTerm?: string
 }
