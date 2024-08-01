@@ -7,8 +7,8 @@ import {testRouter} from "./features/test/test-router";
 import {blogRouter} from "./features/blog/api/blog-router";
 import {postRouter} from "./features/post/api/post-router";
 import {userRouter} from "./features/user/user-router";
-import {authRouter} from "./features/auth-registration/auth-router";
-import {commentsRouter} from "./features/comment/comment-router";
+import {authRouter} from "./features/auth-registration/api/auth-router";
+import {commentsRouter} from "./features/comment/api/comment-router";
 import {securityRouter} from "./features/security-device/security-device-router";
  
 

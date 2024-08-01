@@ -1,12 +1,13 @@
-import {PostModel} from "../../Domain/Post/Post";
 import {UserModel} from "../../Domain/User/User";
-import {CommentModel, LikeModel} from "../../Domain/Comment/Comment";
 import {AuthSessionModel, RequestLimiterModel} from "../../Domain/Auth/Auth";
 import {RecoveryPasswordSessionModel} from "../../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {iTestRepositories} from "./test-interface";
 import {BlogModel} from "../blog/domain/entity";
 import {inject, injectable} from "inversify";
 import "reflect-metadata";
+import {CommentModel} from "../comment/domain/entity";
+import {PostModel} from "../post/domain/entity";
+import {LikeModel} from "../likes/domain/entity";
 
 
 @injectable()

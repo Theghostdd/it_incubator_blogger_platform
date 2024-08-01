@@ -7,7 +7,6 @@ import {BlogController} from "../features/blog/api/blog-controller";
 import {BlogModel} from "../features/blog/domain/entity";
 import {BlogRepositories} from "../features/blog/infrastructure/blog-repositories";
 import {UserModel} from "../Domain/User/User";
-import {CommentModel, LikeModel} from "../Domain/Comment/Comment";
 import {AuthSessionModel, RequestLimiterModel} from "../Domain/Auth/Auth";
 import {RecoveryPasswordSessionModel} from "../Domain/RecoveryPasswordSession/RecoveryPasswordSession";
 import {TestController} from "../features/test/test-controller";
@@ -18,6 +17,9 @@ import {PostController} from "../features/post/api/post-controller";
 import {PostRepositories} from "../features/post/infrastructure/post-repositories";
 import {PostQueryRepository} from "../features/post/api/post-query-repositories";
 import {PostModel} from "../features/post/domain/entity";
+import {AuthService} from "../features/auth-registration/auth/auth-service";
+import {CommentModel} from "../features/comment/domain/entity";
+import {LikeModel} from "../features/likes/domain/entity";
 
 
 
@@ -35,7 +37,7 @@ container.bind<TestController>(TestController).toSelf()
 container.bind<PostService>(PostService).toSelf()
 container.bind<TestService>(TestService).toSelf()
 container.bind<BlogService>(BlogService).toSelf()
-
+container.bind<AuthService>(AuthService).toSelf()
 
 
 container.bind<BlogRepositories>(BlogRepositories).toSelf()
@@ -43,7 +45,6 @@ container.bind<PostRepositories>(PostRepositories).toSelf()
 container.bind<TestRepositories>(TestRepositories).toSelf()
 container.bind<BlogQueryRepositories>(BlogQueryRepositories).toSelf()
 container.bind<PostQueryRepository>(PostQueryRepository).toSelf()
-
 
 
 container.bind<typeof BlogModel>(BlogModel).toConstantValue(BlogModel)

@@ -1,20 +1,9 @@
-import mongoose, {HydratedDocument, Model} from "mongoose";
-import {PostViewMongoModelType} from "../post-types";
+import mongoose from "mongoose";
 import {MONGO_SETTINGS} from "../../../settings";
 import {PostDto} from "./dto";
 import {PostInputModel, PostUpdateModel} from "../api/input-models/dto";
+import {IPostInstanceMethod, IPostModel} from "./interfaces";
 
-
-
-
-
-export interface IPostInstanceMethod {
-    updateInstance(postUpdateDto: PostUpdateModel): void
-}
-
-export interface IPostModel extends Model<PostDto, {}, IPostInstanceMethod >{
-    createInstance(postDto: PostInputModel, blogName: string): HydratedDocument<PostDto, IPostInstanceMethod>
-}
 
 
 const PostSchema = new mongoose.Schema<PostDto, IPostModel, IPostInstanceMethod>({
@@ -44,7 +33,7 @@ PostSchema.methods.updateInstance = function (postUpdateDto: PostUpdateModel) {
     this.content = postUpdateDto.content
 }
 
-
-
 export const PostModel = mongoose.model<PostDto, IPostModel>(MONGO_SETTINGS.COLLECTIONS.posts, PostSchema)
+
+
 

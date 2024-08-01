@@ -1,8 +1,9 @@
 import {DeleteResult} from "mongodb";
 import {HydratedDocument} from "mongoose";
 import {PostDto} from "../domain/dto";
-import {IPostInstanceMethod, PostModel} from "../domain/entity";
+import {PostModel} from "../domain/entity";
 import {inject, injectable} from "inversify";
+import {IPostInstanceMethod} from "../domain/interfaces";
 
 @injectable()
 export class PostRepositories {

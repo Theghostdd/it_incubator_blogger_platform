@@ -1,19 +1,19 @@
-import {LikeStatusEnum, ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
+import {ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
 import {BlogRepositories} from "../../blog/infrastructure/blog-repositories";
 import {PostRepositories} from "../infrastructure/post-repositories";
-import {CommentCreateType, CommentInputModelType, CommentViewModelType} from "../../comment/comment-types";
 import {UserRepositories} from "../../user/user-repositories";
 import {UserModel} from "../../../Domain/User/User";
-import {CommentModel} from "../../../Domain/Comment/Comment";
-import {CommentRepositories} from "../../comment/comment-repositories";
-import {commentMap} from "../../../internal/utils/map/commentMap";
+import {CommentRepositories} from "../../comment/infrastucture/comment-repositories";
 import {inject, injectable} from "inversify";
 import {PostInputModel, PostUpdateModel} from "../api/input-models/dto";
-import {IPostInstanceMethod, PostModel} from "../domain/entity";
+import {PostModel} from "../domain/entity";
 import {HydratedDocument} from "mongoose";
 import {BlogDto} from "../../blog/domain/dto";
 import {IBlogInstanceMethod} from "../../blog/domain/interfaces";
 import {PostDto} from "../domain/dto";
+import {CommentCreateInputModelDto} from "../../comment/api/input-models/dto";
+import {IPostInstanceMethod} from "../domain/interfaces";
+import {CommentModel} from "../../comment/domain/entity";
 
 @injectable()
 export class PostService {
@@ -51,7 +51,6 @@ export class PostService {
     }
 
     async deletePostById(id: string): Promise<ResultNotificationType> {
-
         const post: HydratedDocument<PostDto, IPostInstanceMethod> | null = await this.postRepositories.getPostById(id)
         if (!post) return {status: ResultNotificationEnum.NotFound, data: null}
 
@@ -60,44 +59,17 @@ export class PostService {
     }
 
 
+    async createCommentByPostId(commentDto: CommentCreateInputModelDto, postId: string, userId: string): Promise<ResultNotificationType<string | null>> {
+        // TODO:
+        // const user: InstanceType<typeof UserModel> | null = await this.userRepositories.getUserById(userId)
+        if (!user) return {status: ResultNotificationEnum.NotFound, data: null}
+        //
+        const post: HydratedDocument<PostDto, IPostInstanceMethod> | null = await this.postRepositories.getPostById(postId)
+        if (!post) return {status: ResultNotificationEnum.NotFound, data: null}
 
+        const comment = this.commentModel.createInstance(commentDto, user._id.toString(), user.login, post._id.toString(), post.blogId)
+        await this.commentRepositories.save(comment)
 
-
-
-
-
-    async createCommentByPostId (data: CommentInputModelType, postId: string, userId: string): Promise<ResultNotificationType<CommentViewModelType>> {
-        try {
-            const user: InstanceType<typeof UserModel> | null = await this.userRepositories.getUserById(userId)
-            if (!user) return {status: ResultNotificationEnum.NotFound}
-
-            const post: InstanceType<typeof PostModel> | null = await this.postRepositories.getPostById(postId)
-            if (!post) return {status: ResultNotificationEnum.NotFound}
-
-            const CreateData: CommentCreateType = {
-                content: data.content,
-                commentatorInfo: {
-                    userId: user._id.toString(),
-                    userLogin: user.login
-                },
-                postInfo: {
-                    postId: post._id.toString()
-                },
-                blogInfo: {
-                    blogId: post.blogId,
-                },
-                likesInfo: {
-                    likesCount: 0,
-                    dislikesCount: 0
-                },
-                createdAt: new Date().toISOString(),
-            }
-
-            const resultCreate: InstanceType<typeof CommentModel> = await this.commentRepositories.save(new this.commentModel(CreateData))
-
-            return {status: ResultNotificationEnum.Success, data: commentMap.mapComment(resultCreate, LikeStatusEnum.None)}
-        } catch (e: any) {
-            throw new Error(e)
-        }
+        return {status: ResultNotificationEnum.Success, data: comment._id.toString()}
     }
 }

@@ -1,10 +1,15 @@
 import {Router} from "express";
-import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
-import {ROUTERS_SETTINGS} from "../../settings";
-import {authUserMiddleware, commentController} from "../../composition-root/composition-root";
+import {inputValidation, ruleBodyValidations} from "../../../internal/middleware/input-validation/input-validation";
+import {ROUTERS_SETTINGS} from "../../../settings";
+import {container} from "../../../composition-root/composition-root";
+import {CommentController} from "./comment-controller";
+import {AuthUserMiddleware} from "../../../internal/middleware/auth/UserAuth/auth-user";
 
 
 export const commentsRouter = Router()
+
+const commentController = container.resolve(CommentController)
+const authUserMiddleware = container.resolve(AuthUserMiddleware);
 
 commentsRouter.get('/:id', authUserMiddleware.verifyUserByAccessToken.bind(authUserMiddleware), commentController.getCommentById.bind(commentController))
 

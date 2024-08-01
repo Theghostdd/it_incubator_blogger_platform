@@ -2,10 +2,14 @@ import {authValidation} from "../../../internal/middleware/auth/AdminAuth/AdminA
 import {inputValidation, ruleBodyValidations} from "../../../internal/middleware/input-validation/input-validation";
 import express from "express";
 import {ROUTERS_SETTINGS} from "../../../settings";
-import {authUserMiddleware, postController} from "../../../composition-root/composition-root";
+import {container} from "../../../composition-root/composition-root";
+import {PostController} from "./post-controller";
+import {AuthUserMiddleware} from "../../../internal/middleware/auth/UserAuth/auth-user";
 
 
 export const postRouter = express.Router();
+const postController = container.resolve(PostController)
+const authUserMiddleware = container.resolve(AuthUserMiddleware)
 
 postRouter.get('/', postController.getPosts.bind(postController))
 

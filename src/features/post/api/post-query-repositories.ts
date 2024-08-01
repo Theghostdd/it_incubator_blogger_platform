@@ -5,9 +5,10 @@ import {
 import {defaultQueryValues} from "../../../internal/utils/default-values/default-query-values";
 import {inject, injectable} from "inversify";
 import {PostViewModel} from "./view-models/dto";
-import {IPostInstanceMethod, PostModel} from "../domain/entity";
+import {PostModel} from "../domain/entity";
 import {HydratedDocument} from "mongoose";
 import {PostDto} from "../domain/dto";
+import {IPostInstanceMethod} from "../domain/interfaces";
 
 @injectable()
 export class PostQueryRepository {
@@ -18,7 +19,6 @@ export class PostQueryRepository {
     }
 
     async getAllPost(query: QueryParamsType, blogId?: string): Promise<ResultDataWithPaginationType<PostViewModel[] | []>> {
-
         const {
             pageNumber,
             pageSize,

@@ -1,33 +1,37 @@
 import {Request, Response} from "express";
-import {APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
-import {ROUTERS_SETTINGS} from "../../settings";
-import {UserQueryRepositories} from "../user/user-query-repositories";
-import {UserMeModelViewType} from "../user/user-types";
-import {saveError} from "../../internal/utils/error-utils/save-error";
-import {
-    RegistrationConfirmCodeType,
-    RegistrationInputType,
-    RegistrationResendConfirmCodeInputType
-} from "./registartion/registration-types";
-import {RegistrationService} from "./registartion/registration-service";
+import {APIErrorsMessageType, ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
+import {ROUTERS_SETTINGS} from "../../../settings";
+import {UserQueryRepositories} from "../../user/user-query-repositories";
+import {UserMeModelViewType} from "../../user/user-types";
+import {saveError} from "../../../internal/utils/error-utils/save-error";
+
+import {RegistrationService} from "../registartion/registration-service";
 import {
     AuthModelServiceType,
     AuthOutputModelType,
     ChangePasswordInputViewType,
     PasswordRecoveryInputViewType,
     UserLoginInputViewType
-} from "./auth/auth-types";
-import {AuthService} from "./auth/auth-service";
+} from "../auth/auth-types";
+import {AuthService} from "../auth/auth-service";
+import {inject, injectable} from "inversify";
+import {
+    UserChangePasswordInputDto,
+    UserLoginInputDto, UserPasswordRecoveryInputDto,
+    UserRegisterInputDto,
+    UserRegistrationConfirmCodeInputDto,
+    UserRegistrationResendConfirmCodeInputDto
+} from "./input-models/dto";
 
-
+@injectable()
 export class AuthController {
     constructor(
-        protected authService: AuthService,
-        protected registrationService: RegistrationService,
-        protected userQueryRepositories: UserQueryRepositories,
+        @inject(AuthService) private authService: AuthService,
+        @inject(RegistrationService) private registrationService: RegistrationService,
+        @inject(UserQueryRepositories) private userQueryRepositories: UserQueryRepositories,
     ) {
     }
-    async login (req: Request<{}, {}, UserLoginInputViewType>, res: Response<AuthOutputModelType | APIErrorsMessageType>) {
+    async login (req: Request<{}, {}, UserLoginInputDto>, res: Response<AuthOutputModelType | APIErrorsMessageType>) {
         try {
             const result: ResultNotificationType<AuthModelServiceType> = await this.authService.auth(req.body, req.ip || req.socket.remoteAddress!, req.useragent!.os || "anonyms")
             switch (result.status) {
@@ -67,7 +71,7 @@ export class AuthController {
         }
     }
 
-    async registrationUser(req: Request<{}, {}, RegistrationInputType>, res: Response<APIErrorsMessageType>) {
+    async registrationUser(req: Request<{}, {}, UserRegisterInputDto>, res: Response<APIErrorsMessageType>) {
         try {
             const result: ResultNotificationType = await this.registrationService.registrationUser(req.body)
             switch(result.status) {
@@ -83,7 +87,7 @@ export class AuthController {
         }
     }
 
-    async registrationUserConfirm(req: Request<{}, {}, RegistrationConfirmCodeType>, res: Response<APIErrorsMessageType>) {
+    async registrationUserConfirm(req: Request<{}, {}, UserRegistrationConfirmCodeInputDto>, res: Response<APIErrorsMessageType>) {
         try {
             const result: ResultNotificationType = await this.registrationService.registrationUserConfirmUserByEmail(req.body)
             switch(result.status) {
@@ -99,7 +103,7 @@ export class AuthController {
         }
     }
 
-    async registrationUserResendConfirmationCode (req: Request<{}, {}, RegistrationResendConfirmCodeInputType>, res: Response<APIErrorsMessageType>) {
+    async registrationUserResendConfirmationCode (req: Request<{}, {}, UserRegistrationResendConfirmCodeInputDto>, res: Response<APIErrorsMessageType>) {
         try {
             const result: ResultNotificationType = await this.registrationService.registrationResendConfirmCodeToEmail(req.body)
             switch(result.status) {
@@ -136,7 +140,7 @@ export class AuthController {
         }
     }
 
-    async passwordRecovery (req: Request<{}, {}, PasswordRecoveryInputViewType>, res: Response) {
+    async passwordRecovery (req: Request<{}, {}, UserPasswordRecoveryInputDto>, res: Response) {
         try {
             const result: ResultNotificationType = await this.authService.passwordRecovery(req.body)
             switch (result.status) {
@@ -151,7 +155,7 @@ export class AuthController {
         }
     }
 
-    async changePassword(req: Request<{}, {}, ChangePasswordInputViewType>, res: Response<APIErrorsMessageType>) {
+    async changePassword(req: Request<{}, {}, UserChangePasswordInputDto>, res: Response<APIErrorsMessageType>) {
         try {
             const result: ResultNotificationType<APIErrorsMessageType> = await this.authService.changeUserPassword(req.body)
             switch (result.status) {

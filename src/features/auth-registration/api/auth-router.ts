@@ -1,11 +1,12 @@
 import {Router} from "express";
-import {ROUTERS_SETTINGS} from "../../settings";
+import {ROUTERS_SETTINGS} from "../../../settings";
 
-import {inputValidation, ruleBodyValidations} from "../../internal/middleware/input-validation/input-validation";
-import {authRegistrationController, authUserMiddleware, requestLimiter} from "../../composition-root/composition-root";
+import {inputValidation, ruleBodyValidations} from "../../../internal/middleware/input-validation/input-validation";
+import {container} from "../../../composition-root/composition-root";
+import {RequestLimiter} from "../../../internal/middleware/request-limit/request-limit";
 
 export const authRouter = Router()
-
+const requestLimiter = container.resolve(RequestLimiter)
 authRouter.post(`${ROUTERS_SETTINGS.AUTH.login}`,
     requestLimiter.requestLimiter.bind(requestLimiter),
     ruleBodyValidations.validationBodyLoginOrEmail,

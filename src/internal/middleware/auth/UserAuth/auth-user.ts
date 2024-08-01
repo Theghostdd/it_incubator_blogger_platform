@@ -5,10 +5,12 @@ import {
     ResultNotificationType,
 } from "../../../../typings/basic-types";
 import {AuthService} from "../../../../features/auth-registration/auth/auth-service";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class AuthUserMiddleware {
     constructor(
-        protected authService: AuthService,
+        @inject(AuthService) private authService: AuthService,
     ) {}
     async authUserByAccessToken (req: Request, res: Response, next: NextFunction) {
         try {

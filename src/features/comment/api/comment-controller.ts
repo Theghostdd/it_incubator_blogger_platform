@@ -1,21 +1,24 @@
 import {Request, Response} from "express";
-import {ROUTERS_SETTINGS} from "../../settings";
-import {ResultNotificationEnum, ResultNotificationType} from "../../typings/basic-types";
-import {CommentInputModelType, CommentViewModelType, LikeStatusType} from "./comment-types";
-import {saveError} from "../../internal/utils/error-utils/save-error";
+import {ROUTERS_SETTINGS} from "../../../settings";
+import {ResultNotificationEnum, ResultNotificationType} from "../../../typings/basic-types";
+import {saveError} from "../../../internal/utils/error-utils/save-error";
 import {CommentQueryRepositories} from "./comment-query-repositories";
-import {CommentService} from "./comment-service";
+import {CommentService} from "../application/comment-service";
+import {CommentUpdateInputModelDto} from "./input-models/dto";
+import {inject, injectable} from "inversify";
+import {CommentViewModelDto} from "./view-models/dto";
+import {LikeInputModelDto} from "../../likes/api/input-models/dto";
 
-
+@injectable()
 export class CommentController {
     constructor(
-        protected commentService: CommentService,
-        protected commentQueryRepositories: CommentQueryRepositories
+        @inject(CommentService) private commentService: CommentService,
+        @inject(CommentQueryRepositories) private commentQueryRepositories: CommentQueryRepositories
     ) {}
 
-    async getCommentById(req: Request<{id: string}>, res: Response<CommentViewModelType>) {
+    async getCommentById(req: Request<{id: string}>, res: Response<CommentViewModelDto>) {
         try {
-            const result: CommentViewModelType | null = await this.commentQueryRepositories.getCommentById(req.params.id, req.user.userId)
+            const result: CommentViewModelDto | null = await this.commentQueryRepositories.getCommentById(req.params.id, req.user.userId)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.COMMENTS.comments}/:id`, 'GET', 'Get comment by ID', e)
@@ -23,7 +26,7 @@ export class CommentController {
         }
     }
 
-    async updateCommentById (req: Request<{id: string}, {}, CommentInputModelType>, res: Response) {
+    async updateCommentById (req: Request<{id: string}, {}, CommentUpdateInputModelDto>, res: Response) {
         try {
             const result: ResultNotificationType = await this.commentService.updateCommentById(req.params.id, req.user.userId, req.body)
             switch (result.status) {
@@ -59,7 +62,7 @@ export class CommentController {
         }
     }
 
-    async updateCommentLikeStatusById (req: Request<{id: string}, {}, LikeStatusType>, res: Response) {
+    async updateCommentLikeStatusById (req: Request<{id: string}, {}, LikeInputModelDto>, res: Response) {
         try {
             const result: ResultNotificationType = await this.commentService.updateLikeStatusForCommentById(req.body, req.params.id, req.user.userId)
             switch (result.status) {

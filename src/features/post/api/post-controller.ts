@@ -1,4 +1,3 @@
-import {PostInputModelType, PostViewModelType} from "../post-types";
 import {
     QueryParamsType, ResultDataWithPaginationType,
     ResultNotificationEnum,
@@ -10,10 +9,11 @@ import {Response, Request} from "express";
 import {CommentInputModelType, CommentViewModelType} from "../../comment/comment-types";
 import {PostService} from "../application/post-service";
 import {PostQueryRepository} from "./post-query-repositories";
-import {CommentQueryRepositories} from "../../comment/comment-query-repositories";
+import {CommentQueryRepositories} from "../../comment/api/comment-query-repositories";
 import {PostInputModel, PostUpdateModel} from "./input-models/dto";
 import {PostViewModel} from "./view-models/dto";
 import {inject, injectable} from "inversify";
+import {CommentViewModelDto} from "../../comment/api/view-models/dto";
 
 @injectable()
 export class PostController {
@@ -94,19 +94,13 @@ export class PostController {
 
 
 
-
-
-
-
-
-
-
-    async createCommentByPostId (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelType>) {
+    async createCommentByPostId (req: Request<{id: string}, {}, CommentInputModelType>, res: Response<CommentViewModelDto>) {
         try {
-            const result: ResultNotificationType<CommentViewModelType> = await this.postService.createCommentByPostId(req.body, req.params.id, req.user.userId)
+            const result: ResultNotificationType<string | null> = await this.postService.createCommentByPostId(req.body, req.params.id, req.user.userId)
             switch (result.status) {
                 case ResultNotificationEnum.Success:
-                    return res.status(201).json(result.data);
+                    const comment: CommentViewModelDto | null = await this.commentQueryRepositories.getCommentById(result.data!, req.user.userId)
+                    return comment ? res.status(201).json(comment) : res.sendStatus(404);
                 case ResultNotificationEnum.NotFound:
                     return res.sendStatus(404);
                 default: return res.sendStatus(500)
@@ -117,9 +111,9 @@ export class PostController {
         }
     }
 
-    async getCommentsByPostId(req: Request<{id: string}, {}, {}, QueryParamsType>, res: Response<ResultDataWithPaginationType<CommentViewModelType[]>>) {
+    async getCommentsByPostId(req: Request<{id: string}, {}, {}, QueryParamsType>, res: Response<ResultDataWithPaginationType<CommentViewModelDto[]>>) {
         try {
-            const result:ResultDataWithPaginationType<CommentViewModelType[]> = await this.commentQueryRepositories.getAllComments(req.query, req.params.id, req.user.userId)
+            const result:ResultDataWithPaginationType<CommentViewModelDto[]> = await this.commentQueryRepositories.getAllComments(req.query, req.params.id, req.user.userId)
             return result.items.length > 0 ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.POST.post}/:id${ROUTERS_SETTINGS.POST.comments}`, 'GET', 'Get all comments by post ID', e)
