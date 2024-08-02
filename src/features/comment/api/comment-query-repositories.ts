@@ -89,9 +89,9 @@ export class CommentQueryRepositories {
 
     }
 
-    async getCommentById(id: string, userId: string): Promise<CommentViewModelDto | null> {
+    async getCommentById(id: string, userId?: string): Promise<CommentViewModelDto | null> {
         let like: HydratedDocument<LikeDto, ILikesInstanceMethods> | null = null;
-        if (userId) like = await this.likeModel.findOne({userId: userId, commentId: id})
+        if (userId) like = await this.likeModel.findOne({userId: userId, parentId: id})
 
         const result: HydratedDocument<CommentDto, ICommentInstanceMethod> | null = await this.commentModel.findById(id)
         return result ? {
