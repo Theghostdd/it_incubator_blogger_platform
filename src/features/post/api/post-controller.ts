@@ -14,6 +14,7 @@ import {PostViewModel} from "./view-models/dto";
 import {inject, injectable} from "inversify";
 import {CommentViewModelDto} from "../../comment/api/view-models/dto";
 import {CommentCreateInputModelDto} from "../../comment/api/input-models/dto";
+import {LikeInputModelDto} from "../../likes/api/input-models/dto";
 
 @injectable()
 export class PostController {
@@ -25,7 +26,7 @@ export class PostController {
 
     async getPosts (req: Request<{},{},{},QueryParamsType>, res: Response<ResultDataWithPaginationType<PostViewModel[]>>) {
         try {
-            const result: ResultDataWithPaginationType<PostViewModel[]> = await this.postQueryRepositories.getAllPost(req.query)
+            const result: ResultDataWithPaginationType<PostViewModel[]> = await this.postQueryRepositories.getAllPost(req.query, '', req.user.userId)
             return res.status(200).json(result)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.POST.post}/`, 'GET', 'GET all a post items', e)
@@ -35,7 +36,7 @@ export class PostController {
 
     async getPostById (req: Request<{id: string}>, res: Response<PostViewModel>) {
         try {
-            const result: PostViewModel | null = await this.postQueryRepositories.getPostById(req.params.id)
+            const result: PostViewModel | null = await this.postQueryRepositories.getPostById(req.params.id, req.user.userId)
             return result ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.POST.post}/:id`, 'GET', 'GET the post item by ID', e)
@@ -92,8 +93,6 @@ export class PostController {
         }
     }
 
-
-
     async createCommentByPostId (req: Request<{id: string}, {}, CommentCreateInputModelDto>, res: Response<CommentViewModelDto>) {
         try {
             const result: ResultNotificationType<string | null> = await this.postService.createCommentByPostId(req.body, req.params.id, req.user.userId)
@@ -117,6 +116,22 @@ export class PostController {
             return result.items.length > 0 ? res.status(200).json(result) : res.sendStatus(404)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.POST.post}/:id${ROUTERS_SETTINGS.POST.comments}`, 'GET', 'Get all comments by post ID', e)
+            return res.sendStatus(500)
+        }
+    }
+
+    async updatePostLikeStatusByPostId(req: Request<{id: string}, {}, LikeInputModelDto>, res: Response) {
+        try {
+            const result: ResultNotificationType = await this.postService.updatePostLikeStatusById(req.body, req.params.id, req.user.userId)
+            switch (result.status) {
+                case ResultNotificationEnum.Success:
+                    return res.sendStatus(204);
+                case ResultNotificationEnum.NotFound:
+                    return res.sendStatus(404);
+                default: return res.sendStatus(500)
+            }
+        } catch (e: any) {
+            await saveError(`${ROUTERS_SETTINGS.POST.post}/:id${ROUTERS_SETTINGS.POST.like_status}`, 'PUT', 'Update the post like status by post ID', e)
             return res.sendStatus(500)
         }
     }

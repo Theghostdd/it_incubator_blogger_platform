@@ -1,5 +1,12 @@
 
 
+class PostLikeInfoDto {
+    constructor(
+        public likesCount: number,
+        public dislikesCount: number,
+    ) {}
+}
+
 
 export class PostDto {
     constructor(
@@ -9,5 +16,6 @@ export class PostDto {
         public blogId: string,
         public createdAt: string,
         public blogName: string,
+        public extendedLikesInfo: PostLikeInfoDto
     ) {}
 }

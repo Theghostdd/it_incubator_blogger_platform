@@ -11,9 +11,9 @@ export const postRouter = express.Router();
 const postController = container.resolve(PostController)
 const authUserMiddleware = container.resolve(AuthUserMiddleware)
 
-postRouter.get('/', postController.getPosts.bind(postController))
+postRouter.get('/', authUserMiddleware.verifyUserByAccessToken.bind(authUserMiddleware), postController.getPosts.bind(postController))
 
-postRouter.get('/:id', postController.getPostById.bind(postController))
+postRouter.get('/:id',  authUserMiddleware.verifyUserByAccessToken.bind(authUserMiddleware), postController.getPostById.bind(postController))
 
 postRouter.post('/',
     authValidation,
@@ -44,3 +44,5 @@ postRouter.post(`/:id${ROUTERS_SETTINGS.POST.comments}`,
 )
 
 postRouter.get(`/:id${ROUTERS_SETTINGS.POST.comments}`, authUserMiddleware.verifyUserByAccessToken.bind(authUserMiddleware), postController.getCommentsByPostId.bind(postController))
+
+postRouter.put(`/:id${ROUTERS_SETTINGS.POST.like_status}`, authUserMiddleware.authUserByAccessToken.bind(authUserMiddleware), ruleBodyValidations.validationBodyLikeStatus, inputValidation, postController.updatePostLikeStatusByPostId.bind(postController))

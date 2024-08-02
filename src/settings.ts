@@ -9,7 +9,8 @@ export const ROUTERS_SETTINGS = {
     },
     POST: {
         post: '/api/posts',
-        comments: '/comments'
+        comments: '/comments',
+        like_status: "/like-status",
     },
     USER: {
         user: '/api/users'
