@@ -127,7 +127,7 @@ export class PostQueryRepository {
         if (userId) like = await this.likeModel.findOne({userId: userId, parentId: id})
 
         const lastLike: HydratedDocument<LikeDto, ILikesInstanceMethods>[] | null = await this.likeModel
-            .find({parentId: id})
+            .find({parentId: id, status: LikeStatusEnum.Like})
             .sort({ lastUpdateAt: -1 })
             .limit(3)
 
