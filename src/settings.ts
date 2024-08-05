@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config()
 
-
+const t = ''
 export const ROUTERS_SETTINGS = {
     BLOG: {
         blogs: '/api/blogs',
@@ -59,12 +59,13 @@ export const MONGO_SETTINGS = {
     }
 }
 
+
 export const SETTINGS = {
     PORT: process.env.PORT || "3000",
     SALTRounds: 10,
     JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY || "SecretKey",
     JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY || "SecretKey2",
-    JWTAccessToken_Expires: '5m',
+    JWTAccessToken_Expires: '10m',
     JWTRefreshToken_Expires: '1h',
 }
 
