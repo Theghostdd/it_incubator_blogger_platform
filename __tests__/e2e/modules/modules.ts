@@ -10,6 +10,7 @@ import {CommentModel} from "../../../src/features/comment/domain/entity";
 import {RequestLimiterModel} from "../../../src/features/request-limiter/domain/entity";
 import {RecoveryPasswordSessionModel} from "../../../src/features/auth-registration/domain/recovery-password-entity";
 import {LikeModel} from "../../../src/features/likes/domain/entity";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 
 
@@ -18,7 +19,7 @@ export const AdminAuth: any = {
 }
 
 beforeAll(async () => {
-    await mongoose.connect(MONGO_SETTINGS.URL, {dbName: MONGO_SETTINGS.DB_NAME})
+    await mongoose.connect(MONGO_SETTINGS.URL_CLOUD, {dbName: MONGO_SETTINGS.DB_NAME})
 })
 afterAll(async () => {
     await mongoose.disconnect();
@@ -110,4 +111,16 @@ export const InsertOneUniversal =async (data: any, model: any) => {
 
 export const FindAllUniversal = async (model: any) => {
     return await model.find().lean()
+}
+
+
+
+
+export const likePost = async (id: string, status: string, token: string) => {
+    const result = await GetRequest()
+        .put(`${ROUTERS_SETTINGS.POST.post}/${id}${ROUTERS_SETTINGS.POST.like_status}`)
+        .set({authorization: `Bearer ${token}`})
+        .send({likeStatus: status})
+    
+    return result.body
 }

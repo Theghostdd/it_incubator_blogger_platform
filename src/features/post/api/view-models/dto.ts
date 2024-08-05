@@ -1,6 +1,13 @@
 import {LikeStatusEnum} from "../../../../typings/basic-types";
 
 
+export class LastLikesDto {
+    constructor (
+        public postId: string,
+        public likes: NewestLikesDto[]
+    ) {}
+}
+
 export class NewestLikesDto {
     constructor(
         public addedAt: string,

@@ -8,4 +8,5 @@ module.exports = {
     "/__tests__/Dto",
     "/__tests__/integration/modules/",
   ],
+  testTimeout: 10000
 };

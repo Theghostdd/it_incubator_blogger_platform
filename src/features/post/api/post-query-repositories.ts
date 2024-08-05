@@ -5,7 +5,7 @@ import {
 } from "../../../typings/basic-types";
 import {defaultQueryValues} from "../../../internal/utils/default-values/default-query-values";
 import {inject, injectable} from "inversify";
-import {NewestLikesDto, PostViewModel} from "./view-models/dto";
+import {LastLikesDto, NewestLikesDto, PostViewModel} from "./view-models/dto";
 import {PostModel} from "../domain/entity";
 import {HydratedDocument} from "mongoose";
 import {PostDto} from "../domain/dto";
@@ -57,35 +57,35 @@ export class PostQueryRepository {
 
 
         let likes: HydratedDocument<LikeDto, ILikesInstanceMethods>[] | [] = []
-        const postIds: ObjectId[] = result.map(id => id._id)
+        const postIds: string[] = result.map(id => id._id.toString())
         if (userId) {
             likes = await this.likeModel
                 .find({userId: userId, parentId: {$in: postIds}})
         }
 
-        let newestLikes: NewestLikesDto[] | [] = []
-
-
-        // TODO: Нужно сделать получние последних 3 лайков для каждого поста
-        // const lastLike: HydratedDocument<LikeDto, ILikesInstanceMethods>[] | null = await this.likeModel
-        //     .find({parentId: id})
-        //     .sort({ lastUpdateAt: -1 })
-        //     .limit(3)
-
-        if (lastLike.length > 0) {
-            const userIds: string[] = lastLike.map((like: HydratedDocument<LikeDto, ILikesInstanceMethods>) => like.userId)
-            const users: HydratedDocument<UserDto, IUserInstanceMethods>[] = await this.userModel.find({_id: {$in: userIds}})
-
-            newestLikes = lastLike.map((item: HydratedDocument<LikeDto, ILikesInstanceMethods>) => {
-                const user: HydratedDocument<UserDto, IUserInstanceMethods> = users.find(u => u._id.toString() === item.userId)!
+        const lastLikes: LastLikesDto[] = await Promise.all(postIds.map(async (postId) => {
+            const likes = await this.likeModel
+                .find({ parentId: postId })
+                .sort({ lastUpdateAt: -1 })
+                .limit(3)
+                .exec();
+        
+            const likesWithUserDetails: NewestLikesDto[] = await Promise.all(likes.map(async (like) => {
+                const user = await this.userModel.findById(like.userId).exec();
                 return {
-                    addedAt: item.lastUpdateAt,
-                    userId: user._id.toString(),
-                    login: user.login
-                }
-            })
-        }
-
+                    addedAt: like.lastUpdateAt,
+                    userId: like.userId,
+                    login: user!.login,
+                };
+            }));
+        
+            return { postId, likes: likesWithUserDetails };
+        }));
+        
+        const likesMap = lastLikes.reduce((acc: {[key: string]: NewestLikesDto[]}, { postId, likes }) => {
+            acc[postId] = likes;
+            return acc;
+        }, {});
 
 
 
@@ -97,6 +97,7 @@ export class PostQueryRepository {
                 items: result.map((item: HydratedDocument<PostDto, IPostInstanceMethod>) => {
                     const foundLike = likes.find(like => like.parentId === item._id.toString());
                     const myStatus: LikeStatusEnum = foundLike ? foundLike.status : LikeStatusEnum.None;
+
                     return {
                         id: item._id.toString(),
                         title: item.title,
@@ -109,7 +110,7 @@ export class PostQueryRepository {
                             likesCount: item.extendedLikesInfo.likesCount,
                             dislikesCount: item.extendedLikesInfo.dislikesCount,
                             myStatus: myStatus,
-                            newestLikes: newestLikes
+                            newestLikes: likesMap[item._id.toString()] ? likesMap[item._id.toString()] : []
                         }
                     }
                 })
@@ -121,7 +122,6 @@ export class PostQueryRepository {
     async getPostById(id: string, userId?: string): Promise<PostViewModel | null> {
         const result: HydratedDocument<PostDto, IPostInstanceMethod> | null = await this.postModel.findById(id)
         if (!result) return null
-
 
         let like: HydratedDocument<LikeDto, ILikesInstanceMethods> | null = null;
         if (userId) like = await this.likeModel.findOne({userId: userId, parentId: id})
