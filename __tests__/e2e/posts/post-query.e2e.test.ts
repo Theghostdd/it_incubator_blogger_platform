@@ -160,7 +160,6 @@ describe("Test query repositories", () => {
         })
     })
 
-
     it('Should get post item with info like, and correct info about 3 last likes', async () => {
         const user1 = await CreateUser(registrationData)
         const user2RegData = {
@@ -287,8 +286,6 @@ describe("Test query repositories", () => {
             myStatus: "None",
             newestLikes: []
         })  
-
-    
     })
 })
 

@@ -65,7 +65,7 @@ export class PostQueryRepository {
 
         const lastLikes: LastLikesDto[] = await Promise.all(postIds.map(async (postId) => {
             const likes = await this.likeModel
-                .find({ parentId: postId })
+                .find({ parentId: postId, status: LikeStatusEnum.Like })
                 .sort({ lastUpdateAt: -1 })
                 .limit(3)
                 .exec();
