@@ -117,7 +117,7 @@ export class BlogController {
 
     async getPostByBlogId(req: Request<{id: string}, {}, {}, QueryParamsType>, res: Response<ResultDataWithPaginationType<PostViewModel[] | []>>) {
         try {
-            const result: ResultDataWithPaginationType<PostViewModel[] | []> = await this.postQueryRepositories.getAllPost(req.query, req.params.id)
+            const result: ResultDataWithPaginationType<PostViewModel[] | []> = await this.postQueryRepositories.getAllPost(req.query, req.params.id, req.user.userId)
             return res.status(200).json(result)
         } catch (e) {
             await saveError(`${ROUTERS_SETTINGS.BLOG.blogs}/:id${ROUTERS_SETTINGS.BLOG.blogs_posts}`, 'GET', 'Get all the post items by blog ID', e)
