@@ -1,7 +1,6 @@
 import { config } from 'dotenv'
 config()
 
-const t = ''
 export const ROUTERS_SETTINGS = {
     BLOG: {
         blogs: '/api/blogs',

@@ -53,6 +53,7 @@ LikeSchema.methods.changeCountLike = function (likeStatus: LikeStatusEnum, curre
 
 LikeSchema.methods.updateLikeStatus = function (likeStatus: LikeStatusEnum): void {
     this.status = likeStatus;
+    this.lastUpdateAt = new Date().toISOString()
 }
 
 export const LikeModel = mongoose.model<LikeDto, ILikesModel>(MONGO_SETTINGS.COLLECTIONS.comments_like, LikeSchema)
